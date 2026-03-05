@@ -1,0 +1,8 @@
+{
+  "name": "BetterWealth 홈 화면 생성",
+  "id": "betterwealth-home-sketch",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"]
+}
