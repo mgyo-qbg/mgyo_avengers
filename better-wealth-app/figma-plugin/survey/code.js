@@ -644,7 +644,7 @@ function buildPage10() {
   });
 
   scroll.appendChild(buildSectionHeader('연봉과 근속연수를\n입력해 주세요'));
-  scroll.appendChild(buildSubHeader('퇴직금 예상액 산출에 활용돼요.'));
+  scroll.appendChild(buildSubHeader('입력한 연봉과 근속연수를 바탕으로\n퇴직금을 예상해 드려요.'));
 
   const g1 = vf('Field - 연봉', CONTENT_W, 80, { gap: 8 });
   g1.fills = [];
@@ -659,7 +659,6 @@ function buildPage10() {
   g2.appendChild(buildHelperText('현재 재직 중인 회사의 근속연수를 입력해 주세요'));
   scroll.appendChild(g2);
 
-  scroll.appendChild(buildHelperText('퇴직 시점 예상 연봉(물가상승률 3% 반영) 기준으로 계산됩니다.'));
 
   return root;
 }
