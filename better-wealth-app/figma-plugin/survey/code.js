@@ -477,11 +477,10 @@ function buildPage4() {
   g1.appendChild(buildSelectBox('65세'));
   scroll.appendChild(g1);
 
-  const g2 = vf('Field - 기대수명', CONTENT_W, 100, { gap: 8 });
+  const g2 = vf('Field - 기대수명', CONTENT_W, 80, { gap: 8 });
   g2.fills = [];
   g2.appendChild(buildLabel('기대수명'));
-  g2.appendChild(buildTextInput('100', '세'));
-  g2.appendChild(buildHelperText('통계청 기준 기대수명을 적용했어요'));
+  g2.appendChild(buildSelectBox('100세'));
   scroll.appendChild(g2);
 
   // 월 생활비
@@ -521,12 +520,11 @@ function buildPage6() {
   scroll.appendChild(buildSectionHeader('국민연금 예상액을\n계산해 볼게요'));
   scroll.appendChild(buildSubHeader('아래 정보를 입력하면 예상 수령액을\n계산해 드려요.'));
 
-  // 세전 연봉
-  const g1 = vf('Field - 연봉', CONTENT_W, 100, { gap: 8 });
+  // 세전 연소득
+  const g1 = vf('Field - 연소득', CONTENT_W, 80, { gap: 8 });
   g1.fills = [];
-  g1.appendChild(buildLabel('연봉 (세전)'));
-  g1.appendChild(buildTextInput('세전 연봉을 입력해 주세요', '만원'));
-  g1.appendChild(buildHelperText('입력한 연봉을 기준으로 월 소득을 환산해 계산해요'));
+  g1.appendChild(buildLabel('연소득 (세전)'));
+  g1.appendChild(buildTextInput('세전 연소득을 입력해 주세요', '만원'));
   scroll.appendChild(g1);
 
   // 최초 가입 시기 (년 + 월)
