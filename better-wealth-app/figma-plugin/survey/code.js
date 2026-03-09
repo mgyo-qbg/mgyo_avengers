@@ -659,7 +659,7 @@ function buildPage10() {
   g2.appendChild(buildHelperText('현재 재직 중인 회사의 근속연수를 입력해 주세요'));
   scroll.appendChild(g2);
 
-  scroll.appendChild(buildHelperText('퇴직금 = (평균임금 x 30일 x 근속연수) / 365로 계산됩니다.'));
+  scroll.appendChild(buildHelperText('퇴직 시점 예상 연봉(물가상승률 3% 반영) 기준으로 계산됩니다.'));
 
   return root;
 }
