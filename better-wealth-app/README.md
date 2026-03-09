@@ -1,7 +1,7 @@
 # 베러웰스앱(BetterWealth App) — 팀 컨텍스트 복구 가이드
 
 서비스: 베러웰스 모바일 앱
-최종 업데이트: 2026-03-06
+최종 업데이트: 2026-03-09
 
 ## 팀 구성
 
@@ -42,10 +42,26 @@
 | plugin_guidelines.md | Figma 플러그인 개발 핵심 규칙 |
 | home_screen_layout_spec.md | 홈 화면 레이아웃 스펙 |
 
+## Figma 플러그인
+
+플러그인은 이 레포에서 git으로 관리한다.
+
+```
+figma-plugin/
+├── home/    # 홈 화면 생성 플러그인 (구버전)
+└── survey/  # #1114 인출설계 설문지 플러그인 (현재 사용)
+```
+
+Figma Desktop에서 플러그인 import: Plugins → Development → Import from manifest
+- **인출설계 설문지**: `figma-plugin/survey/manifest.json`
+- **홈 화면**: `figma-plugin/home/manifest.json`
+
+> Figma Desktop에서 이 레포 경로를 직접 참조하도록 import할 것.
+> 구버전 경로(`/Users/imsi/Desktop/betterwealth-figma-plugin/`)는 더 이상 사용하지 않음.
+
 ## Figma 정보
 
 - **디자인 시스템 파일**: [베러웰스앱] NEW 디자인 시스템 (Key: wygEtCwUqQJ9p06qsDnBJF) — 수정 금지
 - **기획 작업 파일**: mgyo_note (Key: AioSbUjrVBRnqTpFsltOC5)
-- **플러그인 위치**: /Users/imsi/Desktop/betterwealth-figma-plugin/
 
 > Figma Personal Access Token은 보안상 저장하지 않음. 필요 시 재발급.
