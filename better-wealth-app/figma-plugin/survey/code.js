@@ -927,11 +927,20 @@ function buildPage16() {
   checkWrap.appendChild(checkMark);
   scroll.appendChild(checkWrap);
 
-  const header = mkText('인출설계 요청이\n전달되었어요!', 20, 'bold', C.text900);
+  const header = mkText('인출설계 첫 걸음을\n내딛으셨어요', 20, 'bold', C.text900);
   header.textAlignHorizontal = 'CENTER';
   scroll.appendChild(header);
 
-  const sub = mkText('담당 FA가 확인 후\n맞춤 인출 전략을 안내해 드릴 예정이에요.', 14, 'regular', C.text500);
+  // 임팩트 문구 박스
+  const impactBox = vf('Impact Box', CONTENT_W, 100, { gap: 8, px: 20, py: 20, radius: 12 });
+  impactBox.fills = [{ type: 'SOLID', color: C.gray50 }];
+  const impactText = mkText('은퇴 후 30년,\n준비된 인출 전략이\n노후를 지켜줍니다.', 16, 'semibold', C.text900);
+  impactText.textAlignHorizontal = 'CENTER';
+  impactText.lineHeight = { value: 150, unit: 'PERCENT' };
+  impactBox.appendChild(impactText);
+  scroll.appendChild(impactBox);
+
+  const sub = mkText('담당 FA가 맞춤 인출 전략으로\n곧 연락드릴게요.', 14, 'regular', C.text500);
   sub.textAlignHorizontal = 'CENTER';
   scroll.appendChild(sub);
 
