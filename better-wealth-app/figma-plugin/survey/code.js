@@ -306,6 +306,21 @@ function buildHelperText(text) {
   return mkText(text, 12, 'regular', C.text500);
 }
 
+function buildDevNote(text) {
+  const DEV_BG = { r: 1.000, g: 0.976, b: 0.769 }; // 연노랑
+  const DEV_BORDER = { r: 0.949, g: 0.800, b: 0.200 };
+  const wrap = vf('DevNote', CONTENT_W, 60, { gap: 4, px: 10, py: 8, radius: 6 });
+  wrap.fills = solid(DEV_BG);
+  wrap.strokes = [{ type: 'SOLID', color: DEV_BORDER }];
+  wrap.strokeWeight = 1;
+  const label = mkText('[개발 참고]', 10, 'bold', { r: 0.600, g: 0.500, b: 0.000 });
+  const body = mkText(text, 11, 'regular', { r: 0.200, g: 0.150, b: 0.000 });
+  body.textAutoResize = 'HEIGHT';
+  wrap.appendChild(label);
+  wrap.appendChild(body);
+  return wrap;
+}
+
 function buildPicker(options) {
   const pickerW = CONTENT_W;
   const itemW = Math.floor((pickerW - (options.length - 1)) / options.length);
@@ -792,7 +807,7 @@ function buildPage13() {
   }
 
   scroll.appendChild(list);
-  scroll.appendChild(buildHelperText('조건에 따라 일부 항목이 생략됩니다: 근로소득자 아닌 경우 → 근로소득 미표시 / DC 자산 없는 경우 → 퇴직연금 미표시'));
+  scroll.appendChild(buildDevNote('근로소득자 아닌 경우 → 근로소득 행 미표시\nDC 자산 없는 경우 → 퇴직연금 행 미표시'));
 
   return root;
 }
