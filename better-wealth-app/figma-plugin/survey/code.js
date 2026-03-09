@@ -689,13 +689,6 @@ function buildPage12() {
 
   scroll.appendChild(buildSectionHeader('기타 정기소득을\n입력해 주세요'));
 
-  // 소득 유형
-  const g0 = vf('Field - 소득유형', CONTENT_W, 80, { gap: 8 });
-  g0.fills = [];
-  g0.appendChild(buildLabel('소득 유형'));
-  g0.appendChild(buildSelectBox('임대소득'));
-  scroll.appendChild(g0);
-
   // 연소득
   const g1 = vf('Field - 연소득', CONTENT_W, 80, { gap: 8 });
   g1.fills = [];
@@ -718,19 +711,6 @@ function buildPage12() {
   g3.appendChild(buildReadonlyField('자동 설정'));
   g3.appendChild(buildHelperText('앞서 입력한 기대수명이 자동 적용돼요'));
   scroll.appendChild(g3);
-
-  // + 추가하기 버튼
-  const addBtn = hf('Add Button', CONTENT_W, 44, {
-    radius: 10, align: 'CENTER', justify: 'CENTER',
-    stroke: C.primary500, strokeW: 1,
-  });
-  addBtn.fills = solid(C.white);
-  const addText = mkText('+ 추가하기', 14, 'medium', C.primary500);
-  addText.textAlignHorizontal = 'CENTER';
-  addBtn.appendChild(addText);
-  scroll.appendChild(addBtn);
-
-  scroll.appendChild(buildHelperText('소득이 여러 건이면 추가하기로 항목을 더 입력할 수 있어요.'));
 
   return root;
 }
