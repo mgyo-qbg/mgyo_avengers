@@ -44,7 +44,6 @@ figma.ui.onmessage = async (msg) => {
       await loadFonts();
       const frames = [];
       if (msg.pages.includes(1))  frames.push(buildPage1());
-      if (msg.pages.includes(2))  frames.push(buildPage2());
       if (msg.pages.includes(3))  frames.push(buildPage3());
       if (msg.pages.includes(4))  frames.push(buildPage4());
       if (msg.pages.includes(5))  frames.push(buildPage5());
@@ -417,39 +416,6 @@ function buildPage1() {
   timeCard.appendChild(clockIcon);
   timeCard.appendChild(mkText('약 3분 소요', 14, 'medium', C.text800));
   scroll.appendChild(timeCard);
-
-  return root;
-}
-
-// P2: FA 자동 매칭 안내
-function buildPage2() {
-  const { root, scroll } = buildRoot('P2 - FA 자동 매칭 안내', {
-    navTitle: '인출설계', ctaLabel: '다음',
-  });
-
-  scroll.primaryAxisAlignItems = 'CENTER';
-  scroll.counterAxisAlignItems = 'CENTER';
-
-  const avatarWrap = hf('FA Avatar', 72, 72, { align: 'CENTER', justify: 'CENTER' });
-  avatarWrap.fills = [];
-  const avatarBg = mkEllipse(72, 72, C.primary500);
-  avatarBg.opacity = 0.15;
-  avatarWrap.appendChild(avatarBg);
-  avatarBg.layoutPositioning = 'ABSOLUTE';
-  avatarBg.x = 0;
-  avatarBg.y = 0;
-  const avatarIcon = mkText('FA', 24, 'bold', C.primary500);
-  avatarIcon.textAlignHorizontal = 'CENTER';
-  avatarWrap.appendChild(avatarIcon);
-  scroll.appendChild(avatarWrap);
-
-  const header = mkText('담당 FA가 배정되었어요', 20, 'bold', C.text900);
-  header.textAlignHorizontal = 'CENTER';
-  scroll.appendChild(header);
-
-  const sub = mkText('김베러 어드바이저가 회원님의\n인출설계를 도와드릴 거예요.', 14, 'regular', C.text500);
-  sub.textAlignHorizontal = 'CENTER';
-  scroll.appendChild(sub);
 
   return root;
 }
@@ -964,7 +930,7 @@ function buildPage16() {
   header.textAlignHorizontal = 'CENTER';
   scroll.appendChild(header);
 
-  const sub = mkText('김베러 어드바이저가 확인 후\n연락드릴 예정이에요.', 14, 'regular', C.text500);
+  const sub = mkText('담당 FA가 확인 후\n맞춤 인출 전략을 안내해 드릴 예정이에요.', 14, 'regular', C.text500);
   sub.textAlignHorizontal = 'CENTER';
   scroll.appendChild(sub);
 

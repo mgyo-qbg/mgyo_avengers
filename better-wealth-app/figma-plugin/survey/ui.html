@@ -64,7 +64,7 @@
     <h2>#1114 인출설계 설문지</h2>
     <p class="sub">선택한 페이지를 현재 캔버스에 생성합니다.<br>375 x 812pt, 가로 400px 간격 배치</p>
     <div class="btn-row">
-      <button class="btn-sm" onclick="checkRange(1,3)">진입 1~3</button>
+      <button class="btn-sm" onclick="checkList([1,3])">진입 P1,P3</button>
       <button class="btn-sm" onclick="checkRange(4,8)">설문 4~8</button>
       <button class="btn-sm" onclick="checkRange(9,13)">설문 9~13</button>
       <button class="btn-sm" onclick="checkRange(14,16)">후처리 14~16</button>
@@ -72,9 +72,8 @@
       <button class="btn-sm" onclick="uncheckAll()">해제</button>
     </div>
     <div class="section">
-      <div class="section-title">진입/조건 (P1~P3)</div>
+      <div class="section-title">진입/조건 (P1, P3)</div>
       <label><input type="checkbox" value="1" class="pg" checked> P1. 설문 시작</label>
-      <label><input type="checkbox" value="2" class="pg" checked> P2. FA 자동 매칭 안내</label>
       <label><input type="checkbox" value="3" class="pg"> P3. 자산없음 경고</label>
       <div class="section-title" style="margin-top:8px">설문 입력 (P4~P13, 1/8~8/8)</div>
       <label><input type="checkbox" value="4" class="pg" checked> P4. 은퇴시기/기대수명/생활비 (1/8)</label>
@@ -133,6 +132,11 @@
     function checkRange(a, b) {
       document.querySelectorAll('.pg').forEach(c => {
         const v = parseInt(c.value); c.checked = v >= a && v <= b;
+      });
+    }
+    function checkList(arr) {
+      document.querySelectorAll('.pg').forEach(c => {
+        c.checked = arr.includes(parseInt(c.value));
       });
     }
     function checkAll()   { document.querySelectorAll('.pg').forEach(c => c.checked = true); }
