@@ -705,10 +705,11 @@ function buildPage12() {
   scroll.appendChild(g1);
 
   // 소득 시작 시기 (readonly)
-  const g2 = vf('Field - 시작시기', CONTENT_W, 80, { gap: 8 });
+  const g2 = vf('Field - 시작시기', CONTENT_W, 100, { gap: 8 });
   g2.fills = [];
   g2.appendChild(buildLabel('소득 시작 시기'));
   g2.appendChild(buildReadonlyField('자동 설정'));
+  g2.appendChild(buildHelperText('앞서 입력한 은퇴 시기가 자동 적용돼요'));
   scroll.appendChild(g2);
 
   // 소득 종료 시기 (readonly)
@@ -716,7 +717,7 @@ function buildPage12() {
   g3.fills = [];
   g3.appendChild(buildLabel('소득 종료 시기'));
   g3.appendChild(buildReadonlyField('자동 설정'));
-  g3.appendChild(buildHelperText('시작/종료 시기는 자동으로 설정됩니다'));
+  g3.appendChild(buildHelperText('앞서 입력한 기대수명이 자동 적용돼요'));
   scroll.appendChild(g3);
 
   // + 추가하기 버튼
@@ -791,6 +792,7 @@ function buildPage13() {
   }
 
   scroll.appendChild(list);
+  scroll.appendChild(buildHelperText('조건에 따라 일부 항목이 생략됩니다: 근로소득자 아닌 경우 → 근로소득 미표시 / DC 자산 없는 경우 → 퇴직연금 미표시'));
 
   return root;
 }
