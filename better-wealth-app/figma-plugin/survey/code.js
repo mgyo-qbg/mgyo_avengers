@@ -895,11 +895,11 @@ function buildPage15() {
   innerCircle.y = 8;
   scroll.appendChild(spinnerWrap);
 
-  const loadingHeader = mkText('FA에게 전달하고 있어요', 16, 'semibold', C.text900);
+  const loadingHeader = mkText('회원님의 은퇴 후 30년을\n준비하고 있어요', 16, 'semibold', C.text900);
   loadingHeader.textAlignHorizontal = 'CENTER';
   scroll.appendChild(loadingHeader);
 
-  const loadingSub = mkText('잠시만 기다려 주세요.', 14, 'regular', C.text500);
+  const loadingSub = mkText('담당 FA에게 전달 중이에요.', 14, 'regular', C.text500);
   loadingSub.textAlignHorizontal = 'CENTER';
   scroll.appendChild(loadingSub);
 
