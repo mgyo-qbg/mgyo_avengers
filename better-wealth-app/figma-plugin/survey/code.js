@@ -656,6 +656,7 @@ function buildPage10() {
   g2.fills = [];
   g2.appendChild(buildLabel('근속연수 (만 연수)'));
   g2.appendChild(buildTextInput('근속연수를 입력해 주세요', '년'));
+  g2.appendChild(buildHelperText('현재 재직 중인 회사의 근속연수를 입력해 주세요'));
   scroll.appendChild(g2);
 
   scroll.appendChild(buildHelperText('퇴직금 = (평균임금 x 30일 x 근속연수) / 365로 계산됩니다.'));
