@@ -1,46 +1,30 @@
-// #1114 인출설계 설문지 — Figma Plugin v2
-// DS 기반 전면 재작성 (2026-03-10)
-// 컬러/치수 출처: figma_design_system.md (Figma REST API 전수 조회)
+// #1114 인출설계 설문지 — Figma Plugin
+// 대상 파일: mgyo_note (AioSbUjrVBRnqTpFsltOC5) / 베러웰스 App (0DVyXyoWEbXXNOZF0H92Ic)
+// 가이드: plugin_guidelines.md 준수
 
 const W = 375;
 const H = 812;
 const STATUS_H = 44;
 const TOPNAV_H = 44;
+const CTA_H = 88; // CTA 버튼 영역 (52 + 패딩)
 const TOP_H = STATUS_H + TOPNAV_H;
 const PAD = 20;
 const CONTENT_W = W - PAD * 2;
 
-// ── Design Tokens (DS 실측값 — figma_design_system.md 기준) ────────────
-// hex → figma rgb (0~1 범위)
-function hex(r, g, b) { return { r: r/255, g: g/255, b: b/255 }; }
-
 const C = {
-  // Primary (#2E9BFF)
-  primary50:   hex(246, 250, 255),   // #F6FAFF
-  primary100:  hex(235, 245, 255),   // #EBF5FF  ← active 배경
-  primary500:  hex( 46, 155, 255),   // #2E9BFF  ← 메인 CTA
-  primary700:  hex( 33, 110, 181),   // #216EB5
-  // Secondary (#2E58FF)
-  secondary500: hex( 46,  88, 255),  // #2E58FF
-  // Gray
-  gray50:   hex(248, 249, 250),      // #F8F9FA  ← 배경
-  gray100:  hex(244, 245, 247),      // #F4F5F7  ← 인풋 비활성
-  gray200:  hex(239, 239, 240),      // #EFEFF0  ← 구분선, 트랙
-  gray300:  hex(230, 230, 231),      // #E6E6E7  ← 아코디언 bg
-  gray400:  hex(214, 215, 219),      // #D6D7DB  ← 보더(비활성), Unchecked
-  gray500:  hex(173, 175, 184),      // #ADAFB8
-  gray700:  hex( 99,  99, 111),      // #63636F  ← Toast/Snackbar
-  // Text
-  text300:  hex(144, 144, 148),      // #909094  ← placeholder
-  text500:  hex(103, 103, 107),      // #67676B  ← 보조 텍스트
-  text800:  hex( 43,  43,  47),      // #2B2B2F  ← 기본 텍스트
-  text900:  hex( 23,  23,  27),      // #17171B  ← 강조 텍스트
-  // Utility
-  green500: hex( 58, 209, 169),      // #3AD1A9
-  red500:   hex(255,  82,  71),      // #FF5247
-  // Base
-  white:    hex(255, 255, 255),
-  black:    hex(  3,   3,   3),      // #030303
+  primary500: { r: 0.180, g: 0.608, b: 1.000 },
+  secondary:  { r: 0.180, g: 0.345, b: 1.000 },
+  green300:   { r: 0.227, g: 0.820, b: 0.663 },
+  red:        { r: 1.000, g: 0.322, b: 0.278 },
+  gray50:     { r: 0.976, g: 0.976, b: 0.976 },
+  gray100:    { r: 0.949, g: 0.949, b: 0.949 },
+  gray200:    { r: 0.878, g: 0.878, b: 0.878 },
+  gray400:    { r: 0.631, g: 0.631, b: 0.631 },
+  text300:    { r: 0.671, g: 0.671, b: 0.671 },
+  text500:    { r: 0.427, g: 0.427, b: 0.427 },
+  text800:    { r: 0.149, g: 0.149, b: 0.149 },
+  text900:    { r: 0.012, g: 0.012, b: 0.012 },
+  white:      { r: 1.000, g: 1.000, b: 1.000 },
 };
 
 figma.showUI(__html__, { width: 320, height: 520 });
@@ -75,6 +59,7 @@ figma.ui.onmessage = async (msg) => {
       if (msg.pages.includes(15)) frames.push(buildPage15());
       if (msg.pages.includes(16)) frames.push(buildPage16());
 
+      // 가로 400px 간격으로 배치
       let xOff = 0;
       for (const f of frames) {
         figma.currentPage.appendChild(f);
@@ -168,7 +153,6 @@ function hf(name, w, h, opts) {
   if (opts.stroke) {
     f.strokes = solid(opts.stroke);
     f.strokeWeight = opts.strokeW || 1;
-    f.strokeAlign = 'INSIDE';
   }
   f.resize(w, h);
   return f;
@@ -193,8 +177,7 @@ function vf(name, w, h, opts) {
   return f;
 }
 
-// ── Shared DS Components ────────────────────────────────────────────────
-// DS: Navi bar 375×44px, 배경 White
+// ── Shared Components ──────────────────────────────────────────────────
 
 function buildStatusBar() {
   const f = hf('Status Bar', W, STATUS_H, { bg: C.white, justify: 'CENTER', align: 'CENTER' });
@@ -205,14 +188,13 @@ function buildStatusBar() {
 }
 
 function buildTopNavBack(title) {
-  // DS: Navi bar / title-center — 375×44px, White
   const f = hf('Top Nav', W, TOPNAV_H, {
     bg: C.white, align: 'CENTER', pl: 4, pr: 16, gap: 4,
   });
 
   const back = hf('Back Button', 40, 40, { align: 'CENTER', justify: 'CENTER' });
   back.fills = [];
-  const arrow = mkText('‹', 22, 'regular', C.text900);
+  const arrow = mkText('<', 20, 'regular', C.text900);
   arrow.textAlignHorizontal = 'CENTER';
   back.appendChild(arrow);
   f.appendChild(back);
@@ -225,19 +207,14 @@ function buildTopNavBack(title) {
 }
 
 function buildCTA(label) {
-  // DS: fixedBtn — 375×92px, pad=20 all, gap=8, bg=#FFFFFF @70%
-  const wrapper = hf('CTA Area', W, 92, {
-    bg: C.white, bgOp: 0.96,
-    px: PAD, pt: 20, pb: 20,
-    align: 'CENTER', justify: 'CENTER',
+  const wrapper = hf('CTA Area', W, CTA_H, {
+    bg: C.white, px: PAD, pt: 12, pb: 24, align: 'CENTER', justify: 'CENTER',
   });
 
-  // DS: buttons Xlarge — 335×52px, r=8, fill=Primary/500
   const btn = hf('CTA Button', CONTENT_W, 52, {
-    bg: C.primary500, radius: 8, align: 'CENTER', justify: 'CENTER',
+    bg: C.primary500, radius: 12, align: 'CENTER', justify: 'CENTER',
   });
-  // DS: Title/Regular — 18px/700
-  const btnText = mkText(label, 18, 'bold', C.white);
+  const btnText = mkText(label, 16, 'semibold', C.white);
   btnText.textAlignHorizontal = 'CENTER';
   btn.appendChild(btnText);
   wrapper.appendChild(btn);
@@ -247,68 +224,48 @@ function buildCTA(label) {
 }
 
 function buildSectionHeader(text) {
-  // DS: Title/Medium — 20px/700
-  const t = mkText(text, 20, 'bold', C.text900);
-  t.lineHeight = { value: 140, unit: 'PERCENT' };
-  t.letterSpacing = { value: -0.2, unit: 'PIXELS' };
-  return t;
+  return mkText(text, 20, 'bold', C.text900);
 }
 
 function buildSubHeader(text) {
-  // DS: Body/Xsmall — 14px/400, lineHeight 150%
   const t = mkText(text, 14, 'regular', C.text500);
   t.textAutoResize = 'WIDTH_AND_HEIGHT';
-  t.lineHeight = { value: 150, unit: 'PERCENT' };
-  t.letterSpacing = { value: -0.2, unit: 'PIXELS' };
   return t;
 }
 
 function buildLabel(text) {
-  // DS: Subtitle/Xsmall — 13px/600
-  const t = mkText(text, 13, 'semibold', C.text800);
-  t.letterSpacing = { value: -0.2, unit: 'PIXELS' };
-  return t;
+  return mkText(text, 13, 'semibold', C.text800);
 }
 
 function buildSelectBox(placeholder, w) {
-  // DS: Selection/Select Layer/Md Active — 106×40px, r=8, stroke=#D6D7DB
-  // 인풋 전체 컨테이너 높이는 48px 사용 (Searchfield 기준)
   w = w || CONTENT_W;
   const box = hf('Select Box', w, 48, {
-    bg: C.white, radius: 8,
-    pl: 16, pr: 14, align: 'CENTER', justify: 'SPACE_BETWEEN',
-    stroke: C.gray400, strokeW: 1,
+    bg: C.white, radius: 10, px: 16, align: 'CENTER', justify: 'SPACE_BETWEEN',
+    stroke: C.gray200, strokeW: 1,
   });
   box.primaryAxisAlignItems = 'SPACE_BETWEEN';
 
-  // DS: Body/Xsmall — 14px/400
   const txt = mkText(placeholder, 14, 'regular', C.text800);
   box.appendChild(txt);
   txt.layoutSizingHorizontal = 'FILL';
 
-  // chevron-down
-  const chevron = mkText('⌄', 16, 'regular', C.gray500);
+  const chevron = mkText('v', 12, 'regular', C.gray400);
   box.appendChild(chevron);
 
   return box;
 }
 
 function buildTextInput(placeholder, suffix) {
-  // DS: Textinput/Textfield — 48px height, r=8
-  // Active border: #D6D7DB (Inactive는 #F4F5F7 배경)
   const box = hf('Text Input', CONTENT_W, 48, {
-    bg: C.gray100, radius: 8,
-    pl: 16, pr: 16, align: 'CENTER', gap: 8,
-    stroke: C.gray400, strokeW: 1,
+    bg: C.white, radius: 10, px: 16, align: 'CENTER', gap: 8,
+    stroke: C.gray200, strokeW: 1,
   });
 
-  // DS: Body/Xsmall — 14px/400, text300 = placeholder
   const txt = mkText(placeholder, 14, 'regular', C.text300);
   box.appendChild(txt);
   txt.layoutSizingHorizontal = 'FILL';
 
   if (suffix) {
-    // DS: Body/Xsmall — 14px/400 (suffix/unit)
     const sfx = mkText(suffix, 14, 'medium', C.text500);
     box.appendChild(sfx);
   }
@@ -317,92 +274,54 @@ function buildTextInput(placeholder, suffix) {
 }
 
 function buildReadonlyField(value) {
-  // DS: Textinput/Textfield Readonly — #F4F5F7, r=8
   const box = hf('Readonly Field', CONTENT_W, 48, {
-    bg: C.gray100, radius: 8, px: 16, align: 'CENTER',
+    bg: C.gray50, radius: 10, px: 16, align: 'CENTER',
+    stroke: C.gray100, strokeW: 1,
   });
-  // DS: Body/Xsmall — 14px/400, text500 (읽기전용 = 흐린 텍스트)
-  const txt = mkText(value, 14, 'regular', C.text500);
+  const txt = mkText(value, 14, 'regular', C.gray400);
   box.appendChild(txt);
   txt.layoutSizingHorizontal = 'FILL';
-
-  // readonly 아이콘 (잠금 표시)
-  const lock = mkText('🔒', 12, 'regular', C.text300);
-  box.appendChild(lock);
   return box;
 }
 
 function buildChoiceCard(text, isSelected) {
-  // DS: Cell/List Item — 327×52px, r=8
-  // Active: fill=#EBF5FF (Primary/100), Inactive: fill=White, stroke=#D6D7DB
-  const card = hf('Choice Card', CONTENT_W, 60, {
-    bg: isSelected ? C.primary100 : C.white,
-    radius: 8, px: 20, align: 'CENTER', justify: 'SPACE_BETWEEN',
-    stroke: isSelected ? C.primary500 : C.gray400,
+  const card = hf('Choice Card', CONTENT_W, 72, {
+    bg: C.white, radius: 12, px: 20, align: 'CENTER', justify: 'SPACE_BETWEEN',
+    stroke: isSelected ? C.primary500 : C.gray200,
     strokeW: isSelected ? 2 : 1,
   });
   card.primaryAxisAlignItems = 'SPACE_BETWEEN';
 
-  // DS: Body/Small — 15px/400 → Subtitle/Small — 14px/600
   const label = mkText(text, 15, 'semibold', isSelected ? C.primary500 : C.text800);
   card.appendChild(label);
   label.layoutSizingHorizontal = 'FILL';
 
-  // DS: Radio/Md — 18×18px
-  const radio = hf('Radio', 20, 20, {
-    radius: 100,
-    bg: isSelected ? C.primary500 : C.white,
-    stroke: isSelected ? C.primary500 : C.gray400,
-    strokeW: 1.5,
-  });
-  if (isSelected) {
-    const dot = mkEllipse(8, 8, C.white);
-    radio.appendChild(dot);
-    radio.primaryAxisAlignItems = 'CENTER';
-    radio.counterAxisAlignItems = 'CENTER';
-  }
-  card.appendChild(radio);
+  const indicator = mkEllipse(20, 20, isSelected ? C.primary500 : C.gray200);
+  card.appendChild(indicator);
 
   return card;
 }
 
 function buildHelperText(text) {
-  // DS: Body/Caption — 12px/400, lineHeight 140%
-  const t = mkText(text, 12, 'regular', C.text500);
-  t.letterSpacing = { value: -0.2, unit: 'PIXELS' };
-  t.lineHeight = { value: 140, unit: 'PERCENT' };
-  return t;
+  return mkText(text, 12, 'regular', C.text500);
 }
 
+
 function buildPicker(options) {
-  // DS: Tabs/Round 느낌으로 재구성 — bg=#EFEFF0, active item=#FFFFFF
   const pickerW = CONTENT_W;
-  const itemW = Math.floor((pickerW - (options.length - 1) * 4) / options.length);
+  const itemW = Math.floor((pickerW - (options.length - 1)) / options.length);
   const picker = hf('Picker', pickerW, 52, {
-    bg: C.gray200, radius: 10, gap: 4, p: 3,
+    bg: C.gray100, radius: 12, gap: 1,
   });
 
   options.forEach((label, i) => {
     const isFirst = i === 0;
-    const item = hf('Picker-' + label, itemW, 46, {
+    const item = hf('Picker-' + label, itemW, 50, {
       align: 'CENTER', justify: 'CENTER',
-      bg: isFirst ? C.white : C.gray200,
-      radius: 8,
+      bg: isFirst ? C.white : C.gray100,
+      radius: 10,
     });
-    if (isFirst) {
-      // DS: shadow-sm 효과 흉내
-      item.effects = [{
-        type: 'DROP_SHADOW',
-        color: { r: 0, g: 0, b: 0, a: 0.08 },
-        offset: { x: 0, y: 1 },
-        radius: 2,
-        spread: 0,
-        visible: true,
-        blendMode: 'NORMAL',
-      }];
-    }
-    // DS: Subtitle/Small — 14px/600 (active), Body/Xsmall — 14px/400 (inactive)
-    const txt = mkText(label, 14, isFirst ? 'semibold' : 'regular',
+    const txt = mkText(label, 15, isFirst ? 'semibold' : 'regular',
       isFirst ? C.text900 : C.text500);
     txt.textAlignHorizontal = 'CENTER';
     item.appendChild(txt);
@@ -412,26 +331,24 @@ function buildPicker(options) {
   return picker;
 }
 
-// ── Step Indicator ──────────────────────────────────────────────────────
-// DS: Progress Bar md — 375×4px, bg=#EFEFF0, fill=Primary/500
+// ── Root Frame Builder ─────────────────────────────────────────────────
 
 function buildStepIndicator(current, total) {
-  const wrapper = vf('Step Indicator', W, 32, {
-    bg: C.white, gap: 8, pt: 8, pb: 0,
+  const STEP_H = 28;
+  const wrapper = vf('Step Indicator', W, STEP_H, {
+    bg: C.white, gap: 6, pt: 8, pb: 0,
   });
 
-  // 스텝 텍스트: DS Body/Caption — 12px/400
   const label = mkText(current + ' / ' + total, 12, 'medium', C.text500);
   label.textAlignHorizontal = 'CENTER';
   wrapper.appendChild(label);
   label.layoutAlign = 'STRETCH';
 
-  // DS: Progress Bar md — 375×4px
-  const barBg = hf('Progress Bar', W, 4, {});
-  barBg.fills = solid(C.gray200);
+  const barBg = hf('Progress Bar', W, 3, { radius: 0 });
+  barBg.fills = solid(C.gray100);
   barBg.clipsContent = true;
   const fillW = Math.round(W * (current / total));
-  const barFill = mkRect(fillW, 4, C.primary500);
+  const barFill = mkRect(fillW, 3, C.primary500);
   barBg.appendChild(barFill);
   barFill.layoutPositioning = 'ABSOLUTE';
   barFill.x = 0;
@@ -441,8 +358,6 @@ function buildStepIndicator(current, total) {
 
   return wrapper;
 }
-
-// ── Root Frame Builder ──────────────────────────────────────────────────
 
 function buildRoot(name, opts) {
   opts = opts || {};
@@ -460,14 +375,13 @@ function buildRoot(name, opts) {
   topNav.layoutSizingHorizontal = 'FILL';
 
   if (hasStep) {
-    const step = buildStepIndicator(opts.pageNo, opts.pageTotal || 8);
+    const step = buildStepIndicator(opts.pageNo, opts.pageTotal || 10);
     root.appendChild(step);
     step.layoutSizingHorizontal = 'FILL';
   }
 
-  // DS: Scroll Content — 수직 스크롤 영역, pad=20(H) 24(V)
   const scroll = vf('Scroll Content', W, 100, {
-    bg: C.white, clip: true, px: PAD, pt: 28, pb: 28, gap: 20,
+    bg: C.white, clip: true, px: PAD, pt: 24, pb: 24, gap: 20,
   });
   root.appendChild(scroll);
   scroll.layoutSizingHorizontal = 'FILL';
@@ -483,7 +397,8 @@ function buildRoot(name, opts) {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-// PAGE BUILDERS — v2 (DS 기반, 2026-03-10)
+// PAGE BUILDERS — 확정 기획 스펙 (2026-03-09)
+// P1~P3: 진입/조건, P4~P13: 설문(1/8~8/8), P14~P16: 후처리
 // ══════════════════════════════════════════════════════════════════════
 
 // P1: 설문 시작
@@ -492,28 +407,17 @@ function buildPage1() {
     navTitle: '인출설계', ctaLabel: '시작하기',
   });
 
-  // DS: Title/Medium — 20px/700, lineHeight 140%
   scroll.appendChild(buildSectionHeader('은퇴 후 자산 인출 전략을\n설계해 볼까요?'));
-
-  // DS: Body/Xsmall — 14px/400
-  scroll.appendChild(buildSubHeader('몇 가지 질문에 답하면, 맞춤 인출 전략을\n제안해 드릴게요.'));
+  scroll.appendChild(buildSubHeader('몇 가지 질문에 답하면, 맞춤 인출 전략을\n제안해 드릴게요. (약 3분 소요)'));
   scroll.appendChild(buildSubHeader('편안한 은퇴를 위한 맞춤 설계를\n시작합니다'));
 
-  // DS: Banner/noti — 335×68px, r=12, bg=#F8F9FA
-  const infoCard = hf('Info Card', CONTENT_W, 60, {
-    bg: C.primary100, radius: 12, px: 16, align: 'CENTER', gap: 12,
+  const timeCard = hf('Time Info', CONTENT_W, 48, {
+    bg: C.gray50, radius: 10, px: 16, align: 'CENTER', gap: 8,
   });
-  // 시계 아이콘 (원형)
-  const iconBg = hf('Icon', 32, 32, {
-    radius: 100, bg: C.primary500, align: 'CENTER', justify: 'CENTER',
-  });
-  const clockTxt = mkText('⏱', 16, 'regular', C.white);
-  clockTxt.textAlignHorizontal = 'CENTER';
-  iconBg.appendChild(clockTxt);
-  infoCard.appendChild(iconBg);
-  // DS: Subtitle/Small — 14px/600
-  infoCard.appendChild(mkText('약 3분 소요', 14, 'semibold', C.text800));
-  scroll.appendChild(infoCard);
+  const clockIcon = mkEllipse(20, 20, C.primary500);
+  timeCard.appendChild(clockIcon);
+  timeCard.appendChild(mkText('약 3분 소요', 14, 'medium', C.text800));
+  scroll.appendChild(timeCard);
 
   return root;
 }
@@ -527,32 +431,30 @@ function buildPage3() {
   scroll.primaryAxisAlignItems = 'CENTER';
   scroll.counterAxisAlignItems = 'CENTER';
 
-  // DS: Utility/Red 500 #FF5247, 배경 Utility/Red 100 #FFF3F1
-  const warnBg = hf('Warn Icon Bg', 72, 72, {
-    bg: C.red500, bgOp: 0.12, radius: 100,
-    align: 'CENTER', justify: 'CENTER',
-  });
-  const warnIcon = mkText('!', 30, 'bold', C.red500);
+  const warnWrap = hf('Warn Icon', 64, 64, { align: 'CENTER', justify: 'CENTER' });
+  warnWrap.fills = [];
+  const warnBg = mkEllipse(64, 64, C.red);
+  warnBg.opacity = 0.12;
+  warnWrap.appendChild(warnBg);
+  warnBg.layoutPositioning = 'ABSOLUTE';
+  warnBg.x = 0;
+  warnBg.y = 0;
+  const warnIcon = mkText('!', 28, 'bold', C.red);
   warnIcon.textAlignHorizontal = 'CENTER';
-  warnBg.appendChild(warnIcon);
-  warnBg.primaryAxisAlignItems = 'CENTER';
-  warnBg.counterAxisAlignItems = 'CENTER';
-  scroll.appendChild(warnBg);
+  warnWrap.appendChild(warnIcon);
+  scroll.appendChild(warnWrap);
 
-  // DS: Title/Medium — 20px/700
   const header = mkText('연결된 퇴직연금이 없어요', 20, 'bold', C.text900);
   header.textAlignHorizontal = 'CENTER';
   scroll.appendChild(header);
 
-  // DS: Body/Xsmall — 14px/400
   const sub = mkText('인출설계를 진행하려면 마이데이터로\nIRP, DC, ISA 중 하나 이상의\n계좌가 연결되어야 해요.', 14, 'regular', C.text500);
   sub.textAlignHorizontal = 'CENTER';
-  sub.lineHeight = { value: 150, unit: 'PERCENT' };
   scroll.appendChild(sub);
 
   scroll.appendChild(buildHelperText('마이데이터에서 퇴직연금 계좌를 연결한 뒤 다시 시도해 주세요.'));
 
-  // 나중에 하기 — DS: Text button/Sm/Primary
+  // 하단 "나중에 하기" 텍스트 링크
   const laterLink = mkText('나중에 하기', 14, 'medium', C.text500);
   laterLink.textAlignHorizontal = 'CENTER';
   laterLink.textDecoration = 'UNDERLINE';
@@ -561,7 +463,7 @@ function buildPage3() {
   return root;
 }
 
-// P4: 은퇴시기 · 기대수명 · 생활비 (1/8)
+// P4: 은퇴시기 · 기대수명 · 생활비 통합 (1/8)
 function buildPage4() {
   const { root, scroll } = buildRoot('P4 - 은퇴시기/기대수명/생활비', {
     navTitle: '인출설계', ctaLabel: '다음', pageNo: 1, pageTotal: 8,
@@ -570,26 +472,24 @@ function buildPage4() {
   scroll.appendChild(buildSectionHeader('은퇴 후 생활 계획을\n알려주세요'));
   scroll.appendChild(buildSubHeader('은퇴 시점과 기대수명에 따라 필요한\n자산 규모와 준비 전략이 달라집니다'));
 
-  // DS: Textinput/Textfield 구조 — label(13px) + field(48px) + helper(12px), gap=6
-  const g1 = vf('Field - 은퇴시기', CONTENT_W, 1, { gap: 6 });
+  // 은퇴 예상 시기
+  const g1 = vf('Field - 은퇴시기', CONTENT_W, 80, { gap: 8 });
   g1.fills = [];
-  g1.primaryAxisSizingMode = 'AUTO';
   g1.appendChild(buildLabel('은퇴 예상 시기'));
   g1.appendChild(buildSelectBox('65세'));
   g1.appendChild(buildHelperText('일반적인 은퇴 시기: 60~65세 / 국민연금은 65세부터 감액 없이 수령 가능'));
   scroll.appendChild(g1);
 
-  const g2 = vf('Field - 기대수명', CONTENT_W, 1, { gap: 6 });
+  const g2 = vf('Field - 기대수명', CONTENT_W, 80, { gap: 8 });
   g2.fills = [];
-  g2.primaryAxisSizingMode = 'AUTO';
   g2.appendChild(buildLabel('기대수명'));
   g2.appendChild(buildSelectBox('100세'));
   g2.appendChild(buildHelperText('평균 기대수명 남성 81세, 여성 87세 / 평균보다 5~10년 길게 설정 권장'));
   scroll.appendChild(g2);
 
-  const g3 = vf('Field - 월생활비', CONTENT_W, 1, { gap: 6 });
+  // 월 생활비
+  const g3 = vf('Field - 월생활비', CONTENT_W, 100, { gap: 8 });
   g3.fills = [];
-  g3.primaryAxisSizingMode = 'AUTO';
   g3.appendChild(buildLabel('월 생활비'));
   g3.appendChild(buildTextInput('324', '만원/월'));
   g3.appendChild(buildHelperText('현재 생활비의 70~80% 수준 / 기본 200~300만원 · 중간 300~500만원 · 여유 500~800만원'));
@@ -606,9 +506,8 @@ function buildPage5() {
 
   scroll.appendChild(buildSectionHeader('국민연금 예상 수령액을\n알고 있나요?'));
 
-  const cards = vf('Choice Cards', CONTENT_W, 1, { gap: 12 });
+  const cards = vf('Choice Cards', CONTENT_W, 160, { gap: 12 });
   cards.fills = [];
-  cards.primaryAxisSizingMode = 'AUTO';
   cards.appendChild(buildChoiceCard('네, 알고 있어요', false));
   cards.appendChild(buildChoiceCard('아니요, 계산해 볼게요', false));
   scroll.appendChild(cards);
@@ -625,16 +524,16 @@ function buildPage6() {
   scroll.appendChild(buildSectionHeader('국민연금 예상액을\n계산해 볼게요'));
   scroll.appendChild(buildSubHeader('은퇴 후 받으실 국민연금을\n계산해드릴게요'));
 
-  const g1 = vf('Field - 연소득', CONTENT_W, 1, { gap: 6 });
+  // 세전 연소득
+  const g1 = vf('Field - 연소득', CONTENT_W, 80, { gap: 8 });
   g1.fills = [];
-  g1.primaryAxisSizingMode = 'AUTO';
   g1.appendChild(buildLabel('연소득 (세전)'));
   g1.appendChild(buildTextInput('세전 연소득을 입력해 주세요', '만원'));
   scroll.appendChild(g1);
 
-  const g2 = vf('Field - 가입시기', CONTENT_W, 1, { gap: 6 });
+  // 최초 가입 시기 (년 + 월)
+  const g2 = vf('Field - 가입시기', CONTENT_W, 80, { gap: 8 });
   g2.fills = [];
-  g2.primaryAxisSizingMode = 'AUTO';
   g2.appendChild(buildLabel('국민연금 최초 가입 시기'));
   const selectRow = hf('Select Row', CONTENT_W, 48, { gap: 8 });
   selectRow.fills = [];
@@ -644,9 +543,9 @@ function buildPage6() {
   g2.appendChild(selectRow);
   scroll.appendChild(g2);
 
-  const g3 = vf('Field - 납입종료', CONTENT_W, 1, { gap: 6 });
+  // 납입 종료 (readonly)
+  const g3 = vf('Field - 납입종료', CONTENT_W, 100, { gap: 8 });
   g3.fills = [];
-  g3.primaryAxisSizingMode = 'AUTO';
   g3.appendChild(buildLabel('납입 종료 예정'));
   g3.appendChild(buildReadonlyField('2051년 (은퇴시기 연동)'));
   g3.appendChild(buildHelperText('은퇴시기와 동일하게 적용됩니다'));
@@ -666,9 +565,8 @@ function buildPage7() {
   scroll.appendChild(buildSectionHeader('국민연금 예상 월수령액을\n입력해 주세요'));
   scroll.appendChild(buildSubHeader('예상 국민연금 월 수령액을\n알려주세요'));
 
-  const group = vf('Field Group', CONTENT_W, 1, { gap: 6 });
+  const group = vf('Field Group', CONTENT_W, 80, { gap: 8 });
   group.fills = [];
-  group.primaryAxisSizingMode = 'AUTO';
   group.appendChild(buildLabel('월 수령액 (세전)'));
   group.appendChild(buildTextInput('예상 월수령액을 입력해 주세요', '만원/월'));
   scroll.appendChild(group);
@@ -685,6 +583,7 @@ function buildPage8() {
   scroll.appendChild(buildSectionHeader('연결된 퇴직연금을\n확인해 주세요'));
   scroll.appendChild(buildSubHeader('마이데이터로 연결된 퇴직연금 계좌입니다.'));
 
+  // 퇴직연금 카드 리스트
   const accounts = [
     { bank: '삼성증권', type: 'IRP', amount: '2,450만원' },
     { bank: '미래에셋증권', type: 'DC', amount: '3,120만원' },
@@ -692,31 +591,27 @@ function buildPage8() {
   ];
 
   for (const acc of accounts) {
-    // DS: Cell/List Item Active — r=8, bg=#EBF5FF, pad h12/v14
     const card = hf('Account Card', CONTENT_W, 72, {
-      bg: C.white, radius: 8, px: 16, align: 'CENTER', gap: 12,
-      stroke: C.gray400, strokeW: 1,
+      bg: C.white, radius: 12, px: 16, align: 'CENTER', gap: 12,
+      stroke: C.gray200, strokeW: 1,
     });
     card.primaryAxisAlignItems = 'MIN';
 
-    // DS: Checkbox/Square/Md Checked — 18×18px, r=4, fill=#2E9BFF
-    const checkBox = hf('Checkbox', 20, 20, {
+    // 체크박스 표현
+    const checkBox = hf('Checkbox', 22, 22, {
       radius: 4, align: 'CENTER', justify: 'CENTER',
       bg: C.primary500,
     });
-    const checkMark = mkText('✓', 13, 'bold', C.white);
+    const checkMark = mkText('V', 12, 'bold', C.white);
     checkMark.textAlignHorizontal = 'CENTER';
     checkBox.appendChild(checkMark);
-    checkBox.primaryAxisAlignItems = 'CENTER';
-    checkBox.counterAxisAlignItems = 'CENTER';
     card.appendChild(checkBox);
 
-    const info = vf('Info', CONTENT_W - 48, 44, { gap: 4 });
+    const info = vf('Info', 200, 44, { gap: 2 });
     info.fills = [];
-    // DS: Subtitle/Small — 14px/600
-    info.appendChild(mkText(acc.bank + '  ' + acc.type, 14, 'semibold', C.text900));
-    // DS: Body/Caption — 12px/400
-    info.appendChild(mkText('평가금액 ' + acc.amount, 12, 'regular', C.text500));
+    const topRow = mkText(acc.bank + '  ' + acc.type, 14, 'semibold', C.text900);
+    info.appendChild(topRow);
+    info.appendChild(mkText('평가금액 ' + acc.amount, 13, 'regular', C.text500));
     card.appendChild(info);
     info.layoutSizingHorizontal = 'FILL';
 
@@ -737,9 +632,8 @@ function buildPage9() {
   scroll.appendChild(buildSectionHeader('현재 근로소득이 있나요?'));
   scroll.appendChild(buildSubHeader('퇴직금 예상액 산출에 필요해요.'));
 
-  const cards = vf('Choice Cards', CONTENT_W, 1, { gap: 12 });
+  const cards = vf('Choice Cards', CONTENT_W, 160, { gap: 12 });
   cards.fills = [];
-  cards.primaryAxisSizingMode = 'AUTO';
   cards.appendChild(buildChoiceCard('네, 있어요', false));
   cards.appendChild(buildChoiceCard('아니요, 없어요', false));
   scroll.appendChild(cards);
@@ -756,20 +650,19 @@ function buildPage10() {
   scroll.appendChild(buildSectionHeader('연봉과 근속연수를\n입력해 주세요'));
   scroll.appendChild(buildSubHeader('입력한 연봉과 근속연수를 바탕으로\n퇴직금을 예상해 드려요.'));
 
-  const g1 = vf('Field - 연봉', CONTENT_W, 1, { gap: 6 });
+  const g1 = vf('Field - 연봉', CONTENT_W, 80, { gap: 8 });
   g1.fills = [];
-  g1.primaryAxisSizingMode = 'AUTO';
   g1.appendChild(buildLabel('연봉 (세전)'));
   g1.appendChild(buildTextInput('세전 연봉을 입력해 주세요', '만원'));
   scroll.appendChild(g1);
 
-  const g2 = vf('Field - 근속연수', CONTENT_W, 1, { gap: 6 });
+  const g2 = vf('Field - 근속연수', CONTENT_W, 80, { gap: 8 });
   g2.fills = [];
-  g2.primaryAxisSizingMode = 'AUTO';
   g2.appendChild(buildLabel('근속연수 (만 연수)'));
   g2.appendChild(buildTextInput('근속연수를 입력해 주세요', '년'));
   g2.appendChild(buildHelperText('현재 재직 중인 회사의 근속연수를 입력해 주세요'));
   scroll.appendChild(g2);
+
 
   return root;
 }
@@ -783,9 +676,8 @@ function buildPage11() {
   scroll.appendChild(buildSectionHeader('은퇴 후 기타 정기소득이\n있거나 예정인가요?'));
   scroll.appendChild(buildSubHeader('임대소득, 사업소득, 배당소득 등\n정기적으로 받는 소득이 있다면 알려주세요.'));
 
-  const cards = vf('Choice Cards', CONTENT_W, 1, { gap: 12 });
+  const cards = vf('Choice Cards', CONTENT_W, 160, { gap: 12 });
   cards.fills = [];
-  cards.primaryAxisSizingMode = 'AUTO';
   cards.appendChild(buildChoiceCard('네, 있어요', false));
   cards.appendChild(buildChoiceCard('아니요, 없어요', false));
   scroll.appendChild(cards);
@@ -802,26 +694,25 @@ function buildPage12() {
   scroll.appendChild(buildSectionHeader('기타 정기소득을\n입력해 주세요'));
   scroll.appendChild(buildSubHeader('은퇴 후 정기적으로 받으실 소득을\n알려주세요'));
 
-  const g1 = vf('Field - 연소득', CONTENT_W, 1, { gap: 6 });
+  // 연소득
+  const g1 = vf('Field - 연소득', CONTENT_W, 80, { gap: 8 });
   g1.fills = [];
-  g1.primaryAxisSizingMode = 'AUTO';
   g1.appendChild(buildLabel('연소득 (세전)'));
   g1.appendChild(buildTextInput('연소득을 입력해 주세요', '만원/년'));
-  g1.appendChild(buildHelperText('월세, 임대 수입, 배당금 등 근로소득 외 정기적으로 받는 소득의 연간 합계'));
+  g1.appendChild(buildHelperText('월세, 임대 수입, 배당금 등 근로소득 외\n정기적으로 받는 소득의 연간 합계'));
   scroll.appendChild(g1);
 
-  // 시작/종료 시기 — DS: Readonly (은퇴시기/기대수명 연동)
-  const g2 = vf('Field - 시작시기', CONTENT_W, 1, { gap: 6 });
+  // 소득 시작 시기 (readonly)
+  const g2 = vf('Field - 시작시기', CONTENT_W, 100, { gap: 8 });
   g2.fills = [];
-  g2.primaryAxisSizingMode = 'AUTO';
   g2.appendChild(buildLabel('소득 시작 시기'));
   g2.appendChild(buildReadonlyField('자동 설정'));
   g2.appendChild(buildHelperText('앞서 입력한 은퇴 시기가 자동 적용돼요'));
   scroll.appendChild(g2);
 
-  const g3 = vf('Field - 종료시기', CONTENT_W, 1, { gap: 6 });
+  // 소득 종료 시기 (readonly)
+  const g3 = vf('Field - 종료시기', CONTENT_W, 100, { gap: 8 });
   g3.fills = [];
-  g3.primaryAxisSizingMode = 'AUTO';
   g3.appendChild(buildLabel('소득 종료 시기'));
   g3.appendChild(buildReadonlyField('자동 설정'));
   g3.appendChild(buildHelperText('앞서 입력한 기대수명이 자동 적용돼요'));
@@ -849,35 +740,30 @@ function buildPage13() {
     { label: '기타 정기소득', value: '없음' },
   ];
 
-  // DS: Divider 2 — 1px 구분선, bg=#EFEFF0
-  const list = vf('Summary List', CONTENT_W, 1, { gap: 0 });
+  const list = vf('Summary List', CONTENT_W, summaryItems.length * 60, { gap: 0 });
   list.fills = [];
-  list.primaryAxisSizingMode = 'AUTO';
 
   for (let i = 0; i < summaryItems.length; i++) {
     const item = summaryItems[i];
-    const row = hf('Item-' + item.label, CONTENT_W, 56, {
-      align: 'CENTER', py: 10,
+    const row = hf('Item-' + item.label, CONTENT_W, 52, {
+      align: 'CENTER', justify: 'SPACE_BETWEEN', py: 8,
     });
     row.fills = [];
     row.primaryAxisAlignItems = 'SPACE_BETWEEN';
 
-    const leftCol = vf('Left', CONTENT_W - 60, 36, { gap: 3 });
+    const leftCol = vf('Left', CONTENT_W - 60, 36, { gap: 2 });
     leftCol.fills = [];
-    // DS: Body/Caption — 12px/400
     leftCol.appendChild(mkText(item.label, 12, 'regular', C.text500));
-    // DS: Subtitle/Small — 14px/600
-    leftCol.appendChild(mkText(item.value, 14, 'semibold', C.text900));
+    leftCol.appendChild(mkText(item.value, 15, 'semibold', C.text900));
     row.appendChild(leftCol);
     leftCol.layoutSizingHorizontal = 'FILL';
 
-    // DS: Text button/Sm/Primary — 44px height, 12px text
-    const editBtn = hf('Edit Btn', 44, 30, {
+    const editBtn = hf('Edit Btn', 48, 28, {
       radius: 6, align: 'CENTER', justify: 'CENTER',
-      stroke: C.gray400, strokeW: 1,
+      stroke: C.gray200, strokeW: 1,
     });
     editBtn.fills = solid(C.white);
-    const editText = mkText('수정', 12, 'semibold', C.primary500);
+    const editText = mkText('수정', 12, 'medium', C.primary500);
     editText.textAlignHorizontal = 'CENTER';
     editBtn.appendChild(editText);
     row.appendChild(editBtn);
@@ -885,8 +771,7 @@ function buildPage13() {
     list.appendChild(row);
 
     if (i < summaryItems.length - 1) {
-      // DS: 1px 구분선 #EFEFF0
-      const div = mkRect(CONTENT_W, 1, C.gray200);
+      const div = mkRect(CONTENT_W, 1, C.gray100);
       list.appendChild(div);
     }
   }
@@ -904,29 +789,25 @@ function buildPage14() {
 
   scroll.appendChild(buildSectionHeader('인출설계 서비스 이용을 위해\n약관에 동의해 주세요'));
 
-  // 전체 동의 — DS: Cell/List Item Active 느낌, bg=#EBF5FF
+  // 전체 동의
   const allAgree = hf('All Agree', CONTENT_W, 52, {
-    bg: C.primary100, radius: 8, px: 16, align: 'CENTER', gap: 12,
-    stroke: C.primary500, strokeW: 1,
+    bg: C.gray50, radius: 12, px: 16, align: 'CENTER', gap: 12,
   });
-  // DS: Checkbox/Square/Md Checked
-  const allCheck = hf('Checkbox', 20, 20, {
+  const allCheck = hf('Checkbox', 22, 22, {
     radius: 4, align: 'CENTER', justify: 'CENTER',
     bg: C.primary500,
   });
-  allCheck.primaryAxisAlignItems = 'CENTER';
-  allCheck.counterAxisAlignItems = 'CENTER';
-  const allCheckMark = mkText('✓', 13, 'bold', C.white);
+  const allCheckMark = mkText('V', 12, 'bold', C.white);
   allCheckMark.textAlignHorizontal = 'CENTER';
   allCheck.appendChild(allCheckMark);
   allAgree.appendChild(allCheck);
-  // DS: Subtitle/Small — 14px/600
-  allAgree.appendChild(mkText('전체 동의', 14, 'semibold', C.text900));
+  allAgree.appendChild(mkText('전체 동의', 15, 'semibold', C.text900));
   scroll.appendChild(allAgree);
 
-  // DS: Divider 2 — 1px #EFEFF0
-  scroll.appendChild(mkRect(CONTENT_W, 1, C.gray200));
+  // 구분선
+  scroll.appendChild(mkRect(CONTENT_W, 1, C.gray100));
 
+  // 개별 항목
   const terms = [
     { text: '[필수] 인출설계 서비스 이용약관', checked: true },
     { text: '[필수] 개인정보 수집·이용 동의', checked: true },
@@ -935,35 +816,30 @@ function buildPage14() {
   ];
 
   for (const term of terms) {
-    const row = hf('Term Row', CONTENT_W, 48, {
-      align: 'CENTER', px: 4,
+    const row = hf('Term Row', CONTENT_W, 44, {
+      align: 'CENTER', justify: 'SPACE_BETWEEN', px: 4,
     });
     row.fills = [];
     row.primaryAxisAlignItems = 'SPACE_BETWEEN';
 
-    const leftPart = hf('Left', CONTENT_W - 40, 24, { align: 'CENTER', gap: 12 });
+    const leftPart = hf('Left', 260, 22, { align: 'CENTER', gap: 12 });
     leftPart.fills = [];
 
-    // DS: Checkbox/Square Checked/Unchecked
-    const cb = hf('Checkbox', 20, 20, {
+    const cb = hf('Checkbox', 22, 22, {
       radius: 4, align: 'CENTER', justify: 'CENTER',
       bg: term.checked ? C.primary500 : C.white,
-      stroke: term.checked ? C.primary500 : C.gray400, strokeW: 1,
+      stroke: term.checked ? C.primary500 : C.gray200, strokeW: 1,
     });
-    cb.primaryAxisAlignItems = 'CENTER';
-    cb.counterAxisAlignItems = 'CENTER';
     if (term.checked) {
-      const cm = mkText('✓', 13, 'bold', C.white);
+      const cm = mkText('V', 12, 'bold', C.white);
       cm.textAlignHorizontal = 'CENTER';
       cb.appendChild(cm);
     }
     leftPart.appendChild(cb);
-    // DS: Body/Caption — 12px/400
-    leftPart.appendChild(mkText(term.text, 12, 'regular', C.text800));
+    leftPart.appendChild(mkText(term.text, 13, 'regular', C.text800));
     row.appendChild(leftPart);
     leftPart.layoutSizingHorizontal = 'FILL';
 
-    // DS: Text button/Xs/Primary — 12px
     const viewLink = mkText('보기', 12, 'medium', C.text500);
     viewLink.textDecoration = 'UNDERLINE';
     row.appendChild(viewLink);
@@ -985,41 +861,30 @@ function buildPage15() {
   scroll.primaryAxisAlignItems = 'CENTER';
   scroll.counterAxisAlignItems = 'CENTER';
 
-  // 스피너 — DS: Progress Bar 원형 느낌, Primary/500
-  const spinnerWrap = hf('Spinner', 72, 72, { align: 'CENTER', justify: 'CENTER' });
+  const spinnerWrap = hf('Spinner', 64, 64, { align: 'CENTER', justify: 'CENTER' });
   spinnerWrap.fills = [];
-
-  const outerRing = mkEllipse(72, 72, C.gray200);
+  const outerRing = mkEllipse(64, 64, C.gray100);
   spinnerWrap.appendChild(outerRing);
   outerRing.layoutPositioning = 'ABSOLUTE';
-  outerRing.x = 0; outerRing.y = 0;
-
-  const arc = mkEllipse(72, 72, C.primary500);
-  arc.opacity = 0.35;
+  outerRing.x = 0;
+  outerRing.y = 0;
+  const arc = mkEllipse(64, 64, C.primary500);
+  arc.opacity = 0.3;
   spinnerWrap.appendChild(arc);
   arc.layoutPositioning = 'ABSOLUTE';
-  arc.x = 0; arc.y = 0;
-
-  const innerCircle = mkEllipse(52, 52, C.white);
+  arc.x = 0;
+  arc.y = 0;
+  const innerCircle = mkEllipse(48, 48, C.white);
   spinnerWrap.appendChild(innerCircle);
   innerCircle.layoutPositioning = 'ABSOLUTE';
-  innerCircle.x = 10; innerCircle.y = 10;
-
-  // 중앙 primary 점
-  const centerDot = mkEllipse(14, 14, C.primary500);
-  spinnerWrap.appendChild(centerDot);
-  centerDot.layoutPositioning = 'ABSOLUTE';
-  centerDot.x = 29; centerDot.y = 29;
-
+  innerCircle.x = 8;
+  innerCircle.y = 8;
   scroll.appendChild(spinnerWrap);
 
-  // DS: Subtitle/Regular — 16px/600
   const loadingHeader = mkText('회원님의 은퇴 후 30년을\n준비하고 있어요', 16, 'semibold', C.text900);
   loadingHeader.textAlignHorizontal = 'CENTER';
-  loadingHeader.lineHeight = { value: 150, unit: 'PERCENT' };
   scroll.appendChild(loadingHeader);
 
-  // DS: Body/Xsmall — 14px/400
   const loadingSub = mkText('담당 FA에게 전달 중이에요.', 14, 'regular', C.text500);
   loadingSub.textAlignHorizontal = 'CENTER';
   scroll.appendChild(loadingSub);
@@ -1036,45 +901,33 @@ function buildPage16() {
   scroll.primaryAxisAlignItems = 'CENTER';
   scroll.counterAxisAlignItems = 'CENTER';
 
-  // DS: Utility/Green 500 #3AD1A9
-  const checkBg = hf('Check Icon Bg', 72, 72, {
-    bg: C.green500, bgOp: 0.15, radius: 100,
-    align: 'CENTER', justify: 'CENTER',
-  });
-  checkBg.primaryAxisAlignItems = 'CENTER';
-  checkBg.counterAxisAlignItems = 'CENTER';
-  const checkCircle = mkEllipse(44, 44, C.green500);
-  checkBg.appendChild(checkCircle);
-  checkCircle.layoutPositioning = 'ABSOLUTE';
-  checkCircle.x = 14; checkCircle.y = 14;
-  const checkMark = mkText('✓', 24, 'bold', C.white);
+  const checkWrap = hf('Check Icon', 72, 72, { align: 'CENTER', justify: 'CENTER' });
+  checkWrap.fills = [];
+  const checkBg = mkEllipse(72, 72, C.green300);
+  checkWrap.appendChild(checkBg);
+  checkBg.layoutPositioning = 'ABSOLUTE';
+  checkBg.x = 0;
+  checkBg.y = 0;
+  const checkMark = mkText('V', 28, 'bold', C.white);
   checkMark.textAlignHorizontal = 'CENTER';
-  checkBg.appendChild(checkMark);
-  scroll.appendChild(checkBg);
+  checkWrap.appendChild(checkMark);
+  scroll.appendChild(checkWrap);
 
-  // DS: Title/Medium — 20px/700
   const header = mkText('인출설계 첫 걸음을\n내딛으셨어요', 20, 'bold', C.text900);
   header.textAlignHorizontal = 'CENTER';
-  header.lineHeight = { value: 140, unit: 'PERCENT' };
   scroll.appendChild(header);
 
-  // 임팩트 박스 — DS: Banner/text — r=16, bg=#EBF5FF (Primary/100), pad=16
-  const impactBox = vf('Impact Box', CONTENT_W, 1, {
-    gap: 0, px: 20, py: 20, radius: 16,
-  });
-  impactBox.fills = [{ type: 'SOLID', color: C.primary100 }];
-  impactBox.primaryAxisSizingMode = 'AUTO';
-  // DS: Subtitle/Regular — 16px/600
+  // 임팩트 문구 박스
+  const impactBox = vf('Impact Box', CONTENT_W, 100, { gap: 8, px: 20, py: 20, radius: 12 });
+  impactBox.fills = [{ type: 'SOLID', color: C.gray50 }];
   const impactText = mkText('은퇴 후 30년,\n준비된 인출 전략이\n노후를 지켜줍니다.', 16, 'semibold', C.text900);
   impactText.textAlignHorizontal = 'CENTER';
   impactText.lineHeight = { value: 150, unit: 'PERCENT' };
   impactBox.appendChild(impactText);
   scroll.appendChild(impactBox);
 
-  // DS: Body/Xsmall — 14px/400
   const reportSub = mkText('입력하신 정보를 바탕으로 맞춤 은퇴 설계\n리포트를 준비하겠습니다', 14, 'regular', C.text800);
   reportSub.textAlignHorizontal = 'CENTER';
-  reportSub.lineHeight = { value: 150, unit: 'PERCENT' };
   scroll.appendChild(reportSub);
 
   const sub = mkText('담당 FA가 맞춤 인출 전략으로\n곧 연락드릴게요.', 14, 'regular', C.text500);
@@ -1087,23 +940,24 @@ function buildPage16() {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-// FLOWCHART BUILDER — 기존과 동일
+// FLOWCHART BUILDER — #1114 인출설계 (2026-03-09 확정 플로우)
 // ══════════════════════════════════════════════════════════════════════
 
 const FC = {
-  NW: 220, NH: 64,
-  VG: 56,
-  COL: { L: 100, C: 400, R: 700 },
+  NW: 220, NH: 64,        // 노드 크기
+  VG: 56,                 // 수직 간격
+  COL: { L: 100, C: 400, R: 700 }, // 열 중심 x
   COLOR: {
-    start:    { bg: hex( 46, 201, 114), text: C.white },
-    end:      { bg: hex( 46, 201, 114), text: C.white },
-    page:     { bg: C.primary500,       text: C.white },
-    action:   { bg: hex(124, 106, 245), text: C.white },
-    decision: { bg: hex(245, 189,  13), text: C.text900 },
-    terminal: { bg: C.red500,           text: C.white },
+    start:    { bg: { r:0.180, g:0.788, b:0.447 }, text: C.white },
+    end:      { bg: { r:0.180, g:0.788, b:0.447 }, text: C.white },
+    page:     { bg: C.primary500,                  text: C.white },
+    action:   { bg: { r:0.486, g:0.416, b:0.961 }, text: C.white },
+    decision: { bg: { r:0.961, g:0.741, b:0.051 }, text: C.text900 },
+    terminal: { bg: { r:1.000, g:0.322, b:0.278 }, text: C.white },
   },
 };
 
+// 노드 정의: [label, type, col, row]
 const FC_NODES = [
   ['ENTRY',        '인출설계 설문\n입력 진입점',              'start',    'C',  0 ],
   ['FA_YN',        '매칭된 FA 유무?',                        'decision', 'C',  1 ],
@@ -1132,6 +986,7 @@ const FC_NODES = [
   ['HOME',         '베러웰스 홈',                            'end',      'C', 21 ],
 ];
 
+// 엣지 정의: [from, to, label, fromMagnet, toMagnet]
 const FC_EDGES = [
   ['ENTRY',       'FA_YN',       '',       'BOTTOM', 'TOP'   ],
   ['FA_YN',       'FA_AUTO',     'N',      'LEFT',   'TOP'   ],
@@ -1165,6 +1020,59 @@ const FC_EDGES = [
   ['DONE',        'HOME',        '',       'BOTTOM', 'TOP'   ],
 ];
 
+function fcNodePos(col, row) {
+  const STEP = FC.NH + FC.VG;
+  return {
+    x: FC.COL[col] - FC.NW / 2,
+    y: row * STEP,
+  };
+}
+
+function fcMkNode(label, type) {
+  const col = FC.COLOR[type] || FC.COLOR.page;
+  const frame = figma.createFrame();
+
+  // layoutMode 먼저 설정 → Figma가 sizeMode를 AUTO로 초기화함
+  // → 그 다음 FIXED로 덮어쓰고 resize 호출해야 크기가 유지됨
+  frame.layoutMode = 'VERTICAL';
+  frame.primaryAxisAlignItems = 'CENTER';
+  frame.counterAxisAlignItems = 'CENTER';
+  frame.itemSpacing = 2;
+  frame.paddingLeft = 12;
+  frame.paddingRight = 12;
+  frame.primaryAxisSizingMode = 'FIXED';
+  frame.counterAxisSizingMode = 'FIXED';
+  frame.resize(FC.NW, FC.NH);
+
+  frame.fills = [{ type: 'SOLID', color: col.bg }];
+  frame.cornerRadius = type === 'decision' ? 32 : 8;
+
+  label.split('\n').forEach(line => {
+    const t = figma.createText();
+    try { t.fontName = gf('semibold'); } catch (_) {}
+    t.characters = line;
+    t.fontSize = 11;
+    t.fills = [{ type: 'SOLID', color: col.text }];
+    t.textAlignHorizontal = 'CENTER';
+    frame.appendChild(t);
+    t.layoutSizingHorizontal = 'FILL';
+  });
+
+  return frame;
+}
+
+function fcMkLabel(text, x, y) {
+  const t = figma.createText();
+  try { t.fontName = gf('bold'); } catch (_) {}
+  t.characters = text;
+  t.fontSize = 11;
+  t.fills = [{ type: 'SOLID', color: { r: 0.15, g: 0.15, b: 0.15 } }];
+  t.x = x;
+  t.y = y;
+  return t;
+}
+
+// createConnector는 FigJam 전용 — 디자인 파일에서는 vector로 엣지 그림
 function fcEdgePt(node, magnet) {
   return {
     x: node.x + (magnet === 'LEFT' ? 0 : magnet === 'RIGHT' ? node.width  : node.width  / 2),
@@ -1193,50 +1101,23 @@ function fcDrawEdge(page, fn, tn, fromMagnet, toMagnet, created) {
   created.push(vec);
 }
 
-function fcMkNode(label, type) {
-  const col = FC.COLOR[type] || FC.COLOR.page;
-  const frame = figma.createFrame();
-  frame.layoutMode = 'VERTICAL';
-  frame.primaryAxisAlignItems = 'CENTER';
-  frame.counterAxisAlignItems = 'CENTER';
-  frame.itemSpacing = 2;
-  frame.paddingLeft = 12;
-  frame.paddingRight = 12;
-  frame.primaryAxisSizingMode = 'FIXED';
-  frame.counterAxisSizingMode = 'FIXED';
-  frame.resize(FC.NW, FC.NH);
-  frame.fills = [{ type: 'SOLID', color: col.bg }];
-  frame.cornerRadius = type === 'decision' ? 32 : 8;
-
-  label.split('\n').forEach(line => {
-    const t = figma.createText();
-    try { t.fontName = gf('semibold'); } catch (_) {}
-    t.characters = line;
-    t.fontSize = 11;
-    t.fills = [{ type: 'SOLID', color: col.text }];
-    t.textAlignHorizontal = 'CENTER';
-    frame.appendChild(t);
-    t.layoutSizingHorizontal = 'FILL';
-  });
-
-  return frame;
-}
-
 async function buildFlowchart() {
   const page = figma.currentPage;
   const STEP = FC.NH + FC.VG;
   const created = [];
 
+  // 제목
   const title = figma.createText();
   try { title.fontName = gf('bold'); } catch (_) {}
   title.characters = '#1114 인출설계 설문 플로우  (2026-03-09 확정)';
   title.fontSize = 18;
-  title.fills = [{ type: 'SOLID', color: C.text900 }];
+  title.fills = [{ type: 'SOLID', color: { r: 0.01, g: 0.01, b: 0.01 } }];
   title.x = FC.COL.L - FC.NW / 2;
   title.y = -56;
   page.appendChild(title);
   created.push(title);
 
+  // 노드
   const nodeMap = {};
   for (const [id, label, type, col, row] of FC_NODES) {
     const node = fcMkNode(label, type);
@@ -1248,21 +1129,18 @@ async function buildFlowchart() {
     created.push(node);
   }
 
+  // 엣지 + 레이블
   for (const [fromId, toId, edgeLabel, fromMagnet, toMagnet] of FC_EDGES) {
     const fn = nodeMap[fromId];
     const tn = nodeMap[toId];
     if (!fn || !tn) continue;
+
     fcDrawEdge(page, fn, tn, fromMagnet, toMagnet, created);
+
     if (edgeLabel) {
       const s = fcEdgePt(fn, fromMagnet);
       const e = fcEdgePt(tn, toMagnet);
-      const lbl = figma.createText();
-      try { lbl.fontName = gf('bold'); } catch (_) {}
-      lbl.characters = edgeLabel;
-      lbl.fontSize = 11;
-      lbl.fills = [{ type: 'SOLID', color: C.text800 }];
-      lbl.x = (s.x + e.x) / 2;
-      lbl.y = (s.y + e.y) / 2 - 14;
+      const lbl = fcMkLabel(edgeLabel, (s.x + e.x) / 2, (s.y + e.y) / 2 - 14);
       page.appendChild(lbl);
       created.push(lbl);
     }
