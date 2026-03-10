@@ -28,10 +28,8 @@
     ├── figma_design_system.md         # 앱-디자이너 (Figma 분석 결과)
     ├── app_planner_context.md         # 앱-기획자 (플로우, 스펙, 플러그인 수정 이력)
     ├── persona_spec.md                # 사용자 테스트 페르소나 스펙 (P-A~P-E)
-    ├── user_test_results.xlsx         # 사용자 테스트 결과 (차수별 이슈)
-    └── figma-plugin/
-        ├── home/                      # 홈 화면 생성 플러그인 (구버전)
-        └── survey/                    # #1114 인출설계 설문지 플러그인 (현재 사용)
+    ├── user_test_results.xlsx         # 사용자 테스트 결과 (차수별 이슈) ← 943user_test_results.xlsx로 이관 예정
+    └── figma-plugin/                  # → issues/feature/{번호}/figma-plugin/ 으로 이관됨
 ```
 
 ## 전체 팀 구조 (총 13명)
@@ -92,7 +90,11 @@ issues/
     └── {이슈번호}/
         ├── {번호}spec.md              # 스펙 (이슈 개요, 플로우, 제약사항)
         ├── {번호}results.md           # 결과 (구현 화면, 플러그인 이력)
-        └── {번호}user_test_results.xlsx  # 사용자 테스트 결과
+        ├── {번호}user_test_results.xlsx  # 사용자 테스트 결과
+        └── figma-plugin/             # 해당 이슈 Figma 스케치 플러그인
+            ├── manifest.json
+            ├── code.js
+            └── ui.html
 ```
 
 **워크플로우**
@@ -116,16 +118,19 @@ issues/
 ## 앱팀 기획-디자인 협업 워크플로우
 
 워크플로우 문서: `better-wealth-app/collaboration_workflow.md`
-플러그인 레포 경로: `better-wealth-app/figma-plugin/survey/` (git 관리 — 이 경로로 Figma import)
 기획 컨텍스트: `better-wealth-app/app_planner_context.md`
 
-> ⚠️ 구버전 플러그인 경로(`/Users/imsi/Desktop/betterwealth-figma-plugin/`)는 더 이상 사용하지 않음.
+**Figma 플러그인 경로 (이슈별 관리)**
+- 플러그인은 이슈 폴더 안에서 관리: `issues/feature/{번호}/figma-plugin/`
+- Figma Desktop import: 해당 이슈 폴더의 `figma-plugin/manifest.json` 경로 지정
+- #943 인출설계 설문지: `issues/feature/943/figma-plugin/manifest.json`
 
 **표준 흐름**: 플로우차트 분석(REST API) → 제약사항 코멘트 등록 → 스펙 협의 → 플러그인 스케치 생성 → 검토/수정
 
 **Figma 코멘트 등록**: `POST /v1/files/{fileKey}/comments` with `client_meta.node_id` + `node_offset`
 **스케치 실행**: Figma Desktop → mgyo_note → Plugins → Development → Import from manifest
-  → manifest 경로: `mgyo_avengers/better-wealth-app/figma-plugin/survey/manifest.json`
+  → manifest 경로: `mgyo_avengers/issues/feature/{번호}/figma-plugin/manifest.json`
+  → #943: `mgyo_avengers/issues/feature/943/figma-plugin/manifest.json`
 
 ## #1114 인출설계 설문지 — 플러그인 현황 (2026-03-09)
 

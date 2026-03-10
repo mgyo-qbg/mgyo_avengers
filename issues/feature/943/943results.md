@@ -41,7 +41,7 @@
 | `ui.html` | 플러그인 UI (페이지 스케치 탭 + 플로우차트 탭) |
 
 **Figma Desktop 실행**: Plugins → Development → Import from manifest
-→ `better-wealth-app/figma-plugin/survey/manifest.json`
+→ `issues/feature/943/figma-plugin/manifest.json`
 
 ---
 

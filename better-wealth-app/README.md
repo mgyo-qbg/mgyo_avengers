@@ -46,20 +46,20 @@
 
 ## Figma 플러그인
 
-플러그인은 이 레포에서 git으로 관리한다.
+플러그인은 이슈 폴더 안에서 이슈별로 관리한다.
 
 ```
-figma-plugin/
-├── home/    # 홈 화면 생성 플러그인 (구버전)
-└── survey/  # #1114 인출설계 설문지 플러그인 (현재 사용)
+issues/feature/{이슈번호}/figma-plugin/
+├── manifest.json
+├── code.js
+└── ui.html
 ```
 
 Figma Desktop에서 플러그인 import: Plugins → Development → Import from manifest
-- **인출설계 설문지**: `figma-plugin/survey/manifest.json`
-- **홈 화면**: `figma-plugin/home/manifest.json`
+→ 해당 이슈 폴더의 `figma-plugin/manifest.json` 경로 지정
 
-> Figma Desktop에서 이 레포 경로를 직접 참조하도록 import할 것.
-> 구버전 경로(`/Users/imsi/Desktop/betterwealth-figma-plugin/`)는 더 이상 사용하지 않음.
+**현재 등록된 플러그인**
+- **#943 인출설계 설문지**: `issues/feature/943/figma-plugin/manifest.json`
 
 ## Figma 정보
 
