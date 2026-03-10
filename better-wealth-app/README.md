@@ -36,6 +36,7 @@
 
 | 파일 | 설명 |
 |------|------|
+| MEMORY.md | 앱팀 프로젝트 메모리 (빠른 참조용 요약) |
 | app_planner_context.md | 앱-기획자 작업 이력 (플로우, 제약사항, Figma 코멘트 ID) |
 | figma_design_system.md | 앱-디자이너 디자인 시스템 분석 결과 |
 | collaboration_workflow.md | 기획-디자인 협업 표준 워크플로우 (5단계) |
