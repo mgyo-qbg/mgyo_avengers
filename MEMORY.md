@@ -82,6 +82,27 @@
 - `.env.local` MONGO_URL: `mongodb` -> `localhost` 변경 필요
 - Prisma 클라이언트 최초 실행 전 `pnpm prisma:local:generate` 필요
 
+## 이슈 관리 구조
+
+이슈 작업 문서는 앱/웹 구분 없이 `mgyo_avengers/issues/` 하위에서 통합 관리한다.
+
+```
+issues/
+└── feature/          # hotfix/, improvement/ 등 타입별 확장 가능
+    └── {이슈번호}/
+        ├── {번호}spec.md              # 스펙 (이슈 개요, 플로우, 제약사항)
+        ├── {번호}results.md           # 결과 (구현 화면, 플러그인 이력)
+        └── {번호}user_test_results.xlsx  # 사용자 테스트 결과
+```
+
+**워크플로우**
+1. `{번호}spec.md` 작성 → 나와 대화하며 요건 파악 → 스펙 확정 (방향 보고 필수)
+2. 작업 진행 → 결과를 `{번호}results.md`에 기록
+3. 사용자 테스트 진행 시 `persona_spec.md` 참고 → 결과를 `{번호}user_test_results.xlsx`에 기록
+4. 완료 시 `app_planner_context.md` 또는 웹 컨텍스트 파일에 요약 + 이슈 폴더 링크로 슬림화
+
+**현재 이슈**: `issues/feature/943/` — #943 인출설계 설문지 (완료)
+
 ## 앱팀 사용자 테스트 워크플로우
 
 > 사용자 테스트 요청 시 **반드시** `persona_spec.md`를 기본 참고 자료로 사용한다.
