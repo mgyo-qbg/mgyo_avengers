@@ -409,6 +409,7 @@ function buildPage1() {
 
   scroll.appendChild(buildSectionHeader('은퇴 후 자산 인출 전략을\n설계해 볼까요?'));
   scroll.appendChild(buildSubHeader('몇 가지 질문에 답하면, 맞춤 인출 전략을\n제안해 드릴게요. (약 3분 소요)'));
+  scroll.appendChild(buildSubHeader('편안한 은퇴를 위한 맞춤 설계를\n시작합니다'));
 
   const timeCard = hf('Time Info', CONTENT_W, 48, {
     bg: C.gray50, radius: 10, px: 16, align: 'CENTER', gap: 8,
@@ -469,18 +470,21 @@ function buildPage4() {
   });
 
   scroll.appendChild(buildSectionHeader('은퇴 후 생활 계획을\n알려주세요'));
+  scroll.appendChild(buildSubHeader('은퇴 시점과 기대수명에 따라 필요한\n자산 규모와 준비 전략이 달라집니다'));
 
   // 은퇴 예상 시기
   const g1 = vf('Field - 은퇴시기', CONTENT_W, 80, { gap: 8 });
   g1.fills = [];
   g1.appendChild(buildLabel('은퇴 예상 시기'));
   g1.appendChild(buildSelectBox('65세'));
+  g1.appendChild(buildHelperText('일반적인 은퇴 시기: 60~65세 / 국민연금은 65세부터 감액 없이 수령 가능'));
   scroll.appendChild(g1);
 
   const g2 = vf('Field - 기대수명', CONTENT_W, 80, { gap: 8 });
   g2.fills = [];
   g2.appendChild(buildLabel('기대수명'));
   g2.appendChild(buildSelectBox('100세'));
+  g2.appendChild(buildHelperText('평균 기대수명 남성 81세, 여성 87세 / 평균보다 5~10년 길게 설정 권장'));
   scroll.appendChild(g2);
 
   // 월 생활비
@@ -488,7 +492,7 @@ function buildPage4() {
   g3.fills = [];
   g3.appendChild(buildLabel('월 생활비'));
   g3.appendChild(buildTextInput('324', '만원/월'));
-  g3.appendChild(buildHelperText('통계청 2인 가구 기준 평균 소비지출입니다.'));
+  g3.appendChild(buildHelperText('현재 생활비의 70~80% 수준 / 기본 200~300만원 · 중간 300~500만원 · 여유 500~800만원'));
   scroll.appendChild(g3);
 
   return root;
@@ -518,7 +522,7 @@ function buildPage6() {
   });
 
   scroll.appendChild(buildSectionHeader('국민연금 예상액을\n계산해 볼게요'));
-  scroll.appendChild(buildSubHeader('아래 정보를 입력하면 예상 수령액을\n계산해 드려요.'));
+  scroll.appendChild(buildSubHeader('은퇴 후 받으실 국민연금을\n계산해드릴게요'));
 
   // 세전 연소득
   const g1 = vf('Field - 연소득', CONTENT_W, 80, { gap: 8 });
@@ -559,7 +563,7 @@ function buildPage7() {
   });
 
   scroll.appendChild(buildSectionHeader('국민연금 예상 월수령액을\n입력해 주세요'));
-  scroll.appendChild(buildSubHeader('국민연금공단 예상연금 조회 결과를\n입력해 주세요.'));
+  scroll.appendChild(buildSubHeader('예상 국민연금 월 수령액을\n알려주세요'));
 
   const group = vf('Field Group', CONTENT_W, 80, { gap: 8 });
   group.fills = [];
@@ -688,12 +692,14 @@ function buildPage12() {
   });
 
   scroll.appendChild(buildSectionHeader('기타 정기소득을\n입력해 주세요'));
+  scroll.appendChild(buildSubHeader('은퇴 후 정기적으로 받으실 소득을\n알려주세요'));
 
   // 연소득
   const g1 = vf('Field - 연소득', CONTENT_W, 80, { gap: 8 });
   g1.fills = [];
   g1.appendChild(buildLabel('연소득 (세전)'));
   g1.appendChild(buildTextInput('연소득을 입력해 주세요', '만원/년'));
+  g1.appendChild(buildHelperText('월세, 임대 수입, 배당금 등 근로소득 외\n정기적으로 받는 소득의 연간 합계'));
   scroll.appendChild(g1);
 
   // 소득 시작 시기 (readonly)
@@ -919,6 +925,10 @@ function buildPage16() {
   impactText.lineHeight = { value: 150, unit: 'PERCENT' };
   impactBox.appendChild(impactText);
   scroll.appendChild(impactBox);
+
+  const reportSub = mkText('입력하신 정보를 바탕으로 맞춤 은퇴 설계\n리포트를 준비하겠습니다', 14, 'regular', C.text700);
+  reportSub.textAlignHorizontal = 'CENTER';
+  scroll.appendChild(reportSub);
 
   const sub = mkText('담당 FA가 맞춤 인출 전략으로\n곧 연락드릴게요.', 14, 'regular', C.text500);
   sub.textAlignHorizontal = 'CENTER';
