@@ -85,28 +85,36 @@ issues/
 
 ## 이슈 관리 구조
 
-이슈 작업 문서는 앱/웹 구분 없이 `mgyo_avengers/issues/` 하위에서 통합 관리한다.
+> **`{번호}spec.md`는 사용자가 직접 소통하거나 수정하는 유일한 파일이다.**
+> 나머지 모든 파일은 spec.md로부터 파생되거나, 결과물이거나, 컨텍스트/도구 파일이다.
+
+워크플로우 상세: `issues/WORKFLOW.md`
 
 ```
 issues/
-└── feature/          # hotfix/, improvement/ 등 타입별 확장 가능
-    └── {이슈번호}/
-        ├── {번호}spec.md              # 스펙 (이슈 개요, 플로우, 제약사항)
-        ├── {번호}results.md           # 결과 (구현 화면, 플러그인 이력)
-        ├── {번호}user_test_results.xlsx  # 사용자 테스트 결과
-        └── figma-plugin/             # 해당 이슈 Figma 스케치 플러그인
-            ├── manifest.json
-            ├── code.js
-            └── ui.html
+└── feature/
+    └── {번호}/
+        ├── {번호}spec.md              # 사용자 소통 파일 (유일한 직접 소통 파일)
+        ├── {번호}results.md           # 파생/결과 파일
+        ├── {번호}user_test_results.xlsx  # 파생/결과 파일
+        └── figma-plugin/             # 파생/결과 파일
 ```
 
-**워크플로우**
-1. `{번호}spec.md` 작성 → 나와 대화하며 요건 파악 → 스펙 확정 (방향 보고 필수)
-2. 작업 진행 → 결과를 `{번호}results.md`에 기록
-3. 사용자 테스트 진행 시 `persona_spec.md` 참고 → 결과를 `{번호}user_test_results.xlsx`에 기록
-4. 완료 시 `app_planner_context.md` 또는 웹 컨텍스트 파일에 요약 + 이슈 폴더 링크로 슬림화
+**이슈 라이프사이클 (5단계)**
+1. `요구사항수집` — 대화로 요건 파악, spec.md 초안 작성
+2. `스펙초안` — 기획자 게이트 검토 (앱: 앱-기획자 / 웹: 웹-기획자1)
+3. `스펙확정` — 사용자 최종 승인 → **이 단계 이전에는 작업 착수 금지**
+4. `작업진행` — 팀 할당, 구현, results.md 작성
+5. `완료` — 사용자 보고, 기획자 컨텍스트 업데이트
 
-**현재 이슈**: `issues/feature/943/` — #943 인출설계 설문지 (완료)
+**기획자 게이트키퍼**
+- 앱 이슈: `better-wealth-app/app_planner_context.md` (앱-기획자)
+- 웹 이슈: `better-wealth-web/web_planner_context.md` (웹-기획자1)
+
+**현재 이슈 현황**
+| 번호 | 이슈명 | Phase | 담당팀 |
+|------|--------|-------|--------|
+| #943 | 인출설계 설문지 | 완료 | 앱팀 |
 
 ## 앱팀 사용자 테스트 워크플로우
 

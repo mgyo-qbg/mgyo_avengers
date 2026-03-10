@@ -55,7 +55,7 @@
 
 | 에이전트명 | 역할 | 담당 파일 |
 |-----------|------|---------|
-| 웹-기획자1 | 기획자 | 01_service_overview.md |
+| 웹-기획자1 | 기획자 / 스펙 게이트키퍼 / 교차 이슈 정합성 검증 | 01_service_overview.md, web_planner_context.md |
 | 웹-기획자2 | 기획자 | 02_ux_screens.md |
 | 웹-프론트엔드1 | 프론트엔드 | 03_frontend_architecture.md |
 | 웹-프론트엔드2 | 프론트엔드 | 04_frontend_quality.md |

@@ -9,7 +9,7 @@
 | 에이전트명 | 역할 | 담당 파일 |
 |-----------|------|---------|
 | 웹팀-리드 | 팀 코디네이터 | (이 README) |
-| 웹-기획자1 | 기획자 (서비스 개요) | 01_service_overview.md |
+| 웹-기획자1 | 기획자 (서비스 개요) + 스펙 게이트키퍼 | 01_service_overview.md, web_planner_context.md |
 | 웹-기획자2 | 기획자 (UI/UX) | 02_ux_screens.md |
 | 웹-프론트엔드1 | 프론트개발자 (아키텍처) | 03_frontend_architecture.md |
 | 웹-프론트엔드2 | 프론트개발자 (품질/테스트) | 04_frontend_quality.md |
@@ -37,7 +37,7 @@
 
 | 에이전트명 | 담당 파일 경로 |
 |-----------|-------------|
-| 웹-기획자1 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/01_service_overview.md |
+| 웹-기획자1 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/01_service_overview.md + web_planner_context.md |
 | 웹-기획자2 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/02_ux_screens.md |
 | 웹-프론트엔드1 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/03_frontend_architecture.md |
 | 웹-프론트엔드2 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/04_frontend_quality.md |
