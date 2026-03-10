@@ -926,7 +926,7 @@ function buildPage16() {
   impactBox.appendChild(impactText);
   scroll.appendChild(impactBox);
 
-  const reportSub = mkText('입력하신 정보를 바탕으로 맞춤 은퇴 설계\n리포트를 준비하겠습니다', 14, 'regular', C.text700);
+  const reportSub = mkText('입력하신 정보를 바탕으로 맞춤 은퇴 설계\n리포트를 준비하겠습니다', 14, 'regular', C.text800);
   reportSub.textAlignHorizontal = 'CENTER';
   scroll.appendChild(reportSub);
 
