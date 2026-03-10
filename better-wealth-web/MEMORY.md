@@ -2,7 +2,7 @@
 
 ## 분석 컨텍스트 저장 위치
 상세 분석 파일: `/Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-fa/`
-- README.md, 01~10 각 팀원 분석, SUMMARY.md (액션 아이템 포함)
+- README.md, 01~10 각 팀원 분석
 
 ## 프로젝트 구조 핵심
 

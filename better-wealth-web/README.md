@@ -20,7 +20,6 @@
 | 웹-코드리뷰어2 | 코드리뷰어 (Python/인프라) | 09_code_review_python_infra.md |
 | 웹-법률전문가1 | 법률전문가 (개인정보/금융규제) | 10_legal_compliance.md |
 
-전체 요약: SUMMARY.md
 
 ## 복구 방법
 

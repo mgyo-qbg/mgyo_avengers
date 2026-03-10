@@ -22,7 +22,6 @@
 │   ├── 08_code_review_typescript.md   # 웹-코드리뷰어1
 │   ├── 09_code_review_python_infra.md # 웹-코드리뷰어2
 │   ├── 10_legal_compliance.md         # 웹-법률전문가1
-│   └── SUMMARY.md                     # 전체 요약 및 액션 아이템
 └── better-wealth-app/                 # 베러웰스앱 팀
     ├── README.md                      # 앱팀 복구 가이드
     ├── figma_design_system.md         # 앱-디자이너 (Figma 분석 결과)
