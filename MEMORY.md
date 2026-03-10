@@ -125,6 +125,11 @@ issues/
 - Figma Desktop import: 해당 이슈 폴더의 `figma-plugin/manifest.json` 경로 지정
 - #943 인출설계 설문지: `issues/feature/943/figma-plugin/manifest.json`
 
+**새 플러그인 작성 시**
+- `better-wealth-app/figma_plugin_design_kit.md` 섹션 4의 공유 라이브러리 코드 복사 → code.js 상단에 붙여넣기
+- 이슈별 buildPage* 함수만 추가 작성 → 색상·레이아웃 톤 자동 유지
+- DS 컴포넌트 import 사용 금지 (토큰 값만 참조)
+
 **표준 흐름**: 플로우차트 분석(REST API) → 제약사항 코멘트 등록 → 스펙 협의 → 플러그인 스케치 생성 → 검토/수정
 
 **Figma 코멘트 등록**: `POST /v1/files/{fileKey}/comments` with `client_meta.node_id` + `node_offset`
