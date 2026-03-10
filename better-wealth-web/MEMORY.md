@@ -52,17 +52,16 @@
 ## 팀 컨텍스트
 
 분석일: 2026-03-05
-팀명: it-service-dev-team
 
-| 팀원 | 역할 | 분석 영역 |
-|------|------|---------|
-| 기획자-민준 | 기획자 | 서비스 개요, 기능 목록 |
-| 기획자-서연 | 기획자 | UI/UX, 화면 구성 |
-| 프론트개발자-지호 | 프론트엔드 | FE 아키텍처 |
-| 프론트개발자-하은 | 프론트엔드 | FE 품질/테스트 |
-| 백엔드개발자-태양 | 백엔드 | NestJS 구조 |
-| 백엔드개발자-나래 | 백엔드 | FastAPI Nudge |
-| 인프라엔지니어-성민 | 인프라 | CI/CD, Docker, 보안 |
-| 코드리뷰어-준혁 | 코드리뷰 | TypeScript 품질 |
-| 코드리뷰어-유진 | 코드리뷰 | Python/인프라 품질 |
-| 법률전문가-혜림 | 법률 | 개인정보, 금융규제 |
+| 에이전트명 | 역할 | 담당 파일 |
+|-----------|------|---------|
+| 웹-기획자1 | 기획자 | 01_service_overview.md |
+| 웹-기획자2 | 기획자 | 02_ux_screens.md |
+| 웹-프론트엔드1 | 프론트엔드 | 03_frontend_architecture.md |
+| 웹-프론트엔드2 | 프론트엔드 | 04_frontend_quality.md |
+| 웹-백엔드1 | 백엔드 | 05_backend_nestjs.md |
+| 웹-백엔드2 | 백엔드 | 06_backend_fastapi.md |
+| 웹-인프라1 | 인프라 | 07_infrastructure.md |
+| 웹-코드리뷰어1 | 코드리뷰 | 08_code_review_typescript.md |
+| 웹-코드리뷰어2 | 코드리뷰 | 09_code_review_python_infra.md |
+| 웹-법률전문가1 | 법률 | 10_legal_compliance.md |

@@ -16,7 +16,7 @@
 - 기획 캔버스: node-id=77-733
 
 **관련 파일**
-- 플러그인: `better-wealth-app/figma-plugin/survey/`
+- 플러그인: `issues/feature/943/figma-plugin/`
 - 결과 문서: `issues/feature/943/943results.md`
 - 사용자 테스트: `issues/feature/943/943user_test_results.xlsx`
 

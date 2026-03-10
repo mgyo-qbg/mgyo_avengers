@@ -37,7 +37,7 @@ Figma 캔버스: node-id=77-733
 
 - **화면**: P1, P3~P16 (총 15개, P2 제거됨)
 - **주요 분기**: FA 유무 → 마데 자산 보유 → 국민연금 인지 → DC 보유 → 근로소득 → 기타소득 → 약관동의
-- **플러그인**: `figma-plugin/survey/` (buildPage1, P3~P16 + buildFlowchart)
+- **플러그인**: `issues/feature/943/figma-plugin/` (buildPage1, P3~P16 + buildFlowchart)
 - **사용자 테스트**: 5차 완료, 전 이슈 해소 ✓
 
 > 상세 내용은 이슈 폴더를 참조할 것

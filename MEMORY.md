@@ -26,10 +26,14 @@
 └── better-wealth-app/                 # 베러웰스앱 팀
     ├── README.md                      # 앱팀 복구 가이드
     ├── figma_design_system.md         # 앱-디자이너 (Figma 분석 결과)
-    ├── app_planner_context.md         # 앱-기획자 (플로우, 스펙, 플러그인 수정 이력)
-    ├── persona_spec.md                # 사용자 테스트 페르소나 스펙 (P-A~P-E)
-    ├── user_test_results.xlsx         # 사용자 테스트 결과 (차수별 이슈) ← 943user_test_results.xlsx로 이관 예정
-    └── figma-plugin/                  # → issues/feature/{번호}/figma-plugin/ 으로 이관됨
+    └── app_planner_context.md         # 앱-기획자 (플로우, 스펙, 플러그인 수정 이력)
+issues/
+└── feature/                           # 이슈별 작업 문서 (앱/웹 통합)
+    └── 943/                           # #943 인출설계 설문지 (완료)
+        ├── 943spec.md
+        ├── 943results.md
+        ├── 943user_test_results.xlsx
+        └── figma-plugin/              # manifest.json, code.js, ui.html
 ```
 
 ## 전체 팀 구조 (총 13명)
@@ -137,7 +141,7 @@ issues/
   → manifest 경로: `mgyo_avengers/issues/feature/{번호}/figma-plugin/manifest.json`
   → #943: `mgyo_avengers/issues/feature/943/figma-plugin/manifest.json`
 
-## #1114 인출설계 설문지 — 플러그인 현황 (2026-03-09)
+## #943 인출설계 설문지 (앱 #1114) — 플러그인 현황 (2026-03-09)
 
 ### 구현된 화면 (P1, P3~P16 — 총 15개, P2 제거됨)
 - P1: 설문 시작
@@ -175,7 +179,7 @@ issues/
 - 765개 컴포넌트, 124개 스타일
 - 폰트: Pretendard, Primary: #2E9BFF, Secondary: #2E58FF
 - WIP 69% (컴포넌트 페이지 16개 중 11개)
-- Figma Personal Access Token: `figd_Z7oOu_lB9DGdqxA4SfXJYrkOsh-cLrms5RBQ68lY`
+- Figma Personal Access Token: 보안상 저장하지 않음 (필요 시 재발급)
 
 ## 주요 기술 스택
 

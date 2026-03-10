@@ -6,8 +6,13 @@
 
 ```
 mgyo_avengers/
+├── README.md            # 전체 팀 구조 및 복구 순서 (이 파일)
+├── MEMORY.md            # Claude 자동 메모리 정본 (symlink 대상)
 ├── better-wealth-web/   # 베러웰스웹(FA 플랫폼) 팀 컨텍스트
-└── better-wealth-app/   # 베러웰스앱 팀 컨텍스트
+├── better-wealth-app/   # 베러웰스앱 팀 컨텍스트
+└── issues/              # 이슈별 작업 문서 (앱/웹 통합)
+    └── feature/
+        └── {이슈번호}/  # {번호}spec.md, {번호}results.md, figma-plugin/
 ```
 
 ## 전체 팀 구조
@@ -39,8 +44,10 @@ mgyo_avengers/
 ### 복구 순서
 
 1. 이 파일(README.md) 읽기
-2. `better-wealth-web/README.md` 읽기 -> 웹팀 조직
-3. `better-wealth-app/README.md` 읽기 -> 앱팀 조직
+2. `MEMORY.md` 읽기 — Claude 자동 메모리 정본, 반드시 읽을 것
+3. `better-wealth-web/README.md` 읽기 -> 웹팀 조직
+4. `better-wealth-app/README.md` 읽기 -> 앱팀 조직
+5. 진행 중인 이슈가 있으면 `issues/feature/{번호}/` 하위 문서 읽기
 
 ### 팀 생성 시 주의사항
 

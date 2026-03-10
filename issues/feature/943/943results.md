@@ -32,7 +32,7 @@
 
 ## Figma 플러그인 스케치
 
-**플러그인 위치**: `better-wealth-app/figma-plugin/survey/`
+**플러그인 위치**: `issues/feature/943/figma-plugin/`
 
 | 파일 | 역할 |
 |------|------|
