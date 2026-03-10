@@ -1,5 +1,9 @@
 # BetterWealth App — 프로젝트 메모리
 
+> **⚠️ 이 문서는 Claude가 관리합니다. 직접 수정하지 마세요.**  
+> 수정이 필요하면 Claude에게 요청하세요. 사용자가 직접 수정할 수 있는 유일한 파일은 이슈별 `{번호}spec.md`입니다.
+
+
 ## 컨텍스트 저장 위치
 
 상세 분석 파일: `/Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-app/`

@@ -1,5 +1,9 @@
 # 베러웰스웹(BetterWealth FA) — 팀 컨텍스트 복구 가이드
 
+> **⚠️ 이 문서는 Claude가 관리합니다. 직접 수정하지 마세요.**  
+> 수정이 필요하면 Claude에게 요청하세요. 사용자가 직접 수정할 수 있는 유일한 파일은 이슈별 `{번호}spec.md`입니다.
+
+
 서비스: 재무 어드바이저(FA)용 B2B SaaS 플랫폼 (웹)
 레포지토리: /Users/imsi/Desktop/qbg/repo/better-wealth-fa
 분석 일자: 2026-03-05
