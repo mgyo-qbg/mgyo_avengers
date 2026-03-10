@@ -3,6 +3,7 @@
 ## 팀 컨텍스트 복구 방법
 
 > 세션 종료 후 복구 시: `/Users/imsi/Desktop/qbg/repo/mgyo_avengers` 하위의 문서들을 읽고 팀을 조직하고 각 팀원들의 컨텍스트를 복구해
+> **필수**: 복구 시작 전 `/Users/imsi/Desktop/qbg/repo/mgyo_avengers/MEMORY.md` 존재 여부를 확인하고 반드시 읽을 것 (이 파일이 Claude 자동 메모리의 정본이며 `.claude/projects/.../memory/MEMORY.md`와 symlink로 연결됨)
 
 ### 컨텍스트 저장 위치
 
