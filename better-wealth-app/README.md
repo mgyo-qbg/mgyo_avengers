@@ -41,6 +41,8 @@
 | collaboration_workflow.md | 기획-디자인 협업 표준 워크플로우 (5단계) |
 | plugin_guidelines.md | Figma 플러그인 개발 핵심 규칙 |
 | home_screen_layout_spec.md | 홈 화면 레이아웃 스펙 |
+| persona_spec.md | 사용자 테스트 페르소나 스펙 (P-A~P-E, 커버리지 매트릭스) |
+| user_test_results.xlsx | 사용자 테스트 결과 (차수별 이슈, 페르소나별 기록) |
 
 ## Figma 플러그인
 
