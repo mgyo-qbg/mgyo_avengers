@@ -5,7 +5,7 @@
 
 
 서비스: 재무 어드바이저(FA)용 B2B SaaS 플랫폼 (웹)
-레포지토리: /Users/imsi/Desktop/qbg/repo/better-wealth-fa
+레포지토리: {FA_REPO}
 분석 일자: 2026-03-05
 
 ## 팀 구성
@@ -32,7 +32,7 @@
 ```
 이름: 웹팀-리드
 역할: general-purpose
-지시: /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/README.md를 읽고
+지시: {MGYO_REPO}/better-wealth-web/README.md를 읽고
       팀 구조를 파악하라. 팀원 이름은 웹- 프리픽스로 시작한다.
       파악 완료 후 team-lead에게 보고하고 대기하라.
 ```
@@ -41,16 +41,16 @@
 
 | 에이전트명 | 담당 파일 경로 |
 |-----------|-------------|
-| 웹-기획자1 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/01_service_overview.md + web_planner_context.md |
-| 웹-기획자2 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/02_ux_screens.md |
-| 웹-프론트엔드1 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/03_frontend_architecture.md |
-| 웹-프론트엔드2 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/04_frontend_quality.md |
-| 웹-백엔드1 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/05_backend_nestjs.md |
-| 웹-백엔드2 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/06_backend_fastapi.md |
-| 웹-인프라1 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/07_infrastructure.md |
-| 웹-코드리뷰어1 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/08_code_review_typescript.md |
-| 웹-코드리뷰어2 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/09_code_review_python_infra.md |
-| 웹-법률전문가1 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-web/10_legal_compliance.md |
+| 웹-기획자1 | {MGYO_REPO}/better-wealth-web/01_service_overview.md + web_planner_context.md |
+| 웹-기획자2 | {MGYO_REPO}/better-wealth-web/02_ux_screens.md |
+| 웹-프론트엔드1 | {MGYO_REPO}/better-wealth-web/03_frontend_architecture.md |
+| 웹-프론트엔드2 | {MGYO_REPO}/better-wealth-web/04_frontend_quality.md |
+| 웹-백엔드1 | {MGYO_REPO}/better-wealth-web/05_backend_nestjs.md |
+| 웹-백엔드2 | {MGYO_REPO}/better-wealth-web/06_backend_fastapi.md |
+| 웹-인프라1 | {MGYO_REPO}/better-wealth-web/07_infrastructure.md |
+| 웹-코드리뷰어1 | {MGYO_REPO}/better-wealth-web/08_code_review_typescript.md |
+| 웹-코드리뷰어2 | {MGYO_REPO}/better-wealth-web/09_code_review_python_infra.md |
+| 웹-법률전문가1 | {MGYO_REPO}/better-wealth-web/10_legal_compliance.md |
 
 ## 즉각 조치 필요 이슈 (Critical 6건)
 

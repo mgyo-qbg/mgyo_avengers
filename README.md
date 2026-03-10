@@ -41,9 +41,26 @@ mgyo_avengers/
 
 ## 복구 방법
 
+### 복구 시작 전 — 경로 확인 (필수)
+
+세션 시작 시 사용자에게 아래 경로를 반드시 확인한다:
+
+1. **MGYO_REPO**: mgyo_avengers 레포를 클론받은 절대 경로
+2. **FA_REPO**: better-wealth-fa 코드 레포 절대 경로
+3. **APP_REPO**: better-wealth-app 코드 레포 절대 경로 (있는 경우)
+
+예시:
+- MGYO_REPO: `/Users/imsi/Desktop/qbg/repo/mgyo_avengers`
+- FA_REPO: `/Users/imsi/Desktop/qbg/repo/better-wealth-fa`
+- APP_REPO: 아직 분리되지 않음 (향후 앱 레포 분리 시 경로 입력)
+
+경로 확인 후 해당 경로를 기준으로 문서를 읽고 팀을 복구한다.
+
+---
+
 세션 종료 후 아래 명령으로 전체 컨텍스트 복구:
 
-> `/Users/imsi/Desktop/qbg/repo/mgyo_avengers` 하위의 문서들을 읽고 팀을 조직하고 각 팀원들의 컨텍스트를 복구해
+> `{MGYO_REPO}` 하위의 문서들을 읽고 팀을 조직하고 각 팀원들의 컨텍스트를 복구해
 
 ### 복구 순서
 

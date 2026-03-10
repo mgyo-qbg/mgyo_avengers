@@ -34,13 +34,31 @@ Claude Code 세션을 닫으면 대화 맥락이 모두 사라집니다. 이 레
 
 ### 2. MEMORY.md symlink 설정
 
+**경로 설정**: 아래 명령에서 `{MGYO_REPO}`를 실제 클론 경로로 대체하세요.
+
 ```bash
+# 인코딩 규칙: 절대 경로에서 /를 -로 교체 (앞의 - 포함)
+# 예시) /Users/imsi/Desktop/qbg/repo/mgyo_avengers
+#      → -Users-imsi-Desktop-qbg-repo-mgyo-avengers
+
 # mgyo_avengers에서 열 때
+ENCODED=$(echo "{MGYO_REPO}" | sed 's|/|-|g')
+mkdir -p ~/.claude/projects/${ENCODED}/memory
+ln -sf {MGYO_REPO}/MEMORY.md ~/.claude/projects/${ENCODED}/memory/MEMORY.md
+
+# better-wealth-fa에서 열 때
+ENCODED_FA=$(echo "{FA_REPO}" | sed 's|/|-|g')
+mkdir -p ~/.claude/projects/${ENCODED_FA}/memory
+ln -sf {MGYO_REPO}/MEMORY.md ~/.claude/projects/${ENCODED_FA}/memory/MEMORY.md
+```
+
+**내 로컬 예시** (`{MGYO_REPO}=/Users/imsi/Desktop/qbg/repo/mgyo_avengers`):
+
+```bash
 mkdir -p ~/.claude/projects/-Users-imsi-Desktop-qbg-repo-mgyo-avengers/memory
 ln -sf /Users/imsi/Desktop/qbg/repo/mgyo_avengers/MEMORY.md \
        ~/.claude/projects/-Users-imsi-Desktop-qbg-repo-mgyo-avengers/memory/MEMORY.md
 
-# better-wealth-fa에서 열 때
 mkdir -p ~/.claude/projects/-Users-imsi-Desktop-qbg-repo-better-wealth-fa/memory
 ln -sf /Users/imsi/Desktop/qbg/repo/mgyo_avengers/MEMORY.md \
        ~/.claude/projects/-Users-imsi-Desktop-qbg-repo-better-wealth-fa/memory/MEMORY.md
@@ -53,15 +71,17 @@ ln -sf /Users/imsi/Desktop/qbg/repo/mgyo_avengers/MEMORY.md \
 **1. Claude Code 실행**
 
 ```bash
-cd /Users/imsi/Desktop/qbg/repo/mgyo_avengers
+cd {MGYO_REPO}   # 예시: /Users/imsi/Desktop/qbg/repo/mgyo_avengers
 claude
 ```
 
 **2. 복구 명령 입력**
 
 ```
-/Users/imsi/Desktop/qbg/repo/mgyo_avengers 하위의 문서들을 읽고 팀을 조직하고 각 팀원들의 컨텍스트를 복구해
+{MGYO_REPO} 하위의 문서들을 읽고 팀을 조직하고 각 팀원들의 컨텍스트를 복구해
 ```
+
+> Claude가 먼저 MGYO_REPO / FA_REPO / APP_REPO 세 경로를 확인한 뒤 복구를 진행합니다.
 
 **3. 복구 확인**
 

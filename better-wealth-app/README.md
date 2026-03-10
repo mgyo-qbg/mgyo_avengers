@@ -22,7 +22,7 @@
 ```
 이름: 앱팀-리드
 역할: general-purpose
-지시: /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-app/README.md를 읽고
+지시: {MGYO_REPO}/better-wealth-app/README.md를 읽고
       팀 구조를 파악하라. 팀원 이름은 앱- 프리픽스로 시작한다.
       파악 완료 후 team-lead에게 보고하고 대기하라.
 ```
@@ -31,8 +31,8 @@
 
 | 에이전트명 | 담당 파일 경로 |
 |-----------|-------------|
-| 앱-기획자 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-app/app_planner_context.md |
-| 앱-디자이너 | /Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-app/figma_design_system.md |
+| 앱-기획자 | {MGYO_REPO}/better-wealth-app/app_planner_context.md |
+| 앱-디자이너 | {MGYO_REPO}/better-wealth-app/figma_design_system.md |
 
 스폰 후 collaboration_workflow.md를 읽어 협업 방식을 숙지하도록 지시할 것.
 

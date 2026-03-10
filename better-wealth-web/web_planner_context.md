@@ -25,7 +25,7 @@
 
 ## 서비스 파일 정보
 
-- 레포: `/Users/imsi/Desktop/qbg/repo/better-wealth-fa`
+- 레포: `{FA_REPO}`
 - 구조: pnpm monorepo — be-nest / fe-react-app / be-fastapi
 - Git 커밋 컨벤션: `[fa] #{이슈번호} {메시지}`
 

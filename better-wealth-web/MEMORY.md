@@ -5,12 +5,12 @@
 
 
 ## 분석 컨텍스트 저장 위치
-상세 분석 파일: `/Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-fa/`
+상세 분석 파일: `{MGYO_REPO}/better-wealth-web/`
 - README.md, 01~10 각 팀원 분석
 
 ## 프로젝트 구조 핵심
 
-- **레포**: /Users/imsi/Desktop/qbg/repo/better-wealth-fa
+- **레포**: {FA_REPO}
 - **구조**: pnpm monorepo (shared-workspace-lockfile=false — 각 앱 독립 lockfile)
 - **앱**: be-nest (NestJS) / fe-react-app (React 18 + Vite) / be-fastapi (Python FastAPI)
 - **패키지**: shared-consts (@package/shared-consts), email-template, excel-to-json

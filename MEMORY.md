@@ -6,13 +6,14 @@
 
 ## 팀 컨텍스트 복구 방법
 
-> 세션 종료 후 복구 시: `/Users/imsi/Desktop/qbg/repo/mgyo_avengers` 하위의 문서들을 읽고 팀을 조직하고 각 팀원들의 컨텍스트를 복구해
-> **필수**: 복구 시작 전 `/Users/imsi/Desktop/qbg/repo/mgyo_avengers/MEMORY.md` 존재 여부를 확인하고 반드시 읽을 것 (이 파일이 Claude 자동 메모리의 정본이며 `.claude/projects/.../memory/MEMORY.md`와 symlink로 연결됨)
+> 세션 종료 후 복구 시: `{MGYO_REPO}` 하위의 문서들을 읽고 팀을 조직하고 각 팀원들의 컨텍스트를 복구해
+> **필수**: 복구 시작 전 `{MGYO_REPO}/MEMORY.md` 존재 여부를 확인하고 반드시 읽을 것 (이 파일이 Claude 자동 메모리의 정본이며 `.claude/projects/.../memory/MEMORY.md`와 symlink로 연결됨)
+> **경로 확인**: 복구 전 사용자에게 MGYO_REPO / FA_REPO / APP_REPO 세 경로를 반드시 확인할 것 (README.md 참조)
 
 ### 컨텍스트 저장 위치
 
 ```
-/Users/imsi/Desktop/qbg/repo/mgyo_avengers/
+{MGYO_REPO}/
 ├── README.md                          # 전체 팀 구조 및 복구 순서
 ├── better-wealth-web/                 # 베러웰스웹(FA 플랫폼) 팀
 │   ├── README.md                      # 웹팀 복구 가이드 (팀원 목록, 파일 경로)
@@ -70,7 +71,7 @@ issues/
 
 ## 베러웰스웹 프로젝트 핵심
 
-- **레포**: /Users/imsi/Desktop/qbg/repo/better-wealth-fa
+- **레포**: {FA_REPO}
 - **구조**: pnpm monorepo (shared-workspace-lockfile=false)
 - **Node**: 실제 18.x 사용 (CLAUDE.md에 16.x 명시 — 불일치)
 

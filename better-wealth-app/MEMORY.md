@@ -6,7 +6,7 @@
 
 ## 컨텍스트 저장 위치
 
-상세 분석 파일: `/Users/imsi/Desktop/qbg/repo/mgyo_avengers/better-wealth-app/`
+상세 분석 파일: `{MGYO_REPO}/better-wealth-app/`
 - README.md, app_planner_context.md, figma_design_system.md 등
 
 ## 서비스 개요
