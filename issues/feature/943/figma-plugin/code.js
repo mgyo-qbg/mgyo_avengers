@@ -595,14 +595,16 @@ function buildTipCard(tag, title, rows, source) {
     labelT.textAutoResize = 'NONE';
     rowF.appendChild(labelT);
 
-    // Bar track (clip → absolute fill inside)
-    const barTrack = hf('Bar', BAR_W, 6, {
-      bg: C.gray200, radius: 3, clip: true, align: 'CENTER',
-    });
+    // Bar track — free-layout frame (no auto-layout, no layoutPositioning needed)
+    const barTrack = figma.createFrame();
+    barTrack.name = 'Bar';
+    barTrack.resize(BAR_W, 6);
+    barTrack.fills = solid(C.gray200);
+    barTrack.cornerRadius = 3;
+    barTrack.clipsContent = true;
     const barFill = mkRect(Math.round(BAR_W * (row.fillPct / 100)), 6, C.gray400);
-    barTrack.appendChild(barFill);
-    barFill.layoutPositioning = 'ABSOLUTE';
     barFill.x = 0; barFill.y = 0;
+    barTrack.appendChild(barFill);
     rowF.appendChild(barTrack);
     barTrack.layoutSizingHorizontal = 'FILL';
 
@@ -640,16 +642,16 @@ function buildStepIndicator(current, total) {
   wrapper.appendChild(label);
   label.layoutAlign = 'STRETCH';
 
-  // DS: Progress Bar md — 375×4px
-  const barBg = hf('Progress Bar', W, 4, {});
+  // DS: Progress Bar md — 375×4px (free-layout, no layoutPositioning)
+  const barBg = figma.createFrame();
+  barBg.name = 'Progress Bar';
+  barBg.resize(W, 4);
   barBg.fills = solid(C.gray200);
   barBg.clipsContent = true;
   const fillW = Math.round(W * (current / total));
   const barFill = mkRect(fillW, 4, C.primary500);
+  barFill.x = 0; barFill.y = 0;
   barBg.appendChild(barFill);
-  barFill.layoutPositioning = 'ABSOLUTE';
-  barFill.x = 0;
-  barFill.y = 0;
   wrapper.appendChild(barBg);
   barBg.layoutSizingHorizontal = 'FILL';
 
@@ -1324,31 +1326,29 @@ function buildPage15() {
   scroll.primaryAxisAlignItems = 'CENTER';
   scroll.counterAxisAlignItems = 'CENTER';
 
-  // 스피너 — DS: Progress Bar 원형 느낌, Primary/500
-  const spinnerWrap = hf('Spinner', 72, 72, { align: 'CENTER', justify: 'CENTER' });
+  // 스피너 — free-layout frame (no layoutPositioning needed)
+  const spinnerWrap = figma.createFrame();
+  spinnerWrap.name = 'Spinner';
+  spinnerWrap.resize(72, 72);
   spinnerWrap.fills = [];
+  spinnerWrap.clipsContent = false;
 
   const outerRing = mkEllipse(72, 72, C.gray200);
-  spinnerWrap.appendChild(outerRing);
-  outerRing.layoutPositioning = 'ABSOLUTE';
   outerRing.x = 0; outerRing.y = 0;
+  spinnerWrap.appendChild(outerRing);
 
   const arc = mkEllipse(72, 72, C.primary500);
   arc.opacity = 0.35;
-  spinnerWrap.appendChild(arc);
-  arc.layoutPositioning = 'ABSOLUTE';
   arc.x = 0; arc.y = 0;
+  spinnerWrap.appendChild(arc);
 
   const innerCircle = mkEllipse(52, 52, C.white);
-  spinnerWrap.appendChild(innerCircle);
-  innerCircle.layoutPositioning = 'ABSOLUTE';
   innerCircle.x = 10; innerCircle.y = 10;
+  spinnerWrap.appendChild(innerCircle);
 
-  // 중앙 primary 점
   const centerDot = mkEllipse(14, 14, C.primary500);
-  spinnerWrap.appendChild(centerDot);
-  centerDot.layoutPositioning = 'ABSOLUTE';
   centerDot.x = 29; centerDot.y = 29;
+  spinnerWrap.appendChild(centerDot);
 
   scroll.appendChild(spinnerWrap);
 
@@ -1375,21 +1375,24 @@ function buildPage16() {
   scroll.primaryAxisAlignItems = 'CENTER';
   scroll.counterAxisAlignItems = 'CENTER';
 
-  // DS: Utility/Green 500 #3AD1A9
-  const checkBg = hf('Check Icon Bg', 72, 72, {
+  // DS: Utility/Green 500 — nested auto-layout (no layoutPositioning needed)
+  const checkOuter = hf('Check Outer', 72, 72, {
     bg: C.green500, bgOp: 0.15, radius: 100,
     align: 'CENTER', justify: 'CENTER',
   });
-  checkBg.primaryAxisAlignItems = 'CENTER';
-  checkBg.counterAxisAlignItems = 'CENTER';
-  const checkCircle = mkEllipse(44, 44, C.green500);
-  checkBg.appendChild(checkCircle);
-  checkCircle.layoutPositioning = 'ABSOLUTE';
-  checkCircle.x = 14; checkCircle.y = 14;
+  checkOuter.primaryAxisAlignItems = 'CENTER';
+  checkOuter.counterAxisAlignItems = 'CENTER';
+  const checkInner = hf('Check Inner', 44, 44, {
+    bg: C.green500, radius: 100,
+    align: 'CENTER', justify: 'CENTER',
+  });
+  checkInner.primaryAxisAlignItems = 'CENTER';
+  checkInner.counterAxisAlignItems = 'CENTER';
   const checkMark = mkText('✓', 24, 'bold', C.white);
   checkMark.textAlignHorizontal = 'CENTER';
-  checkBg.appendChild(checkMark);
-  scroll.appendChild(checkBg);
+  checkInner.appendChild(checkMark);
+  checkOuter.appendChild(checkInner);
+  scroll.appendChild(checkOuter);
 
   // DS: Title/Medium — 20px/700
   const header = mkText('인출설계 첫 걸음을\n내딛으셨어요', 20, 'bold', C.text900);
