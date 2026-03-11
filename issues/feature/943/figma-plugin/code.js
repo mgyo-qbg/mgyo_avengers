@@ -62,6 +62,8 @@ figma.ui.onmessage = async (msg) => {
       if (msg.pages.includes(1))  frames.push(buildPage1());
       if (msg.pages.includes(3))  frames.push(buildPage3());
       if (msg.pages.includes(4))  frames.push(buildPage4());
+      if (msg.pages.includes(41)) frames.push(buildPage4b());
+      if (msg.pages.includes(42)) frames.push(buildPage4c());
       if (msg.pages.includes(5))  frames.push(buildPage5());
       if (msg.pages.includes(6))  frames.push(buildPage6());
       if (msg.pages.includes(7))  frames.push(buildPage7());
@@ -224,6 +226,49 @@ function buildTopNavBack(title) {
   return f;
 }
 
+// ── Top Nav with Segmented Progress Bar + X Close ──────────────────────
+// Reference UI style: ‹ | [■■□□□□□□] | ✕
+function buildTopNavSeg(step, total, showBack) {
+  if (showBack === undefined) showBack = true;
+  const f = hf('Top Nav', W, TOPNAV_H, {
+    bg: C.white, align: 'CENTER', px: 4, gap: 0,
+  });
+
+  // Back button (40×40)
+  const back = hf('Back', 40, 40, { align: 'CENTER', justify: 'CENTER' });
+  back.fills = [];
+  if (showBack) {
+    const arr = mkText('‹', 22, 'regular', C.text900);
+    arr.textAlignHorizontal = 'CENTER';
+    back.appendChild(arr);
+  }
+  f.appendChild(back);
+
+  // Segmented progress bar — fills remaining space
+  const segGap = 3;
+  const barAreaW = W - 80 - 8; // 80 = two 40px buttons, 8 = gap
+  const segW = Math.floor((barAreaW - (total - 1) * segGap) / total);
+  const barArea = hf('Seg Bar', barAreaW, 3, { gap: segGap, align: 'CENTER', justify: 'CENTER' });
+  barArea.fills = [];
+  for (let i = 0; i < total; i++) {
+    const seg = mkRect(segW, 3, i < step ? C.text900 : C.gray200);
+    seg.cornerRadius = 2;
+    barArea.appendChild(seg);
+  }
+  f.appendChild(barArea);
+  barArea.layoutSizingHorizontal = 'FILL';
+
+  // Close button (40×40)
+  const close = hf('Close', 40, 40, { align: 'CENTER', justify: 'CENTER' });
+  close.fills = [];
+  const x = mkText('✕', 14, 'regular', C.text900);
+  x.textAlignHorizontal = 'CENTER';
+  close.appendChild(x);
+  f.appendChild(close);
+
+  return f;
+}
+
 function buildCTA(label) {
   // DS: fixedBtn — 375×92px, pad=20 all, gap=8, bg=#FFFFFF @70%
   const wrapper = hf('CTA Area', W, 92, {
@@ -232,9 +277,10 @@ function buildCTA(label) {
     align: 'CENTER', justify: 'CENTER',
   });
 
-  // DS: buttons Xlarge — 335×52px, r=8, fill=Primary/500
+  // Dark navy button matching reference UI (#152A56)
+  const navy = hex(21, 42, 86);
   const btn = hf('CTA Button', CONTENT_W, 52, {
-    bg: C.primary500, radius: 8, align: 'CENTER', justify: 'CENTER',
+    bg: navy, radius: 8, align: 'CENTER', justify: 'CENTER',
   });
   // DS: Title/Regular — 18px/700
   const btnText = mkText(label, 18, 'bold', C.white);
@@ -412,6 +458,174 @@ function buildPicker(options) {
   return picker;
 }
 
+// ── Display Question + Sentence ─────────────────────────────────────────
+// Reference: large header + optional pre-label + "[값]에 은퇴하고 싶어요." 형태
+// preLine: small gray label above (e.g. "만 나이로") — optional
+// parts: [{text, hi}] — hi=true → primary500 blue, hi=false → text900
+function buildDisplaySentence(preLine, parts) {
+  const wrap = vf('Display Sentence', CONTENT_W, 1, { gap: 6 });
+  wrap.fills = [];
+  wrap.primaryAxisSizingMode = 'AUTO';
+
+  if (preLine) {
+    const pre = mkText(preLine, 13, 'medium', C.text500);
+    pre.letterSpacing = { value: -0.2, unit: 'PIXELS' };
+    wrap.appendChild(pre);
+    pre.layoutSizingHorizontal = 'FILL';
+  }
+
+  // Build answer line as horizontal auto-layout frame with text pieces
+  const line = hf('Answer Line', CONTENT_W, 1, { align: 'CENTER', gap: 0 });
+  line.fills = [];
+  line.primaryAxisSizingMode = 'AUTO';
+  line.counterAxisSizingMode = 'AUTO';
+
+  for (const p of parts) {
+    const t = mkText(p.text, 26, 'bold', p.hi ? C.primary500 : C.text900);
+    t.letterSpacing = { value: -0.5, unit: 'PIXELS' };
+    line.appendChild(t);
+  }
+  wrap.appendChild(line);
+
+  return wrap;
+}
+
+// ── Slider (static visual) ───────────────────────────────────────────────
+// value: current value, min/max: range, minLabel/maxLabel: text below track
+function buildSlider(value, min, max, minLabel, maxLabel) {
+  const trackH = 4;
+  const thumbD = 22;
+  const ratio = Math.max(0, Math.min(1, (value - min) / (max - min)));
+  const thumbLeft = Math.round(ratio * (CONTENT_W - thumbD));
+  const fillW = Math.round(thumbLeft + thumbD / 2);
+
+  const wrap = vf('Slider', CONTENT_W, 1, { gap: 10, pt: 8 });
+  wrap.fills = [];
+  wrap.primaryAxisSizingMode = 'AUTO';
+
+  // Track area — free layout (no auto-layout) so children use x/y
+  const trackArea = figma.createFrame();
+  trackArea.name = 'Track Area';
+  trackArea.resize(CONTENT_W, thumbD);
+  trackArea.fills = [];
+  trackArea.clipsContent = false;
+
+  // Track background
+  const trackBg = mkRect(CONTENT_W, trackH, C.gray200, 2);
+  trackBg.x = 0; trackBg.y = (thumbD - trackH) / 2;
+  trackArea.appendChild(trackBg);
+
+  // Track fill
+  if (fillW > 2) {
+    const trackFill = mkRect(fillW, trackH, C.primary500, 2);
+    trackFill.x = 0; trackFill.y = (thumbD - trackH) / 2;
+    trackArea.appendChild(trackFill);
+  }
+
+  // Thumb (ellipse)
+  const thumb = figma.createEllipse();
+  thumb.name = 'Thumb';
+  thumb.resize(thumbD, thumbD);
+  thumb.fills = solid(C.white);
+  thumb.strokes = solid(C.primary500);
+  thumb.strokeWeight = 1.5;
+  thumb.strokeAlign = 'INSIDE';
+  thumb.effects = [{
+    type: 'DROP_SHADOW',
+    color: { r: 0, g: 0, b: 0, a: 0.18 },
+    offset: { x: 0, y: 2 }, radius: 8, spread: 0,
+    visible: true, blendMode: 'NORMAL',
+  }];
+  thumb.x = thumbLeft; thumb.y = 0;
+  trackArea.appendChild(thumb);
+
+  wrap.appendChild(trackArea);
+  trackArea.layoutSizingHorizontal = 'FILL';
+  trackArea.resize(CONTENT_W, thumbD);
+
+  // Min / Max labels
+  const labels = hf('Slider Labels', CONTENT_W, 16, {
+    justify: 'SPACE_BETWEEN', align: 'CENTER',
+  });
+  labels.fills = [];
+  const minT = mkText(minLabel, 12, 'regular', C.text300);
+  const maxT = mkText(maxLabel, 12, 'regular', C.text300);
+  labels.appendChild(minT);
+  labels.appendChild(maxT);
+  wrap.appendChild(labels);
+  labels.layoutSizingHorizontal = 'FILL';
+
+  return wrap;
+}
+
+// ── Tip / Info Card ──────────────────────────────────────────────────────
+// tag: "은퇴 설계 도움말", title: main content,
+// rows: [{label, fillPct(0-100), value}], source: attribution text
+function buildTipCard(tag, title, rows, source) {
+  const card = vf('Tip Card', CONTENT_W, 1, {
+    bg: C.gray100, radius: 12, p: 16, gap: 10,
+  });
+  card.primaryAxisSizingMode = 'AUTO';
+
+  if (tag) {
+    const tagT = mkText(tag, 11, 'semibold', C.text500);
+    tagT.letterSpacing = { value: 0.3, unit: 'PIXELS' };
+    tagT.textAlignHorizontal = 'LEFT';
+    card.appendChild(tagT);
+    tagT.layoutSizingHorizontal = 'FILL';
+  }
+
+  const titleT = mkText(title, 14, 'bold', C.text900);
+  titleT.lineHeight = { value: 140, unit: 'PERCENT' };
+  titleT.letterSpacing = { value: -0.2, unit: 'PIXELS' };
+  card.appendChild(titleT);
+  titleT.layoutSizingHorizontal = 'FILL';
+
+  const INNER_W = CONTENT_W - 32; // card padding 16*2
+  const LABEL_W = 74;
+  const VAL_W = 44;
+  const BAR_W = INNER_W - LABEL_W - VAL_W - 16; // 16 = two gaps of 8
+
+  for (const row of rows) {
+    const rowF = hf('Row - ' + row.label, INNER_W, 20, { align: 'CENTER', gap: 8 });
+    rowF.fills = [];
+
+    const labelT = mkText(row.label, 12, 'regular', C.text500);
+    labelT.resize(LABEL_W, 16);
+    labelT.textAutoResize = 'NONE';
+    rowF.appendChild(labelT);
+
+    // Bar track (clip → absolute fill inside)
+    const barTrack = hf('Bar', BAR_W, 6, {
+      bg: C.gray200, radius: 3, clip: true, align: 'CENTER',
+    });
+    const barFill = mkRect(Math.round(BAR_W * (row.fillPct / 100)), 6, C.gray400);
+    barFill.layoutPositioning = 'ABSOLUTE';
+    barFill.x = 0; barFill.y = 0;
+    barTrack.appendChild(barFill);
+    rowF.appendChild(barTrack);
+    barTrack.layoutSizingHorizontal = 'FILL';
+
+    const valT = mkText(row.value, 12, 'semibold', C.text800);
+    valT.resize(VAL_W, 16);
+    valT.textAlignHorizontal = 'RIGHT';
+    valT.textAutoResize = 'NONE';
+    rowF.appendChild(valT);
+
+    card.appendChild(rowF);
+    rowF.layoutSizingHorizontal = 'FILL';
+  }
+
+  if (source) {
+    const srcT = mkText(source, 11, 'regular', C.text300);
+    srcT.textAlignHorizontal = 'RIGHT';
+    card.appendChild(srcT);
+    srcT.layoutSizingHorizontal = 'FILL';
+  }
+
+  return card;
+}
+
 // ── Step Indicator ──────────────────────────────────────────────────────
 // DS: Progress Bar md — 375×4px, bg=#EFEFF0, fill=Primary/500
 
@@ -455,15 +669,15 @@ function buildRoot(name, opts) {
   root.appendChild(statusBar);
   statusBar.layoutSizingHorizontal = 'FILL';
 
-  const topNav = buildTopNavBack(opts.navTitle || '');
+  // hasStep → segmented nav (reference style), else → title nav (P1/P3)
+  let topNav;
+  if (hasStep) {
+    topNav = buildTopNavSeg(opts.pageNo, opts.pageTotal || 10, opts.showBack !== false);
+  } else {
+    topNav = buildTopNavBack(opts.navTitle || '');
+  }
   root.appendChild(topNav);
   topNav.layoutSizingHorizontal = 'FILL';
-
-  if (hasStep) {
-    const step = buildStepIndicator(opts.pageNo, opts.pageTotal || 8);
-    root.appendChild(step);
-    step.layoutSizingHorizontal = 'FILL';
-  }
 
   // DS: Scroll Content — 수직 스크롤 영역, pad=20(H) 24(V)
   const scroll = vf('Scroll Content', W, 100, {
@@ -561,39 +775,126 @@ function buildPage3() {
   return root;
 }
 
-// P4: 은퇴시기 · 기대수명 · 생활비 (1/8)
+// P4: 언제 은퇴하고 싶으신가요? (1/10) — 슬라이더 스타일
 function buildPage4() {
-  const { root, scroll } = buildRoot('P4 - 은퇴시기/기대수명/생활비', {
-    navTitle: '인출설계', ctaLabel: '다음', pageNo: 1, pageTotal: 8,
+  const { root, scroll } = buildRoot('P4 - 은퇴 시기', {
+    ctaLabel: '다음', pageNo: 1, pageTotal: 10,
   });
 
-  scroll.appendChild(buildSectionHeader('은퇴 후 생활 계획을\n알려주세요'));
-  scroll.appendChild(buildSubHeader('은퇴 시점과 기대수명에 따라 필요한\n자산 규모와 준비 전략이 달라집니다'));
+  // Question header
+  const qHeader = mkText('언제 은퇴하고 싶으신가요?', 22, 'bold', C.text900);
+  qHeader.lineHeight = { value: 135, unit: 'PERCENT' };
+  qHeader.letterSpacing = { value: -0.3, unit: 'PIXELS' };
+  scroll.appendChild(qHeader);
+  qHeader.layoutSizingHorizontal = 'FILL';
 
-  // DS: Textinput/Textfield 구조 — label(13px) + field(48px) + helper(12px), gap=6
-  const g1 = vf('Field - 은퇴시기', CONTENT_W, 1, { gap: 6 });
-  g1.fills = [];
-  g1.primaryAxisSizingMode = 'AUTO';
-  g1.appendChild(buildLabel('은퇴 예상 시기'));
-  g1.appendChild(buildSelectBox('65세'));
-  g1.appendChild(buildHelperText('일반적인 은퇴 시기: 60~65세 / 국민연금은 65세부터 감액 없이 수령 가능'));
-  scroll.appendChild(g1);
+  scroll.appendChild(buildSubHeader('은퇴 후 받을 수령 연금을 예상하기 위해 필요한 정보예요.'));
 
-  const g2 = vf('Field - 기대수명', CONTENT_W, 1, { gap: 6 });
-  g2.fills = [];
-  g2.primaryAxisSizingMode = 'AUTO';
-  g2.appendChild(buildLabel('기대수명'));
-  g2.appendChild(buildSelectBox('100세'));
-  g2.appendChild(buildHelperText('평균 기대수명 남성 81세, 여성 87세 / 평균보다 5~10년 길게 설정 권장'));
-  scroll.appendChild(g2);
+  // Spacer
+  const sp = mkRect(CONTENT_W, 16, C.white, 0, 0);
+  sp.fills = [];
+  scroll.appendChild(sp);
 
-  const g3 = vf('Field - 월생활비', CONTENT_W, 1, { gap: 6 });
-  g3.fills = [];
-  g3.primaryAxisSizingMode = 'AUTO';
-  g3.appendChild(buildLabel('월 생활비'));
-  g3.appendChild(buildTextInput('324', '만원/월'));
-  g3.appendChild(buildHelperText('현재 생활비의 70~80% 수준 / 기본 200~300만원 · 중간 300~500만원 · 여유 500~800만원'));
-  scroll.appendChild(g3);
+  // Display sentence: "60세에 은퇴하고 싶어요."
+  scroll.appendChild(buildDisplaySentence('만 나이로', [
+    { text: '60세', hi: true },
+    { text: '에 은퇴하고 싶어요.', hi: false },
+  ]));
+
+  // Slider: 40~80세, default 60
+  scroll.appendChild(buildSlider(60, 40, 80, '40세', '80세'));
+
+  // Tip card
+  scroll.appendChild(buildTipCard(
+    '은퇴 설계 도움말',
+    '대한민국 평균 은퇴 나이는 49세예요.',
+    [
+      { label: '희망 평균 은퇴', fillPct: 81, value: '65세' },
+      { label: '실제 평균 은퇴', fillPct: 45, value: '49세' },
+    ],
+    '출처: 통계청, 한국리서치'
+  ));
+
+  return root;
+}
+
+// P4b: 기대수명은 얼마로 생각하시나요? (2/10)
+function buildPage4b() {
+  const { root, scroll } = buildRoot('P4b - 기대수명', {
+    ctaLabel: '다음', pageNo: 2, pageTotal: 10,
+  });
+
+  const qHeader = mkText('기대수명은 얼마로\n생각하시나요?', 22, 'bold', C.text900);
+  qHeader.lineHeight = { value: 135, unit: 'PERCENT' };
+  qHeader.letterSpacing = { value: -0.3, unit: 'PIXELS' };
+  scroll.appendChild(qHeader);
+  qHeader.layoutSizingHorizontal = 'FILL';
+
+  scroll.appendChild(buildSubHeader('은퇴 후 필요한 자산 규모를 계산하기 위해 필요해요.\n평균보다 5~10년 길게 설정하는 걸 권장해요.'));
+
+  const sp = mkRect(CONTENT_W, 16, C.white, 0, 0);
+  sp.fills = [];
+  scroll.appendChild(sp);
+
+  scroll.appendChild(buildDisplaySentence('건강하게 사는 목표', [
+    { text: '90세', hi: true },
+    { text: '까지 준비할게요.', hi: false },
+  ]));
+
+  // Slider: 70~100세, default 90
+  scroll.appendChild(buildSlider(90, 70, 100, '70세', '100세'));
+
+  // Tip card
+  scroll.appendChild(buildTipCard(
+    '은퇴 설계 도움말',
+    '기대수명보다 오래 사실 수도 있어요.',
+    [
+      { label: '남성 기대수명', fillPct: 81, value: '81세' },
+      { label: '여성 기대수명', fillPct: 87, value: '87세' },
+    ],
+    '출처: 통계청 2023'
+  ));
+
+  return root;
+}
+
+// P4c: 노후 월 생활비는 얼마나 생각하세요? (3/10)
+function buildPage4c() {
+  const { root, scroll } = buildRoot('P4c - 월 생활비', {
+    ctaLabel: '다음', pageNo: 3, pageTotal: 10,
+  });
+
+  const qHeader = mkText('은퇴 후 연금을 얼마씩\n받고 싶으세요?', 22, 'bold', C.text900);
+  qHeader.lineHeight = { value: 135, unit: 'PERCENT' };
+  qHeader.letterSpacing = { value: -0.3, unit: 'PIXELS' };
+  scroll.appendChild(qHeader);
+  qHeader.layoutSizingHorizontal = 'FILL';
+
+  scroll.appendChild(buildSubHeader('은퇴 시점에 받고 싶은 금액을 입력해 주세요.\n이후 매년 수령 금액이 물가상승률만큼 늘어나요.'));
+
+  const sp = mkRect(CONTENT_W, 16, C.white, 0, 0);
+  sp.fills = [];
+  scroll.appendChild(sp);
+
+  scroll.appendChild(buildDisplaySentence('60세에 은퇴 후', [
+    { text: '매 월 ', hi: false },
+    { text: '300만원', hi: true },
+    { text: ' 받고 싶어요.', hi: false },
+  ]));
+
+  // Slider: 120~1000만원, default 300
+  scroll.appendChild(buildSlider(300, 120, 1000, '120만원', '1000만원'));
+
+  // Tip card — NPS reference
+  scroll.appendChild(buildTipCard(
+    '은퇴 설계 도움말',
+    '노후 1인 적정 생활비는 165만원이에요.',
+    [
+      { label: '최소 생활비', fillPct: 40, value: '120만원' },
+      { label: '적정 생활비', fillPct: 55, value: '165만원' },
+    ],
+    '출처: 국민연금공단'
+  ));
 
   return root;
 }
@@ -601,7 +902,7 @@ function buildPage4() {
 // P5: 국민연금 Y/N (2/8)
 function buildPage5() {
   const { root, scroll } = buildRoot('P5 - 국민연금 수령액 여부', {
-    navTitle: '인출설계', cta: false, pageNo: 2, pageTotal: 8,
+    cta: false, pageNo: 4, pageTotal: 10,
   });
 
   scroll.appendChild(buildSectionHeader('국민연금 예상 수령액을\n알고 있나요?'));
@@ -616,21 +917,59 @@ function buildPage5() {
   return root;
 }
 
-// P6: 국민연금 계산기 (3/8)
+// P6: 국민연금 계산기 — 레퍼런스 스타일 (5/10)
 function buildPage6() {
   const { root, scroll } = buildRoot('P6 - 국민연금 계산기', {
-    navTitle: '인출설계', ctaLabel: '계산하기', pageNo: 3, pageTotal: 8,
+    ctaLabel: '계산하기', pageNo: 5, pageTotal: 10,
   });
 
-  scroll.appendChild(buildSectionHeader('국민연금 예상액을\n계산해 볼게요'));
-  scroll.appendChild(buildSubHeader('은퇴 후 받으실 국민연금을\n계산해드릴게요'));
+  // Reference style: large bold question header
+  const qHeader = mkText('연 소득 금액을 입력해 주세요.', 22, 'bold', C.text900);
+  qHeader.lineHeight = { value: 135, unit: 'PERCENT' };
+  qHeader.letterSpacing = { value: -0.3, unit: 'PIXELS' };
+  scroll.appendChild(qHeader);
+  qHeader.layoutSizingHorizontal = 'FILL';
 
-  const g1 = vf('Field - 연소득', CONTENT_W, 1, { gap: 6 });
-  g1.fills = [];
-  g1.primaryAxisSizingMode = 'AUTO';
-  g1.appendChild(buildLabel('연소득 (세전)'));
-  g1.appendChild(buildTextInput('세전 연소득을 입력해 주세요', '만원'));
-  scroll.appendChild(g1);
+  scroll.appendChild(buildSubHeader('은퇴 시 퇴직연금 예상 수령액 계산과\n소득 추이를 예상하기 위해 필요한 정보예요.'));
+
+  const sp = mkRect(CONTENT_W, 8, C.white, 0, 0);
+  sp.fills = [];
+  scroll.appendChild(sp);
+
+  // Large input — reference style (value + unit)
+  const inputBox = hf('Large Input', CONTENT_W, 64, {
+    bg: C.white, radius: 8, px: 0,
+    stroke: C.gray200, strokeW: 1,
+    align: 'CENTER', justify: 'SPACE_BETWEEN',
+  });
+  inputBox.paddingBottom = 16;
+  inputBox.fills = [];
+  // Bottom border only — simulate with a rectangle below
+  const inputWrap = vf('Input Wrap', CONTENT_W, 1, { gap: 8 });
+  inputWrap.fills = [];
+  inputWrap.primaryAxisSizingMode = 'AUTO';
+
+  const inputRow = hf('Input Row', CONTENT_W, 52, {
+    align: 'CENTER', justify: 'SPACE_BETWEEN',
+  });
+  inputRow.fills = [];
+  const valText = mkText('6,000', 28, 'bold', C.text800);
+  valText.letterSpacing = { value: -0.5, unit: 'PIXELS' };
+  inputRow.appendChild(valText);
+  valText.layoutSizingHorizontal = 'FILL';
+  const unitText = mkText('만원', 14, 'medium', C.text500);
+  inputRow.appendChild(unitText);
+  inputWrap.appendChild(inputRow);
+
+  // Bottom border line
+  const divider = mkRect(CONTENT_W, 1, C.gray400);
+  inputWrap.appendChild(divider);
+  divider.layoutSizingHorizontal = 'FILL';
+
+  scroll.appendChild(inputWrap);
+  inputWrap.layoutSizingHorizontal = 'FILL';
+
+  scroll.appendChild(buildHelperText('· 고용노동부의 소득 데이터와 물가상승률을 이용해요.'));
 
   const g2 = vf('Field - 가입시기', CONTENT_W, 1, { gap: 6 });
   g2.fills = [];
@@ -660,7 +999,7 @@ function buildPage6() {
 // P7: 국민연금 직접입력 (3/8)
 function buildPage7() {
   const { root, scroll } = buildRoot('P7 - 국민연금 직접입력', {
-    navTitle: '인출설계', ctaLabel: '다음', pageNo: 3, pageTotal: 8,
+    ctaLabel: '다음', pageNo: 5, pageTotal: 10,
   });
 
   scroll.appendChild(buildSectionHeader('국민연금 예상 월수령액을\n입력해 주세요'));
@@ -679,7 +1018,7 @@ function buildPage7() {
 // P8: 마이데이터 IRP/DC 자산 확인 (4/8)
 function buildPage8() {
   const { root, scroll } = buildRoot('P8 - IRP/DC 자산 확인', {
-    navTitle: '인출설계', ctaLabel: '다음', pageNo: 4, pageTotal: 8,
+    ctaLabel: '다음', pageNo: 6, pageTotal: 10,
   });
 
   scroll.appendChild(buildSectionHeader('연결된 퇴직연금을\n확인해 주세요'));
@@ -731,7 +1070,7 @@ function buildPage8() {
 // P9: 근로소득자 여부 (5/8)
 function buildPage9() {
   const { root, scroll } = buildRoot('P9 - 근로소득자 여부', {
-    navTitle: '인출설계', cta: false, pageNo: 5, pageTotal: 8,
+    cta: false, pageNo: 7, pageTotal: 10,
   });
 
   scroll.appendChild(buildSectionHeader('현재 근로소득이 있나요?'));
@@ -750,7 +1089,7 @@ function buildPage9() {
 // P10: 연봉 · 근속연수 (6/8)
 function buildPage10() {
   const { root, scroll } = buildRoot('P10 - 연봉/근속연수', {
-    navTitle: '인출설계', ctaLabel: '다음', pageNo: 6, pageTotal: 8,
+    ctaLabel: '다음', pageNo: 8, pageTotal: 10,
   });
 
   scroll.appendChild(buildSectionHeader('연봉과 근속연수를\n입력해 주세요'));
@@ -777,7 +1116,7 @@ function buildPage10() {
 // P11: 기타 정기소득 여부 (7/8)
 function buildPage11() {
   const { root, scroll } = buildRoot('P11 - 기타 정기소득 여부', {
-    navTitle: '인출설계', cta: false, pageNo: 7, pageTotal: 8,
+    cta: false, pageNo: 9, pageTotal: 10,
   });
 
   scroll.appendChild(buildSectionHeader('은퇴 후 기타 정기소득이\n있거나 예정인가요?'));
@@ -796,7 +1135,7 @@ function buildPage11() {
 // P12: 기타 정기소득 입력 (7/8)
 function buildPage12() {
   const { root, scroll } = buildRoot('P12 - 기타 정기소득 입력', {
-    navTitle: '인출설계', ctaLabel: '다음', pageNo: 7, pageTotal: 8,
+    ctaLabel: '다음', pageNo: 9, pageTotal: 10,
   });
 
   scroll.appendChild(buildSectionHeader('기타 정기소득을\n입력해 주세요'));
@@ -833,7 +1172,7 @@ function buildPage12() {
 // P13: 설문 결과 확인 (8/8)
 function buildPage13() {
   const { root, scroll } = buildRoot('P13 - 결과 확인', {
-    navTitle: '인출설계', ctaLabel: 'FA에게 전달하기', pageNo: 8, pageTotal: 8,
+    ctaLabel: 'FA에게 전달하기', pageNo: 10, pageTotal: 10,
   });
 
   scroll.appendChild(buildSectionHeader('입력하신 내용을\n확인해 주세요'));
