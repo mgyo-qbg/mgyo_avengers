@@ -1600,6 +1600,38 @@ function toDiv(frag) {
 
 // ── Boot ───────────────────────────────────────────────────────────
 go('P1', true);
+
+// ── iPhone 내부 스크롤 강제 연결 ────────────────────────────────────
+// 바깥 페이지가 스크롤 가능할 때 wheel 이벤트가 외부로 나가는 문제 방지
+(function() {
+  const screen = document.querySelector('.iphone-screen');
+
+  // 마우스 휠 → scroll-content로 전달
+  screen.addEventListener('wheel', (e) => {
+    const sc = document.querySelector('.scroll-content');
+    if (!sc) return;
+    const canScrollDown = sc.scrollTop < sc.scrollHeight - sc.clientHeight;
+    const canScrollUp   = sc.scrollTop > 0;
+    if ((e.deltaY > 0 && canScrollDown) || (e.deltaY < 0 && canScrollUp)) {
+      e.preventDefault();
+      sc.scrollBy({ top: e.deltaY, behavior: 'auto' });
+    }
+  }, { passive: false });
+
+  // 터치 스크롤 (모바일/태블릿 공유 시)
+  let touchStartY = 0;
+  screen.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  screen.addEventListener('touchmove', (e) => {
+    const sc = document.querySelector('.scroll-content');
+    if (!sc) return;
+    const dy = touchStartY - e.touches[0].clientY;
+    touchStartY = e.touches[0].clientY;
+    sc.scrollTop += dy;
+    e.preventDefault();
+  }, { passive: false });
+})();
 </script>
 </body>
 </html>
