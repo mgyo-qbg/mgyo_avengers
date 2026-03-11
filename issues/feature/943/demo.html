@@ -217,21 +217,12 @@ body {
 
 /* ── Step Indicator ── */
 .step-indicator {
-  height: var(--STEP_H);
+  height: 3px;
   background: var(--white);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding-top: 8px;
   flex-shrink: 0;
-}
-.step-label {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text500);
-  text-align: center;
-  width: 100%;
 }
 .step-bar-bg {
   width: 100%;
@@ -816,6 +807,10 @@ body {
     <input type="checkbox" id="tog-terms" onchange="updateState()">
     T0054 약관 동의 완료
   </label>
+  <label class="toggle-group">
+    <input type="checkbox" id="tog-dc" onchange="updateState()">
+    DC 자산 보유
+  </label>
 </div>
 
 <!-- iPhone frame -->
@@ -855,12 +850,16 @@ const S = {
   extraIncome: '',
   hasMydata: true,
   termsAgreed: false,
+  hasDC: false,
 };
 
 function updateState() {
   S.hasMydata   = document.getElementById('tog-mydata').checked;
   S.termsAgreed = document.getElementById('tog-terms').checked;
+  S.hasDC       = document.getElementById('tog-dc').checked;
 }
+
+function totalSteps() { return S.hasDC ? 6 : 7; }
 
 // ── Navigation ─────────────────────────────────────────────────────────
 let navStack = [];
@@ -935,7 +934,6 @@ function mkTopNav(title, showBack) {
 
 function mkStep(current, total) {
   const wrap = div('step-indicator');
-  const lbl = div('step-label'); lbl.textContent = current + ' / ' + total; wrap.appendChild(lbl);
   const bg = div('step-bar-bg');
   const fill = div('step-bar-fill');
   fill.style.width = Math.round((current / total) * 100) + '%';
@@ -1096,11 +1094,11 @@ function renderP3() {
   return toDiv(frag);
 }
 
-// ── P4: 은퇴시기 (1/7) ─────────────────────────────────────────────
+// ── P4: 은퇴시기 (1/N) ─────────────────────────────────────────────
 function renderP4() {
   const frag = document.createDocumentFragment();
   frag.appendChild(mkTopNav('인출설계'));
-  frag.appendChild(mkStep(1, 7));
+  frag.appendChild(mkStep(1, totalSteps()));
 
   const ans = div('answer-sentence');
   function updateAns(v) {
@@ -1131,11 +1129,11 @@ function renderP4() {
   return toDiv(frag);
 }
 
-// ── P5: 기대수명 (2/7) ─────────────────────────────────────────────
+// ── P5: 기대수명 (2/N) ─────────────────────────────────────────────
 function renderP5() {
   const frag = document.createDocumentFragment();
   frag.appendChild(mkTopNav('인출설계'));
-  frag.appendChild(mkStep(2, 7));
+  frag.appendChild(mkStep(2, totalSteps()));
 
   const ans = div('answer-sentence');
   function updateAns(v) {
@@ -1164,11 +1162,11 @@ function renderP5() {
   return toDiv(frag);
 }
 
-// ── P6: 월 생활비 (3/7) ────────────────────────────────────────────
+// ── P6: 월 생활비 (3/N) ────────────────────────────────────────────
 function renderP6() {
   const frag = document.createDocumentFragment();
   frag.appendChild(mkTopNav('인출설계'));
-  frag.appendChild(mkStep(3, 7));
+  frag.appendChild(mkStep(3, totalSteps()));
 
   const ans = div('answer-sentence');
   function updateAns(v) {
@@ -1197,11 +1195,11 @@ function renderP6() {
   return toDiv(frag);
 }
 
-// ── P7: 국민연금 Y/N + 입력 [병합] (4/7) ──────────────────────────
+// ── P7: 국민연금 Y/N + 입력 [병합] (4/N) ──────────────────────────
 function renderP7() {
   const frag = document.createDocumentFragment();
   frag.appendChild(mkTopNav('인출설계'));
-  frag.appendChild(mkStep(4, 7));
+  frag.appendChild(mkStep(4, totalSteps()));
 
   // "네" expandable: 월수령액 직접입력
   const yesArea = div('expandable' + (S.knowsNPS === 'yes' ? ' open' : ''));
@@ -1316,7 +1314,7 @@ function renderP7() {
   ctaBtn.className = 'cta-btn' + (ctaActive ? '' : '');
   ctaBtn.textContent = '다음';
   ctaBtn.disabled = !ctaActive;
-  ctaBtn.onclick = () => go('P8');
+  ctaBtn.onclick = () => go(S.hasDC ? 'P9' : 'P8');
   ctaArea.appendChild(ctaBtn);
   frag.appendChild(ctaArea);
   return toDiv(frag);
@@ -1389,11 +1387,11 @@ function renderP8() {
   return toDiv(frag);
 }
 
-// ── P9: 기타소득+입력 [병합] (6/7) ────────────────────────────────
+// ── P9: 기타소득+입력 [병합] (5/6 or 6/7) ─────────────────────────
 function renderP9() {
   const frag = document.createDocumentFragment();
   frag.appendChild(mkTopNav('인출설계'));
-  frag.appendChild(mkStep(6, 7));
+  frag.appendChild(mkStep(S.hasDC ? 5 : 6, totalSteps()));
 
   const expandArea = div('expandable' + (S.hasExtraIncome === 'yes' ? ' open' : ''));
 
@@ -1443,11 +1441,11 @@ function renderP9() {
   return toDiv(frag);
 }
 
-// ── P10: 결과 확인 (7/7) ───────────────────────────────────────────
+// ── P10: 결과 확인 (6/6 or 7/7) ───────────────────────────────────
 function renderP10() {
   const frag = document.createDocumentFragment();
   frag.appendChild(mkTopNav('인출설계'));
-  frag.appendChild(mkStep(7, 7));
+  frag.appendChild(mkStep(totalSteps(), totalSteps()));
 
   const npsValue = S.knowsNPS === 'yes'
     ? (S.npsAmount ? S.npsAmount + '만원/월 (세전)' : '—')
@@ -1458,7 +1456,9 @@ function renderP10() {
     { label: '기대수명',          value: S.lifeExpect + '세',             page: 'P5' },
     { label: '월 생활비',         value: S.monthlyExpense + '만원',       page: 'P6' },
     { label: '국민연금 월 수령액', value: npsValue,                       page: 'P7' },
-    { label: '근로소득',          value: S.hasWorkIncome === 'yes' && S.salary ? '연봉 ' + S.salary + '만원 / 근속 ' + (S.tenure || '?') + '년' : '없음', page: 'P8' },
+    // DC=N이면 근로소득 표시, DC=Y이면 퇴직연금(DC) 표시
+    ...(!S.hasDC ? [{ label: '근로소득', value: S.hasWorkIncome === 'yes' && S.salary ? '연봉 ' + S.salary + '만원 / 근속 ' + (S.tenure || '?') + '년' : '없음', page: 'P8' }] : []),
+    ...(S.hasDC  ? [{ label: '퇴직연금(DC)', value: 'DC 계좌 보유 (마이데이터 연결)', page: null }] : []),
     { label: '기타 정기소득',     value: S.hasExtraIncome === 'yes' && S.extraIncome ? S.extraIncome + '만원/년' : '없음', page: 'P9' },
   ];
 
@@ -1471,11 +1471,13 @@ function renderP10() {
     const lbl = div('summary-label'); lbl.textContent = item.label; info.appendChild(lbl);
     const val = div('summary-value'); val.textContent = item.value; info.appendChild(val);
     row.appendChild(info);
-    const btn = document.createElement('button');
-    btn.className = 'edit-btn';
-    btn.textContent = '수정';
-    btn.onclick = () => go(item.page);
-    row.appendChild(btn);
+    if (item.page) {
+      const btn = document.createElement('button');
+      btn.className = 'edit-btn';
+      btn.textContent = '수정';
+      btn.onclick = () => go(item.page);
+      row.appendChild(btn);
+    }
     list.appendChild(row);
   });
 
@@ -1552,7 +1554,7 @@ function renderP12() {
   const sub = div('loading-sub'); sub.textContent = '담당 FA에게 전달 중이에요.'; center.appendChild(sub);
   frag.appendChild(center);
   const wrap = toDiv(frag);
-  setTimeout(() => go('P13'), 2500);
+  setTimeout(() => go('P13'), 1000);
   return wrap;
 }
 
