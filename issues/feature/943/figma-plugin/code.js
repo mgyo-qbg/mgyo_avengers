@@ -600,9 +600,9 @@ function buildTipCard(tag, title, rows, source) {
       bg: C.gray200, radius: 3, clip: true, align: 'CENTER',
     });
     const barFill = mkRect(Math.round(BAR_W * (row.fillPct / 100)), 6, C.gray400);
+    barTrack.appendChild(barFill);
     barFill.layoutPositioning = 'ABSOLUTE';
     barFill.x = 0; barFill.y = 0;
-    barTrack.appendChild(barFill);
     rowF.appendChild(barTrack);
     barTrack.layoutSizingHorizontal = 'FILL';
 
