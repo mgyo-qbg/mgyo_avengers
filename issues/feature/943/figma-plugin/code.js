@@ -912,7 +912,7 @@ function buildPage7() {
   resultCard.paddingRight = 16;
   resultCard.primaryAxisSizingMode = 'AUTO';
 
-  resultCard.appendChild(mkText('예상 국민연금 월수령액', 13, 'regular', C.gray600));
+  resultCard.appendChild(mkText('예상 국민연금 월수령액', 13, 'regular', C.text500));
   resultCard.appendChild(mkText('약 120만원 (세전)', 20, 'bold', C.primary500));
   const recalcBtn = mkText('다시 계산하기', 13, 'regular', C.gray500);
   recalcBtn.textDecoration = 'UNDERLINE';
