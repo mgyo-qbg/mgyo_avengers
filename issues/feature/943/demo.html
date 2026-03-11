@@ -259,6 +259,8 @@ body {
   scrollbar-width: none;
 }
 .scroll-content::-webkit-scrollbar { display: none; }
+/* flex 자식이 shrink되지 않아야 overflow가 생겨 스크롤 가능 */
+.scroll-content > * { flex-shrink: 0; }
 
 /* ── Scroll Fade (스크롤 유도) ── */
 .scroll-fade {
@@ -1606,16 +1608,12 @@ go('P1', true);
 (function() {
   const screen = document.querySelector('.iphone-screen');
 
-  // 마우스 휠 → scroll-content로 전달
+  // 마우스 휠 → scroll-content로 전달 (iphone 위에서는 외부 페이지 스크롤 차단)
   screen.addEventListener('wheel', (e) => {
     const sc = document.querySelector('.scroll-content');
     if (!sc) return;
-    const canScrollDown = sc.scrollTop < sc.scrollHeight - sc.clientHeight;
-    const canScrollUp   = sc.scrollTop > 0;
-    if ((e.deltaY > 0 && canScrollDown) || (e.deltaY < 0 && canScrollUp)) {
-      e.preventDefault();
-      sc.scrollBy({ top: e.deltaY, behavior: 'auto' });
-    }
+    e.preventDefault();
+    sc.scrollTop += e.deltaY;
   }, { passive: false });
 
   // 터치 스크롤 (모바일/태블릿 공유 시)
