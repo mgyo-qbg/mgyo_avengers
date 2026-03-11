@@ -545,7 +545,7 @@ function buildPage3() {
   scroll.appendChild(header);
 
   // DS: Body/Xsmall — 14px/400
-  const sub = mkText('인출설계를 진행하려면 마이데이터로\nIRP, DC, ISA 중 하나 이상의\n계좌가 연결되어야 해요.', 14, 'regular', C.text500);
+  const sub = mkText('인출설계를 진행하려면 마이데이터로\nIRP 또는 DC 계좌가\n연결되어야 해요.', 14, 'regular', C.text500);
   sub.textAlignHorizontal = 'CENTER';
   sub.lineHeight = { value: 150, unit: 'PERCENT' };
   scroll.appendChild(sub);
