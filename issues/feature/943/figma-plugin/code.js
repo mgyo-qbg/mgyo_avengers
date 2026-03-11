@@ -62,8 +62,6 @@ figma.ui.onmessage = async (msg) => {
       if (msg.pages.includes(1))  frames.push(buildPage1());
       if (msg.pages.includes(3))  frames.push(buildPage3());
       if (msg.pages.includes(4))  frames.push(buildPage4());
-      if (msg.pages.includes(41)) frames.push(buildPage4b());
-      if (msg.pages.includes(42)) frames.push(buildPage4c());
       if (msg.pages.includes(5))  frames.push(buildPage5());
       if (msg.pages.includes(6))  frames.push(buildPage6());
       if (msg.pages.includes(7))  frames.push(buildPage7());
@@ -226,48 +224,6 @@ function buildTopNavBack(title) {
   return f;
 }
 
-// ── Top Nav with Segmented Progress Bar + X Close ──────────────────────
-// Reference UI style: ‹ | [■■□□□□□□] | ✕
-function buildTopNavSeg(step, total, showBack) {
-  if (showBack === undefined) showBack = true;
-  const f = hf('Top Nav', W, TOPNAV_H, {
-    bg: C.white, align: 'CENTER', px: 4, gap: 0,
-  });
-
-  // Back button (40×40)
-  const back = hf('Back', 40, 40, { align: 'CENTER', justify: 'CENTER' });
-  back.fills = [];
-  if (showBack) {
-    const arr = mkText('‹', 22, 'regular', C.text900);
-    arr.textAlignHorizontal = 'CENTER';
-    back.appendChild(arr);
-  }
-  f.appendChild(back);
-
-  // Segmented progress bar — fills remaining space
-  const segGap = 3;
-  const barAreaW = W - 80 - 8; // 80 = two 40px buttons, 8 = gap
-  const segW = Math.floor((barAreaW - (total - 1) * segGap) / total);
-  const barArea = hf('Seg Bar', barAreaW, 3, { gap: segGap, align: 'CENTER', justify: 'CENTER' });
-  barArea.fills = [];
-  for (let i = 0; i < total; i++) {
-    const seg = mkRect(segW, 3, i < step ? C.text900 : C.gray200);
-    seg.cornerRadius = 2;
-    barArea.appendChild(seg);
-  }
-  f.appendChild(barArea);
-  barArea.layoutSizingHorizontal = 'FILL';
-
-  // Close button (40×40)
-  const close = hf('Close', 40, 40, { align: 'CENTER', justify: 'CENTER' });
-  close.fills = [];
-  const x = mkText('✕', 14, 'regular', C.text900);
-  x.textAlignHorizontal = 'CENTER';
-  close.appendChild(x);
-  f.appendChild(close);
-
-  return f;
-}
 
 function buildCTA(label) {
   // DS: fixedBtn — 375×92px, pad=20 all, gap=8, bg=#FFFFFF @70%
@@ -628,38 +584,30 @@ function buildTipCard(tag, title, rows, source) {
   return card;
 }
 
-// ── Step Indicator ──────────────────────────────────────────────────────
-// DS: Progress Bar md — 375×4px, bg=#EFEFF0, fill=Primary/500
-
+// ── Step Indicator (N / total + 연속형 Progress Bar) ──────────────────
+// DS 표준 — figma_plugin_design_kit.md 기준
 function buildStepIndicator(current, total) {
-  const wrapper = vf('Step Indicator', W, 32, {
-    bg: C.white, gap: 8, pt: 8, pb: 0,
-  });
-
-  // 스텝 텍스트: DS Body/Caption — 12px/400
+  const STEP_H = 28;
+  const wrapper = vf('Step Indicator', W, STEP_H, { bg: C.white, gap: 6, pt: 8, pb: 0 });
   const label = mkText(current + ' / ' + total, 12, 'medium', C.text500);
   label.textAlignHorizontal = 'CENTER';
   wrapper.appendChild(label);
   label.layoutAlign = 'STRETCH';
-
-  // DS: Progress Bar md — 375×4px (free-layout, no layoutPositioning)
-  const barBg = figma.createFrame();
-  barBg.name = 'Progress Bar';
-  barBg.resize(W, 4);
-  barBg.fills = solid(C.gray200);
+  const barBg = hf('Progress Bar', W, 3, { radius: 0 });
+  barBg.fills = solid(C.gray100);
   barBg.clipsContent = true;
   const fillW = Math.round(W * (current / total));
-  const barFill = mkRect(fillW, 4, C.primary500);
-  barFill.x = 0; barFill.y = 0;
+  const barFill = mkRect(fillW, 3, C.primary500);
   barBg.appendChild(barFill);
+  barFill.layoutPositioning = 'ABSOLUTE';
+  barFill.x = 0; barFill.y = 0;
   wrapper.appendChild(barBg);
   barBg.layoutSizingHorizontal = 'FILL';
-
   return wrapper;
 }
 
 // ── Root Frame Builder ──────────────────────────────────────────────────
-
+// DS 표준 buildRoot: topNavBack + stepIndicator (pageNo 있을 때)
 function buildRoot(name, opts) {
   opts = opts || {};
   const hasCTA = opts.cta !== false;
@@ -671,19 +619,19 @@ function buildRoot(name, opts) {
   root.appendChild(statusBar);
   statusBar.layoutSizingHorizontal = 'FILL';
 
-  // hasStep → segmented nav (reference style), else → title nav (P1/P3)
-  let topNav;
-  if (hasStep) {
-    topNav = buildTopNavSeg(opts.pageNo, opts.pageTotal || 10, opts.showBack !== false);
-  } else {
-    topNav = buildTopNavBack(opts.navTitle || '');
-  }
+  const topNav = buildTopNavBack(opts.navTitle || '인출설계');
   root.appendChild(topNav);
   topNav.layoutSizingHorizontal = 'FILL';
 
+  if (hasStep) {
+    const step = buildStepIndicator(opts.pageNo, opts.pageTotal || 8);
+    root.appendChild(step);
+    step.layoutSizingHorizontal = 'FILL';
+  }
+
   // DS: Scroll Content — 수직 스크롤 영역, pad=20(H) 24(V)
   const scroll = vf('Scroll Content', W, 100, {
-    bg: C.white, clip: true, px: PAD, pt: 28, pb: 28, gap: 20,
+    bg: C.white, clip: true, px: PAD, pt: 24, pb: 24, gap: 20,
   });
   root.appendChild(scroll);
   scroll.layoutSizingHorizontal = 'FILL';
@@ -780,7 +728,7 @@ function buildPage3() {
 // P4: 언제 은퇴하고 싶으신가요? (1/10) — 슬라이더 스타일
 function buildPage4() {
   const { root, scroll } = buildRoot('P4 - 은퇴 시기', {
-    ctaLabel: '다음', pageNo: 1, pageTotal: 10,
+    ctaLabel: '다음', pageNo: 1, pageTotal: 8,
   });
 
   // Question header
@@ -821,9 +769,9 @@ function buildPage4() {
 }
 
 // P4b: 기대수명은 얼마로 생각하시나요? (2/10)
-function buildPage4b() {
-  const { root, scroll } = buildRoot('P4b - 기대수명', {
-    ctaLabel: '다음', pageNo: 2, pageTotal: 10,
+function buildPage5() {
+  const { root, scroll } = buildRoot('P5 - 기대수명', {
+    ctaLabel: '다음', pageNo: 2, pageTotal: 8,
   });
 
   const qHeader = mkText('기대수명은 얼마로\n생각하시나요?', 22, 'bold', C.text900);
@@ -861,9 +809,9 @@ function buildPage4b() {
 }
 
 // P4c: 노후 월 생활비는 얼마나 생각하세요? (3/10)
-function buildPage4c() {
-  const { root, scroll } = buildRoot('P4c - 월 생활비', {
-    ctaLabel: '다음', pageNo: 3, pageTotal: 10,
+function buildPage6() {
+  const { root, scroll } = buildRoot('P6 - 월 생활비', {
+    ctaLabel: '다음', pageNo: 3, pageTotal: 8,
   });
 
   const qHeader = mkText('은퇴 후 연금을 얼마씩\n받고 싶으세요?', 22, 'bold', C.text900);
@@ -902,9 +850,9 @@ function buildPage4c() {
 }
 
 // P5: 국민연금 Y/N (2/8)
-function buildPage5() {
-  const { root, scroll } = buildRoot('P5 - 국민연금 수령액 여부', {
-    cta: false, pageNo: 4, pageTotal: 10,
+function buildPage7() {
+  const { root, scroll } = buildRoot('P7 - 국민연금 수령액 여부', {
+    cta: false, pageNo: 4, pageTotal: 8,
   });
 
   scroll.appendChild(buildSectionHeader('국민연금 예상 수령액을\n알고 있나요?'));
@@ -920,9 +868,9 @@ function buildPage5() {
 }
 
 // P6: 국민연금 계산기 — 레퍼런스 스타일 (5/10)
-function buildPage6() {
-  const { root, scroll } = buildRoot('P6 - 국민연금 계산기', {
-    ctaLabel: '계산하기', pageNo: 5, pageTotal: 10,
+function buildPage8() {
+  const { root, scroll } = buildRoot('P8 - 국민연금 계산기', {
+    ctaLabel: '계산하기', pageNo: 5, pageTotal: 8,
   });
 
   // Reference style: large bold question header
@@ -999,9 +947,9 @@ function buildPage6() {
 }
 
 // P7: 국민연금 직접입력 (3/8)
-function buildPage7() {
-  const { root, scroll } = buildRoot('P7 - 국민연금 직접입력', {
-    ctaLabel: '다음', pageNo: 5, pageTotal: 10,
+function buildPage9() {
+  const { root, scroll } = buildRoot('P9 - 국민연금 직접입력', {
+    ctaLabel: '다음', pageNo: 5, pageTotal: 8,
   });
 
   scroll.appendChild(buildSectionHeader('국민연금 예상 월수령액을\n입력해 주세요'));
@@ -1018,9 +966,9 @@ function buildPage7() {
 }
 
 // P8: 마이데이터 IRP/DC 자산 확인 (4/8)
-function buildPage8() {
-  const { root, scroll } = buildRoot('P8 - IRP/DC 자산 확인', {
-    ctaLabel: '다음', pageNo: 6, pageTotal: 10,
+function buildPage10() {
+  const { root, scroll } = buildRoot('P10 - IRP/DC 자산 확인', {
+    ctaLabel: '다음', pageNo: 6, pageTotal: 8,
   });
 
   scroll.appendChild(buildSectionHeader('연결된 퇴직연금을\n확인해 주세요'));
@@ -1070,32 +1018,27 @@ function buildPage8() {
 }
 
 // P9: 근로소득자 여부 (5/8)
-function buildPage9() {
-  const { root, scroll } = buildRoot('P9 - 근로소득자 여부', {
-    cta: false, pageNo: 7, pageTotal: 10,
+// P11: 근로소득자 질문 + 연봉/근속연수 입력 (병합, 6/8)
+// "네" 선택 시 입력 영역 펼침 — 스케치는 펼쳐진 상태로 표시
+function buildPage11() {
+  const { root, scroll } = buildRoot('P11 - 근로소득자+연봉(병합)', {
+    ctaLabel: '다음', pageNo: 6, pageTotal: 8,
   });
 
   scroll.appendChild(buildSectionHeader('현재 근로소득이 있나요?'));
   scroll.appendChild(buildSubHeader('퇴직금 예상액 산출에 필요해요.'));
 
+  // Y/N 선택 카드 — "네" 선택 상태로 표시
   const cards = vf('Choice Cards', CONTENT_W, 1, { gap: 12 });
   cards.fills = [];
   cards.primaryAxisSizingMode = 'AUTO';
-  cards.appendChild(buildChoiceCard('네, 있어요', false));
+  cards.appendChild(buildChoiceCard('네, 있어요', true));   // selected
   cards.appendChild(buildChoiceCard('아니요, 없어요', false));
   scroll.appendChild(cards);
 
-  return root;
-}
-
-// P10: 연봉 · 근속연수 (6/8)
-function buildPage10() {
-  const { root, scroll } = buildRoot('P10 - 연봉/근속연수', {
-    ctaLabel: '다음', pageNo: 8, pageTotal: 10,
-  });
-
-  scroll.appendChild(buildSectionHeader('연봉과 근속연수를\n입력해 주세요'));
-  scroll.appendChild(buildSubHeader('입력한 연봉과 근속연수를 바탕으로\n퇴직금을 예상해 드려요.'));
+  // 입력 영역 — "네" 선택 시 펼쳐지는 영역 (앱에서는 Animated 처리)
+  const divider = mkRect(CONTENT_W, 1, C.gray200);
+  scroll.appendChild(divider);
 
   const g1 = vf('Field - 연봉', CONTENT_W, 1, { gap: 6 });
   g1.fills = [];
@@ -1115,33 +1058,27 @@ function buildPage10() {
   return root;
 }
 
-// P11: 기타 정기소득 여부 (7/8)
-function buildPage11() {
-  const { root, scroll } = buildRoot('P11 - 기타 정기소득 여부', {
-    cta: false, pageNo: 9, pageTotal: 10,
+// P12: 기타 정기소득 질문 + 입력 (병합, 7/8)
+// "네" 선택 시 입력 영역 펼침 — 스케치는 펼쳐진 상태로 표시
+function buildPage12() {
+  const { root, scroll } = buildRoot('P12 - 기타소득(병합)', {
+    ctaLabel: '다음', pageNo: 7, pageTotal: 8,
   });
 
   scroll.appendChild(buildSectionHeader('은퇴 후 기타 정기소득이\n있거나 예정인가요?'));
-  scroll.appendChild(buildSubHeader('임대소득, 사업소득, 배당소득 등\n정기적으로 받는 소득이 있다면 알려주세요.'));
+  scroll.appendChild(buildSubHeader('은퇴 후 정기적으로 받으실 소득을\n알려주세요'));
 
+  // Y/N 선택 카드 — "네" 선택 상태로 표시
   const cards = vf('Choice Cards', CONTENT_W, 1, { gap: 12 });
   cards.fills = [];
   cards.primaryAxisSizingMode = 'AUTO';
-  cards.appendChild(buildChoiceCard('네, 있어요', false));
+  cards.appendChild(buildChoiceCard('네, 있어요', true));   // selected
   cards.appendChild(buildChoiceCard('아니요, 없어요', false));
   scroll.appendChild(cards);
 
-  return root;
-}
-
-// P12: 기타 정기소득 입력 (7/8)
-function buildPage12() {
-  const { root, scroll } = buildRoot('P12 - 기타 정기소득 입력', {
-    ctaLabel: '다음', pageNo: 9, pageTotal: 10,
-  });
-
-  scroll.appendChild(buildSectionHeader('기타 정기소득을\n입력해 주세요'));
-  scroll.appendChild(buildSubHeader('은퇴 후 정기적으로 받으실 소득을\n알려주세요'));
+  // 입력 영역 — "네" 선택 시 펼쳐지는 영역 (앱에서는 Animated 처리)
+  const divider = mkRect(CONTENT_W, 1, C.gray200);
+  scroll.appendChild(divider);
 
   const g1 = vf('Field - 연소득', CONTENT_W, 1, { gap: 6 });
   g1.fills = [];
@@ -1151,7 +1088,6 @@ function buildPage12() {
   g1.appendChild(buildHelperText('월세, 임대 수입, 배당금 등 근로소득 외 정기적으로 받는 소득의 연간 합계'));
   scroll.appendChild(g1);
 
-  // 시작/종료 시기 — DS: Readonly (은퇴시기/기대수명 연동)
   const g2 = vf('Field - 시작시기', CONTENT_W, 1, { gap: 6 });
   g2.fills = [];
   g2.primaryAxisSizingMode = 'AUTO';
@@ -1174,7 +1110,7 @@ function buildPage12() {
 // P13: 설문 결과 확인 (8/8)
 function buildPage13() {
   const { root, scroll } = buildRoot('P13 - 결과 확인', {
-    ctaLabel: 'FA에게 전달하기', pageNo: 10, pageTotal: 10,
+    ctaLabel: 'FA에게 전달하기', pageNo: 8, pageTotal: 8,
   });
 
   scroll.appendChild(buildSectionHeader('입력하신 내용을\n확인해 주세요'));
