@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>#943 인출설계 설문지 — 데모</title>
+<style>
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Design Tokens ── */
+:root {
+  --primary500: #2E9BFF;
+  --primary100: #EBF5FF;
+  --secondary500: #2E58FF;
+  --text900: #030303;
+  --text800: #292929;
+  --text700: #434343;
+  --text500: #6D6D6D;
+  --text400: #8A8A8A;
+  --gray50:  #F9F9F9;
+  --gray100: #EFEFF0;
+  --gray200: #D9D9D9;
+  --gray400: #A1A1A1;
+  --gray600: #6D6D6D;
+  --white:   #FFFFFF;
+  --green500: #3AD1A9;
+  --red:     #FF5247;
+  --navy:    #152A56;
+  --PAD: 20px;
+  --W: 375px;
+  --H: 812px;
+  --TOPNAV: 44px;
+  --STEP_H: 36px;
+}
+
+/* ── Page scaffold ── */
+body {
+  background: #1a1a2e;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 40px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Pretendard', sans-serif;
+  gap: 20px;
+}
+
+/* ── Debug toggles ── */
+.debug-panel {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 12px 18px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.debug-panel .label {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+}
+.toggle-group input[type=checkbox] {
+  width: 32px;
+  height: 18px;
+  appearance: none;
+  background: rgba(255,255,255,0.2);
+  border-radius: 9px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+.toggle-group input[type=checkbox]:checked {
+  background: var(--primary500);
+}
+.toggle-group input[type=checkbox]::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: left 0.2s;
+}
+.toggle-group input[type=checkbox]:checked::after {
+  left: 16px;
+}
+
+/* ── iPhone frame ── */
+.iphone {
+  width: 397px;
+  background: #1c1c1e;
+  border-radius: 54px;
+  padding: 14px;
+  box-shadow:
+    0 0 0 2px #3a3a3c,
+    0 40px 80px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.08);
+  position: relative;
+  flex-shrink: 0;
+}
+/* Side buttons */
+.iphone::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 120px;
+  width: 3px;
+  height: 34px;
+  background: #3a3a3c;
+  border-radius: 2px 0 0 2px;
+  box-shadow: 0 48px 0 #3a3a3c, 0 88px 0 #3a3a3c;
+}
+.iphone::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 168px;
+  width: 3px;
+  height: 74px;
+  background: #3a3a3c;
+  border-radius: 0 2px 2px 0;
+}
+.iphone-screen {
+  width: 375px;
+  height: 812px;
+  background: var(--white);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+}
+/* Dynamic Island */
+.dynamic-island {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 34px;
+  background: #1c1c1e;
+  border-radius: 20px;
+  z-index: 100;
+}
+/* Status bar */
+.status-bar {
+  height: 44px;
+  background: var(--white);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 28px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text900);
+  position: relative;
+  z-index: 90;
+  flex-shrink: 0;
+}
+.status-time { font-size: 15px; font-weight: 600; }
+.status-icons { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+
+/* ── App shell ── */
+#app {
+  width: 375px;
+  height: 768px; /* 812 - 44 status bar */
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  overflow: hidden;
+}
+
+/* ── Top Navigation ── */
+.top-nav {
+  height: var(--TOPNAV);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+.nav-back-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--text900);
+  border: none;
+  background: none;
+  flex-shrink: 0;
+}
+.nav-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text900);
+  flex: 1;
+  text-align: center;
+}
+.nav-spacer { width: 40px; flex-shrink: 0; }
+
+/* ── Step Indicator ── */
+.step-indicator {
+  height: var(--STEP_H);
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  flex-shrink: 0;
+}
+.step-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text500);
+  text-align: center;
+  width: 100%;
+}
+.step-bar-bg {
+  width: 100%;
+  height: 3px;
+  background: var(--gray100);
+  position: relative;
+  overflow: hidden;
+}
+.step-bar-fill {
+  height: 100%;
+  background: var(--primary500);
+  transition: width 0.3s ease;
+}
+
+/* ── Scroll Content ── */
+.scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px var(--PAD) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.scroll-content::-webkit-scrollbar { display: none; }
+
+/* ── CTA Area ── */
+.cta-area {
+  flex-shrink: 0;
+  padding: 16px var(--PAD) 20px;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(8px);
+}
+.cta-btn {
+  width: 100%;
+  height: 52px;
+  background: var(--navy);
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  letter-spacing: -0.2px;
+}
+.cta-btn:hover { opacity: 0.9; }
+.cta-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.cta-btn.primary-btn {
+  background: var(--primary500);
+}
+
+/* ── Typography ── */
+.section-header {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text900);
+  line-height: 1.4;
+  letter-spacing: -0.4px;
+}
+.sub-header {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text500);
+  line-height: 1.6;
+}
+.helper-text {
+  font-size: 12px;
+  color: var(--text400);
+  line-height: 1.5;
+  padding-top: 4px;
+}
+.highlight { color: var(--primary500); }
+
+/* ── Answer sentence (slider pages) ── */
+.answer-sentence {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text800);
+  line-height: 1.5;
+  padding: 8px 0 4px;
+}
+.answer-sentence strong {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary500);
+}
+
+/* ── Slider ── */
+.slider-wrap {
+  padding: 8px 0;
+}
+.slider-input {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(to right, var(--primary500) 0%, var(--primary500) 50%, var(--gray200) 50%);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  background: var(--white);
+  border: 2px solid var(--primary500);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  cursor: grab;
+}
+.slider-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text400);
+  margin-top: 6px;
+}
+
+/* ── Tip Card ── */
+.tip-card {
+  background: var(--gray50);
+  border: 1px solid var(--gray200);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tip-tag {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--primary500);
+  letter-spacing: 0.3px;
+}
+.tip-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text800);
+}
+.tip-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tip-row-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text500);
+}
+.tip-bar-bg {
+  height: 6px;
+  background: var(--gray200);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.tip-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--primary500);
+}
+.tip-source {
+  font-size: 10px;
+  color: var(--text400);
+}
+
+/* ── Choice Card ── */
+.choice-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.choice-card {
+  border: 1.5px solid var(--gray200);
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text800);
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--white);
+  text-align: left;
+}
+.choice-card:hover { border-color: var(--primary500); background: var(--primary100); }
+.choice-card.selected {
+  border-color: var(--primary500);
+  background: var(--primary100);
+  color: var(--primary500);
+  font-weight: 600;
+}
+
+/* ── Field ── */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text500);
+}
+.field-row {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--gray200);
+  border-radius: 10px;
+  padding: 0 14px;
+  height: 52px;
+  background: var(--white);
+  gap: 8px;
+  transition: border-color 0.15s;
+}
+.field-row:focus-within { border-color: var(--primary500); }
+.field-row.readonly { background: var(--gray50); }
+.field-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: var(--text900);
+  background: transparent;
+  font-family: inherit;
+}
+.field-input::placeholder { color: var(--gray400); }
+.field-input:disabled { color: var(--text500); }
+.field-suffix {
+  font-size: 13px;
+  color: var(--text400);
+  flex-shrink: 0;
+}
+.lock-icon { font-size: 13px; color: var(--gray400); }
+
+/* ── Reference-style large input (P8) ── */
+.large-input-wrap {
+  border-bottom: 2px solid var(--primary500);
+  padding: 8px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.large-input {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text900);
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  font-family: inherit;
+  letter-spacing: -0.5px;
+}
+.large-input::placeholder { color: var(--gray200); font-weight: 400; font-size: 22px; }
+.large-suffix { font-size: 16px; color: var(--text500); flex-shrink: 0; }
+
+/* ── Select box ── */
+.select-row {
+  display: flex;
+  gap: 8px;
+}
+.field-select {
+  flex: 1;
+  height: 52px;
+  border: 1px solid var(--gray200);
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 15px;
+  color: var(--text900);
+  background: var(--white);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23A1A1A1' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: var(--gray100);
+  margin: 4px 0;
+}
+
+/* ── Account card (P10) ── */
+.account-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1.5px solid var(--gray200);
+  border-radius: 12px;
+  background: var(--white);
+}
+.account-card.checked { border-color: var(--primary500); background: var(--primary100); }
+.account-check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--gray400);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: transparent;
+  transition: all 0.15s;
+}
+.account-card.checked .account-check {
+  background: var(--primary500);
+  border-color: var(--primary500);
+  color: white;
+}
+.account-info { flex: 1; }
+.account-name { font-size: 14px; font-weight: 600; color: var(--text900); }
+.account-type { font-size: 12px; color: var(--text500); margin-top: 2px; }
+.account-amount { font-size: 14px; font-weight: 700; color: var(--text800); }
+
+/* ── Summary list (P13) ── */
+.summary-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  gap: 8px;
+}
+.summary-info { flex: 1; }
+.summary-label { font-size: 12px; color: var(--text500); margin-bottom: 3px; }
+.summary-value { font-size: 14px; font-weight: 600; color: var(--text900); }
+.edit-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--gray200);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary500);
+  cursor: pointer;
+  background: var(--white);
+  flex-shrink: 0;
+}
+.edit-btn:hover { background: var(--primary100); }
+
+/* ── Terms (P14) ── */
+.terms-all {
+  background: var(--primary100);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text900);
+}
+.term-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 0;
+  gap: 12px;
+}
+.term-row + .term-row { border-top: 1px solid var(--gray100); }
+.term-check {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--gray400);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: transparent;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.term-check.checked {
+  background: var(--primary500);
+  border-color: var(--primary500);
+  color: white;
+}
+.term-info { flex: 1; }
+.term-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--primary500);
+  border: 1px solid var(--primary500);
+  border-radius: 3px;
+  padding: 1px 4px;
+  margin-right: 4px;
+}
+.term-badge.opt { color: var(--text400); border-color: var(--gray400); }
+.term-title { font-size: 13px; color: var(--text800); }
+.term-link {
+  font-size: 12px;
+  color: var(--text500);
+  text-decoration: underline;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Loading (P15) ── */
+.loading-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: var(--PAD);
+}
+.spinner {
+  width: 72px;
+  height: 72px;
+  position: relative;
+}
+.spinner-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 6px solid var(--gray100);
+}
+.spinner-arc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 6px solid transparent;
+  border-top-color: var(--primary500);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text900);
+  text-align: center;
+  line-height: 1.5;
+}
+.loading-sub {
+  font-size: 14px;
+  color: var(--text500);
+  text-align: center;
+}
+
+/* ── Complete (P16) ── */
+.complete-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: var(--PAD);
+}
+.check-outer {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(58,209,169,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.check-inner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--green500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: white;
+}
+.impact-box {
+  background: var(--primary100);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text900);
+  line-height: 1.5;
+  width: 100%;
+}
+.complete-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text900);
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ── Info card (P1) ── */
+.info-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--gray50);
+  border: 1px solid var(--gray200);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+.info-card-icon { font-size: 18px; }
+.info-card-text { font-size: 13px; color: var(--text700); font-weight: 500; }
+
+/* ── Warning screen (P3) ── */
+.warning-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: var(--PAD);
+  text-align: center;
+}
+.warning-icon {
+  width: 64px;
+  height: 64px;
+  background: rgba(255,82,71,0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--red);
+  font-weight: 800;
+}
+.warning-link {
+  font-size: 14px;
+  color: var(--text500);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ── Expandable section (P11/P12 merged) ── */
+.expandable {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.expandable.open {
+  max-height: 400px;
+  opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<!-- Debug toggles -->
+<div class="debug-panel">
+  <span class="label">데모 시나리오</span>
+  <label class="toggle-group">
+    <input type="checkbox" id="tog-mydata" checked onchange="updateState()">
+    마이데이터 연결됨
+  </label>
+  <label class="toggle-group">
+    <input type="checkbox" id="tog-terms" onchange="updateState()">
+    T0054 약관 동의 완료
+  </label>
+</div>
+
+<!-- iPhone frame -->
+<div class="iphone">
+  <div class="iphone-screen">
+    <div class="dynamic-island"></div>
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <span>●●●●</span>
+        <span>WiFi</span>
+        <span>🔋</span>
+      </div>
+    </div>
+    <!-- App -->
+    <div id="app"></div>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────
+const S = {
+  retireAge: 60,
+  lifeExpect: 90,
+  monthlyExpense: 300,
+  knowsNPS: null,        // 'yes' | 'no'
+  npsCalcDone: false,    // 아니요 경로: 계산하기 완료 여부
+  npsAmount: '',         // 네 경로: 직접 입력 월수령액
+  npsIncome: '6,000',   // 아니요 경로: 계산기 연소득
+  npsJoinYear: '2000',
+  npsJoinMonth: '1',
+  hasWorkIncome: null,
+  salary: '',
+  tenure: '',
+  hasExtraIncome: null,
+  extraIncome: '',
+  hasMydata: true,
+  termsAgreed: false,
+};
+
+function updateState() {
+  S.hasMydata   = document.getElementById('tog-mydata').checked;
+  S.termsAgreed = document.getElementById('tog-terms').checked;
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────
+let navStack = [];
+
+function go(pageId, clearStack) {
+  if (clearStack) navStack = [];
+  navStack.push(pageId);
+  render(pageId);
+}
+
+function back() {
+  if (navStack.length > 1) {
+    navStack.pop();
+    render(navStack[navStack.length - 1]);
+  }
+}
+
+// ── Render dispatch ────────────────────────────────────────────────────
+function render(id) {
+  const app = document.getElementById('app');
+  const pages = {
+    P1: renderP1, P3: renderP3,
+    P4: renderP4, P5: renderP5, P6: renderP6,
+    P7: renderP7, P8: renderP8, P9: renderP9,
+    P10: renderP10, P11: renderP11, P12: renderP12, P13: renderP13,
+  };
+  const fn = pages[id];
+  if (fn) { app.innerHTML = ''; app.appendChild(fn()); }
+  app.scrollTop = 0;
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────
+function el(tag, props, children) {
+  const e = document.createElement(tag);
+  if (props) Object.assign(e, props);
+  if (children) {
+    if (typeof children === 'string') e.innerHTML = children;
+    else if (Array.isArray(children)) children.forEach(c => c && e.appendChild(c));
+  }
+  return e;
+}
+function div(cls, children) {
+  const d = document.createElement('div');
+  if (cls) d.className = cls;
+  if (children) {
+    if (typeof children === 'string') d.innerHTML = children;
+    else if (Array.isArray(children)) children.forEach(c => c && d.appendChild(typeof c === 'string' ? Object.assign(document.createElement('span'), {textContent: c}) : c));
+  }
+  return d;
+}
+function text(content, tag = 'p') {
+  const e = document.createElement(tag);
+  e.textContent = content;
+  return e;
+}
+
+function mkTopNav(title, showBack) {
+  const nav = div('top-nav');
+  if (showBack !== false) {
+    const btn = document.createElement('button');
+    btn.className = 'nav-back-btn';
+    btn.textContent = '‹';
+    btn.onclick = back;
+    nav.appendChild(btn);
+  } else {
+    nav.appendChild(div('nav-spacer'));
+  }
+  const t = div('nav-title'); t.textContent = title; nav.appendChild(t);
+  nav.appendChild(div('nav-spacer'));
+  return nav;
+}
+
+function mkStep(current, total) {
+  const wrap = div('step-indicator');
+  const lbl = div('step-label'); lbl.textContent = current + ' / ' + total; wrap.appendChild(lbl);
+  const bg = div('step-bar-bg');
+  const fill = div('step-bar-fill');
+  fill.style.width = Math.round((current / total) * 100) + '%';
+  bg.appendChild(fill); wrap.appendChild(bg);
+  return wrap;
+}
+
+function mkScroll(...children) {
+  const s = div('scroll-content');
+  children.forEach(c => c && s.appendChild(c));
+  return s;
+}
+
+function mkCTA(label, onclick, cls) {
+  const area = div('cta-area');
+  const btn = document.createElement('button');
+  btn.className = 'cta-btn' + (cls ? ' ' + cls : '');
+  btn.textContent = label;
+  btn.onclick = onclick;
+  area.appendChild(btn);
+  return area;
+}
+
+function mkField(label, inputEl, helperText, isReadonly) {
+  const g = div('field-group');
+  if (label) { const l = div('field-label'); l.textContent = label; g.appendChild(l); }
+  const row = div('field-row' + (isReadonly ? ' readonly' : ''));
+  row.appendChild(inputEl);
+  if (isReadonly) { const icon = div('lock-icon'); icon.textContent = '🔒'; row.appendChild(icon); }
+  g.appendChild(row);
+  if (helperText) { const h = div('helper-text'); h.textContent = helperText; g.appendChild(h); }
+  return g;
+}
+
+function mkTextInput(placeholder, suffix, value, onchange) {
+  const inp = document.createElement('input');
+  inp.className = 'field-input';
+  inp.type = 'text';
+  inp.placeholder = placeholder;
+  if (value) inp.value = value;
+  if (onchange) inp.oninput = onchange;
+  const wrap = document.createDocumentFragment();
+  const inpWrap = inp;
+  if (suffix) {
+    const suf = div('field-suffix'); suf.textContent = suffix;
+    const arr = [inp, suf];
+    return arr;
+  }
+  return [inp];
+}
+
+function mkReadonlyField(label, displayValue, helperText) {
+  const inp = document.createElement('input');
+  inp.className = 'field-input';
+  inp.value = displayValue;
+  inp.disabled = true;
+  return mkField(label, inp, helperText, true);
+}
+
+function mkSlider(min, max, value, unit, onchange) {
+  const wrap = div('slider-wrap');
+  const inp = document.createElement('input');
+  inp.type = 'range';
+  inp.className = 'slider-input';
+  inp.min = min; inp.max = max; inp.value = value;
+  updateSliderBg(inp);
+  inp.oninput = function() {
+    updateSliderBg(this);
+    if (onchange) onchange(this.value);
+  };
+  const labels = div('slider-range-labels');
+  labels.innerHTML = '<span>' + min + unit + '</span><span>' + max + unit + '</span>';
+  wrap.appendChild(inp);
+  wrap.appendChild(labels);
+  return wrap;
+}
+
+function updateSliderBg(inp) {
+  const pct = ((inp.value - inp.min) / (inp.max - inp.min)) * 100;
+  inp.style.background = `linear-gradient(to right, var(--primary500) ${pct}%, var(--gray200) ${pct}%)`;
+}
+
+function mkTipCard(tag, title, rows, source) {
+  const card = div('tip-card');
+  const t = div('tip-tag'); t.textContent = tag; card.appendChild(t);
+  const ti = div('tip-title'); ti.textContent = title; card.appendChild(ti);
+  rows.forEach(r => {
+    const row = div('tip-row');
+    const lbl = div('tip-row-label');
+    lbl.innerHTML = '<span>' + r.label + '</span><span>' + r.value + '</span>';
+    const bg = div('tip-bar-bg');
+    const fill = div('tip-bar-fill');
+    fill.style.width = r.pct + '%';
+    bg.appendChild(fill);
+    row.appendChild(lbl); row.appendChild(bg);
+    card.appendChild(row);
+  });
+  if (source) { const s = div('tip-source'); s.textContent = source; card.appendChild(s); }
+  return card;
+}
+
+function mkChoiceCards(options, selected, onclick) {
+  const wrap = div('choice-cards');
+  options.forEach(opt => {
+    const card = div('choice-card' + (selected === opt.value ? ' selected' : ''));
+    card.textContent = opt.label;
+    card.onclick = () => onclick(opt.value);
+    wrap.appendChild(card);
+  });
+  return wrap;
+}
+
+function mkDivider() { return div('divider'); }
+
+// ── P1: 설문 시작 ────────────────────────────────────────────────────
+function renderP1() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('인출설계', false));
+  const scroll = mkScroll(
+    (() => { const h = div('section-header'); h.innerHTML = '은퇴 후 자산 인출 전략을<br>설계해 볼까요?'; return h; })(),
+    (() => { const s = div('sub-header'); s.innerHTML = '몇 가지 질문에 답하면, 맞춤 인출 전략을<br>제안해 드릴게요.'; return s; })(),
+    (() => { const s = div('sub-header'); s.innerHTML = '편안한 은퇴를 위한 맞춤 설계를<br>시작합니다'; return s; })(),
+    (() => {
+      const card = div('info-card');
+      const icon = div('info-card-icon'); icon.textContent = '🕐'; card.appendChild(icon);
+      const t = div('info-card-text'); t.textContent = '약 3분 소요'; card.appendChild(t);
+      return card;
+    })(),
+  );
+  frag.appendChild(scroll);
+  frag.appendChild(mkCTA('시작하기', () => {
+    updateState();
+    go(S.hasMydata ? 'P4' : 'P3');
+  }));
+  return toDiv(frag);
+}
+
+// ── P3: 자산없음 경고 ───────────────────────────────────────────────
+function renderP3() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('인출설계'));
+  const center = div('warning-center');
+  const icon = div('warning-icon'); icon.textContent = '!'; center.appendChild(icon);
+  const h = div('section-header'); h.textContent = '연결된 퇴직연금이 없어요'; center.appendChild(h);
+  const s = div('sub-header'); s.innerHTML = '인출설계를 진행하려면 마이데이터로<br>IRP 또는 DC 계좌가<br>연결되어야 해요.'; center.appendChild(s);
+  const link = div('warning-link'); link.textContent = '나중에 하기'; link.onclick = () => go('P1', true); center.appendChild(link);
+  frag.appendChild(center);
+  frag.appendChild(mkCTA('마이데이터 연결하기', () => go('P1', true)));
+  return toDiv(frag);
+}
+
+// ── P4: 은퇴시기 (1/7) ─────────────────────────────────────────────
+function renderP4() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('인출설계'));
+  frag.appendChild(mkStep(1, 7));
+
+  const ans = div('answer-sentence');
+  function updateAns(v) {
+    S.retireAge = parseInt(v);
+    ans.innerHTML = '만 나이로 <strong>' + v + '세</strong> 에 은퇴하고 싶어요.';
+  }
+  updateAns(S.retireAge);
+
+  const slider = mkSlider(40, 80, S.retireAge, '세', v => updateAns(v));
+
+  const scroll = mkScroll(
+    (() => { const h = div('section-header'); h.innerHTML = '언제 은퇴하고 싶으신가요?'; return h; })(),
+    (() => { const s = div('sub-header'); s.textContent = '은퇴 후 받을 수령 연금을 예상하기 위해 필요한 정보예요.'; return s; })(),
+    ans,
+    slider,
+    mkTipCard(
+      '은퇴 설계 도움말',
+      '대한민국 평균 은퇴 나이는 49세예요.',
+      [
+        { label: '희망 평균 은퇴', value: '65세', pct: 81 },
+        { label: '실제 평균 은퇴', value: '49세', pct: 45 },
+      ],
+      '출처: 통계청, 한국리서치'
+    ),
+  );
+  frag.appendChild(scroll);
+  frag.appendChild(mkCTA('다음', () => go('P5')));
+  return toDiv(frag);
+}
+
+// ── P5: 기대수명 (2/7) ─────────────────────────────────────────────
+function renderP5() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('인출설계'));
+  frag.appendChild(mkStep(2, 7));
+
+  const ans = div('answer-sentence');
+  function updateAns(v) {
+    S.lifeExpect = parseInt(v);
+    ans.innerHTML = '건강하게 사는 목표 <strong>' + v + '세</strong> 까지 준비할게요.';
+  }
+  updateAns(S.lifeExpect);
+
+  const scroll = mkScroll(
+    (() => { const h = div('section-header'); h.innerHTML = '기대수명은 얼마로<br>생각하시나요?'; return h; })(),
+    (() => { const s = div('sub-header'); s.innerHTML = '은퇴 후 필요한 자산 규모를 계산하기 위해 필요해요.<br>평균보다 5~10년 길게 설정하는 걸 권장해요.'; return s; })(),
+    ans,
+    mkSlider(70, 100, S.lifeExpect, '세', v => updateAns(v)),
+    mkTipCard(
+      '은퇴 설계 도움말',
+      '기대수명보다 오래 사실 수도 있어요.',
+      [
+        { label: '남성 기대수명', value: '81세', pct: 81 },
+        { label: '여성 기대수명', value: '87세', pct: 87 },
+      ],
+      '출처: 통계청 2023'
+    ),
+  );
+  frag.appendChild(scroll);
+  frag.appendChild(mkCTA('다음', () => go('P6')));
+  return toDiv(frag);
+}
+
+// ── P6: 월 생활비 (3/7) ────────────────────────────────────────────
+function renderP6() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('인출설계'));
+  frag.appendChild(mkStep(3, 7));
+
+  const ans = div('answer-sentence');
+  function updateAns(v) {
+    S.monthlyExpense = parseInt(v);
+    ans.innerHTML = S.retireAge + '세에 은퇴 후 매 월 <strong>' + v + '만원</strong> 받고 싶어요.';
+  }
+  updateAns(S.monthlyExpense);
+
+  const scroll = mkScroll(
+    (() => { const h = div('section-header'); h.innerHTML = '은퇴 후 연금을 얼마씩<br>받고 싶으세요?'; return h; })(),
+    (() => { const s = div('sub-header'); s.innerHTML = '은퇴 시점에 받고 싶은 금액을 입력해 주세요.<br>이후 매년 수령 금액이 물가상승률만큼 늘어나요.'; return s; })(),
+    ans,
+    mkSlider(120, 1000, S.monthlyExpense, '만원', v => updateAns(v)),
+    mkTipCard(
+      '은퇴 설계 도움말',
+      '노후 1인 적정 생활비는 165만원이에요.',
+      [
+        { label: '최소 생활비', value: '120만원', pct: 40 },
+        { label: '적정 생활비', value: '165만원', pct: 55 },
+      ],
+      '출처: 국민연금공단'
+    ),
+  );
+  frag.appendChild(scroll);
+  frag.appendChild(mkCTA('다음', () => go('P7')));
+  return toDiv(frag);
+}
+
+// ── P7: 국민연금 Y/N + 입력 [병합] (4/7) ──────────────────────────
+function renderP7() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('인출설계'));
+  frag.appendChild(mkStep(4, 7));
+
+  // "네" expandable: 월수령액 직접입력
+  const yesArea = div('expandable' + (S.knowsNPS === 'yes' ? ' open' : ''));
+
+  const amtInp = document.createElement('input');
+  amtInp.className = 'field-input';
+  amtInp.type = 'text';
+  amtInp.placeholder = '예상 월수령액을 입력해 주세요';
+  amtInp.value = S.npsAmount;
+  amtInp.oninput = () => { S.npsAmount = amtInp.value; };
+  const amtSuf = div('field-suffix'); amtSuf.textContent = '만원/월';
+  const amtRow = div('field-row'); amtRow.appendChild(amtInp); amtRow.appendChild(amtSuf);
+  const amtG = div('field-group');
+  const amtLbl = div('field-label'); amtLbl.textContent = '월 수령액 (세전)'; amtG.appendChild(amtLbl);
+  amtG.appendChild(amtRow);
+  yesArea.appendChild(mkDivider());
+  yesArea.appendChild(amtG);
+
+  // "아니요" expandable: 계산기 필드 + 인라인 결과
+  const noArea = div('expandable' + (S.knowsNPS === 'no' ? ' open' : ''));
+
+  const incInp = document.createElement('input');
+  incInp.className = 'field-input';
+  incInp.type = 'text';
+  incInp.placeholder = '세전 연소득을 입력해 주세요';
+  incInp.value = S.npsIncome;
+  incInp.oninput = () => { S.npsIncome = incInp.value; };
+  const incSuf = div('field-suffix'); incSuf.textContent = '만원';
+  const incRow = div('field-row'); incRow.appendChild(incInp); incRow.appendChild(incSuf);
+  const incG = div('field-group');
+  const incLbl = div('field-label'); incLbl.textContent = '연소득 (세전)'; incG.appendChild(incLbl);
+  incG.appendChild(incRow);
+
+  const joinLabel = div('field-label'); joinLabel.textContent = '국민연금 최초 가입 시기';
+  const selRow = div('select-row');
+  const selYear = document.createElement('select');
+  selYear.className = 'field-select';
+  for (let y = 1988; y <= 2024; y++) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y + '년';
+    if (String(y) === S.npsJoinYear) opt.selected = true;
+    selYear.appendChild(opt);
+  }
+  selYear.onchange = () => { S.npsJoinYear = selYear.value; };
+  const selMonth = document.createElement('select');
+  selMonth.className = 'field-select';
+  for (let m = 1; m <= 12; m++) {
+    const opt = document.createElement('option');
+    opt.value = m; opt.textContent = m + '월';
+    if (String(m) === S.npsJoinMonth) opt.selected = true;
+    selMonth.appendChild(opt);
+  }
+  selMonth.onchange = () => { S.npsJoinMonth = selMonth.value; };
+  selRow.appendChild(selYear); selRow.appendChild(selMonth);
+  const joinG = div('field-group');
+  joinG.appendChild(joinLabel); joinG.appendChild(selRow);
+
+  const payEndField = mkReadonlyField('납입 종료 예정일', S.retireAge + '세 (은퇴시기 연동)', '앞서 입력한 은퇴 시기가 자동 적용돼요');
+
+  // 인라인 결과 카드 (계산하기 완료 후 표시)
+  const resultCard = div('');
+  resultCard.style.cssText = 'background:var(--primary100);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;' + (S.npsCalcDone ? '' : 'display:none;');
+  const resultLbl = div(''); resultLbl.style.cssText = 'font-size:13px;color:var(--text500);'; resultLbl.textContent = '예상 국민연금 월수령액';
+  const resultAmt = div(''); resultAmt.style.cssText = 'font-size:20px;font-weight:700;color:var(--primary500);'; resultAmt.textContent = '약 120만원 (세전)';
+  const recalcBtn = document.createElement('button');
+  recalcBtn.style.cssText = 'border:none;background:none;font-size:13px;color:var(--text500);text-decoration:underline;cursor:pointer;padding:0;text-align:left;';
+  recalcBtn.textContent = '다시 계산하기';
+  recalcBtn.onclick = () => { S.npsCalcDone = false; render('P7'); };
+  resultCard.appendChild(resultLbl); resultCard.appendChild(resultAmt); resultCard.appendChild(recalcBtn);
+
+  // 계산하기 버튼 (결과 표시 전)
+  const calcBtnWrap = div('');
+  calcBtnWrap.style.cssText = S.npsCalcDone ? 'display:none;' : '';
+  const calcBtn = document.createElement('button');
+  calcBtn.style.cssText = 'width:100%;height:44px;background:var(--primary100);border:1px solid var(--primary500);border-radius:10px;color:var(--primary500);font-size:15px;font-weight:600;cursor:pointer;';
+  calcBtn.textContent = '계산하기';
+  calcBtn.onclick = () => { S.npsCalcDone = true; render('P7'); };
+  calcBtnWrap.appendChild(calcBtn);
+
+  noArea.appendChild(mkDivider());
+  noArea.appendChild(incG);
+  noArea.appendChild(joinG);
+  noArea.appendChild(payEndField);
+  noArea.appendChild(calcBtnWrap);
+  noArea.appendChild(resultCard);
+
+  const cards = mkChoiceCards(
+    [
+      { label: '네, 알고 있어요', value: 'yes' },
+      { label: '아니요, 계산해 볼게요', value: 'no' },
+    ],
+    S.knowsNPS,
+    v => {
+      S.knowsNPS = v;
+      S.npsCalcDone = false;
+      render('P7');
+    }
+  );
+
+  const scroll = mkScroll(
+    (() => { const h = div('section-header'); h.innerHTML = '국민연금 예상 수령액을<br>알고 있나요?'; return h; })(),
+    (() => { const s = div('sub-header'); s.innerHTML = '국민연금 수령액을 알면 더 정확한<br>인출 전략을 세울 수 있어요'; return s; })(),
+    cards,
+    yesArea,
+    noArea,
+  );
+  frag.appendChild(scroll);
+  // CTA: 네→항상 활성 / 아니요→계산 완료 후 활성
+  const ctaActive = S.knowsNPS === 'yes' || (S.knowsNPS === 'no' && S.npsCalcDone);
+  const ctaArea = div('cta-area');
+  const ctaBtn = document.createElement('button');
+  ctaBtn.className = 'cta-btn' + (ctaActive ? '' : '');
+  ctaBtn.textContent = '다음';
+  ctaBtn.disabled = !ctaActive;
+  ctaBtn.onclick = () => go('P8');
+  ctaArea.appendChild(ctaBtn);
+  frag.appendChild(ctaArea);
+  return toDiv(frag);
+}
+
+// ── P8: 근로소득자+연봉 [병합] (5/7) ─────────────────────────────
+function renderP8() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('인출설계'));
+  frag.appendChild(mkStep(5, 7));
+
+  let selectedIncome = S.hasWorkIncome;
+
+  const expandArea = div('expandable' + (selectedIncome === 'yes' ? ' open' : ''));
+
+  const salaryInp = document.createElement('input');
+  salaryInp.className = 'field-input';
+  salaryInp.type = 'text';
+  salaryInp.placeholder = '세전 연봉을 입력해 주세요';
+  salaryInp.value = S.salary;
+  salaryInp.oninput = () => { S.salary = salaryInp.value; };
+  const salarySuf = div('field-suffix'); salarySuf.textContent = '만원';
+  const salaryRow = div('field-row'); salaryRow.appendChild(salaryInp); salaryRow.appendChild(salarySuf);
+  const salaryG = div('field-group');
+  const sl = div('field-label'); sl.textContent = '연봉 (세전)'; salaryG.appendChild(sl);
+  salaryG.appendChild(salaryRow);
+
+  const tenureInp = document.createElement('input');
+  tenureInp.className = 'field-input';
+  tenureInp.type = 'text';
+  tenureInp.placeholder = '근속연수를 입력해 주세요';
+  tenureInp.value = S.tenure;
+  tenureInp.oninput = () => { S.tenure = tenureInp.value; };
+  const tenureSuf = div('field-suffix'); tenureSuf.textContent = '년';
+  const tenureRow = div('field-row'); tenureRow.appendChild(tenureInp); tenureRow.appendChild(tenureSuf);
+  const tenureG = div('field-group');
+  const tl = div('field-label'); tl.textContent = '근속연수 (만 연수)'; tenureG.appendChild(tl);
+  tenureG.appendChild(tenureRow);
+  const tenureHelper = div('helper-text'); tenureHelper.textContent = '현재 재직 중인 회사의 근속연수를 입력해 주세요';
+  tenureG.appendChild(tenureHelper);
+
+  expandArea.appendChild(mkDivider());
+  expandArea.appendChild(salaryG);
+  expandArea.appendChild(tenureG);
+
+  const cards = mkChoiceCards(
+    [
+      { label: '네, 있어요', value: 'yes' },
+      { label: '아니요, 없어요', value: 'no' },
+    ],
+    selectedIncome,
+    v => {
+      S.hasWorkIncome = v;
+      selectedIncome = v;
+      if (v === 'yes') expandArea.classList.add('open');
+      else expandArea.classList.remove('open');
+      // re-render to update card selection
+      render('P8');
+    }
+  );
+
+  const scroll = mkScroll(
+    (() => { const h = div('section-header'); h.textContent = '현재 근로소득이 있나요?'; return h; })(),
+    (() => { const s = div('sub-header'); s.textContent = '퇴직금 예상액 산출에 필요해요.'; return s; })(),
+    cards,
+    expandArea,
+  );
+  frag.appendChild(scroll);
+  frag.appendChild(mkCTA('다음', () => go('P9')));
+  return toDiv(frag);
+}
+
+// ── P9: 기타소득+입력 [병합] (6/7) ────────────────────────────────
+function renderP9() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('인출설계'));
+  frag.appendChild(mkStep(6, 7));
+
+  const expandArea = div('expandable' + (S.hasExtraIncome === 'yes' ? ' open' : ''));
+
+  const incomeInp = document.createElement('input');
+  incomeInp.className = 'field-input';
+  incomeInp.type = 'text';
+  incomeInp.placeholder = '연소득을 입력해 주세요';
+  incomeInp.value = S.extraIncome;
+  incomeInp.oninput = () => { S.extraIncome = incomeInp.value; };
+  const incomeSuf = div('field-suffix'); incomeSuf.textContent = '만원/년';
+  const incomeRow = div('field-row'); incomeRow.appendChild(incomeInp); incomeRow.appendChild(incomeSuf);
+  const incomeG = div('field-group');
+  const il = div('field-label'); il.textContent = '연소득 (세전)'; incomeG.appendChild(il);
+  incomeG.appendChild(incomeRow);
+  const incHelper = div('helper-text'); incHelper.textContent = '월세, 임대 수입, 배당금 등 근로소득 외 정기적으로 받는 소득의 연간 합계'; incomeG.appendChild(incHelper);
+
+  const startField = mkReadonlyField('소득 시작 시기', S.retireAge + '세 (은퇴시기 연동)', '앞서 입력한 은퇴 시기가 자동 적용돼요');
+  const endField   = mkReadonlyField('소득 종료 시기', S.lifeExpect + '세 (기대수명 연동)', '앞서 입력한 기대수명이 자동 적용돼요');
+
+  expandArea.appendChild(mkDivider());
+  expandArea.appendChild(incomeG);
+  expandArea.appendChild(startField);
+  expandArea.appendChild(endField);
+
+  const cards = mkChoiceCards(
+    [
+      { label: '네, 있어요', value: 'yes' },
+      { label: '아니요, 없어요', value: 'no' },
+    ],
+    S.hasExtraIncome,
+    v => {
+      S.hasExtraIncome = v;
+      if (v === 'yes') expandArea.classList.add('open');
+      else expandArea.classList.remove('open');
+      render('P9');
+    }
+  );
+
+  const scroll = mkScroll(
+    (() => { const h = div('section-header'); h.innerHTML = '은퇴 후 기타 정기소득이<br>있거나 예정인가요?'; return h; })(),
+    (() => { const s = div('sub-header'); s.innerHTML = '은퇴 후 정기적으로 받으실 소득을<br>알려주세요'; return s; })(),
+    cards,
+    expandArea,
+  );
+  frag.appendChild(scroll);
+  frag.appendChild(mkCTA('다음', () => go('P10')));
+  return toDiv(frag);
+}
+
+// ── P10: 결과 확인 (7/7) ───────────────────────────────────────────
+function renderP10() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('인출설계'));
+  frag.appendChild(mkStep(7, 7));
+
+  const npsValue = S.knowsNPS === 'yes'
+    ? (S.npsAmount ? S.npsAmount + '만원/월 (세전)' : '—')
+    : (S.npsCalcDone ? '약 120만원 (세전)' : '—');
+
+  const items = [
+    { label: '은퇴 예상 시기',    value: S.retireAge + '세',              page: 'P4' },
+    { label: '기대수명',          value: S.lifeExpect + '세',             page: 'P5' },
+    { label: '월 생활비',         value: S.monthlyExpense + '만원',       page: 'P6' },
+    { label: '국민연금 월 수령액', value: npsValue,                       page: 'P7' },
+    { label: '근로소득',          value: S.hasWorkIncome === 'yes' && S.salary ? '연봉 ' + S.salary + '만원 / 근속 ' + (S.tenure || '?') + '년' : '없음', page: 'P8' },
+    { label: '기타 정기소득',     value: S.hasExtraIncome === 'yes' && S.extraIncome ? S.extraIncome + '만원/년' : '없음', page: 'P9' },
+  ];
+
+  const list = div('');
+  list.style.cssText = 'display:flex;flex-direction:column;';
+  items.forEach((item, i) => {
+    const row = div('summary-row');
+    if (i > 0) row.style.borderTop = '1px solid var(--gray100)';
+    const info = div('summary-info');
+    const lbl = div('summary-label'); lbl.textContent = item.label; info.appendChild(lbl);
+    const val = div('summary-value'); val.textContent = item.value; info.appendChild(val);
+    row.appendChild(info);
+    const btn = document.createElement('button');
+    btn.className = 'edit-btn';
+    btn.textContent = '수정';
+    btn.onclick = () => go(item.page);
+    row.appendChild(btn);
+    list.appendChild(row);
+  });
+
+  const scroll = mkScroll(
+    (() => { const h = div('section-header'); h.innerHTML = '입력하신 내용을<br>확인해 주세요'; return h; })(),
+    (() => { const s = div('sub-header'); s.textContent = '수정이 필요한 항목을 탭하면 해당 화면으로 이동합니다.'; return s; })(),
+    list,
+  );
+  frag.appendChild(scroll);
+  frag.appendChild(mkCTA('FA에게 전달하기', () => {
+    updateState();
+    go(S.termsAgreed ? 'P12' : 'P11');
+  }));
+  return toDiv(frag);
+}
+
+// ── P11: 약관동의 ──────────────────────────────────────────────────
+function renderP11() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('약관 동의'));
+
+  const allCheck = div('terms-all');
+  const allChk = div('term-check checked'); allChk.textContent = '✓'; allCheck.appendChild(allChk);
+  const allLbl = document.createElement('span'); allLbl.textContent = '전체 동의'; allCheck.appendChild(allLbl);
+
+  const terms = [
+    { badge: '필수', title: '인출설계 서비스 이용약관', checked: true },
+    { badge: '필수', title: '개인정보 수집·이용 동의', checked: true },
+    { badge: '필수', title: '개인정보 제3자 제공 동의', checked: true },
+    { badge: '선택', title: '마케팅 정보 수신 동의', checked: false },
+  ];
+
+  const termList = div('');
+  termList.style.cssText = 'display:flex;flex-direction:column;';
+  terms.forEach(t => {
+    const row = div('term-row');
+    const chk = div('term-check' + (t.checked ? ' checked' : '')); chk.textContent = t.checked ? '✓' : ''; row.appendChild(chk);
+    const info = div('term-info');
+    const badge = document.createElement('span');
+    badge.className = 'term-badge' + (t.badge === '선택' ? ' opt' : '');
+    badge.textContent = t.badge;
+    const title = document.createTextNode(t.title);
+    const titleLine = div('term-title');
+    titleLine.appendChild(badge);
+    titleLine.appendChild(title);
+    info.appendChild(titleLine);
+    row.appendChild(info);
+    const link = div('term-link'); link.textContent = '보기'; row.appendChild(link);
+    termList.appendChild(row);
+  });
+
+  const scroll = mkScroll(
+    (() => { const h = div('section-header'); h.innerHTML = '인출설계 서비스 이용을 위해<br>약관에 동의해 주세요'; return h; })(),
+    allCheck,
+    mkDivider(),
+    termList,
+    (() => { const h = div('helper-text'); h.textContent = '필수 항목에 모두 동의해야 서비스를 이용할 수 있어요.'; return h; })(),
+  );
+  frag.appendChild(scroll);
+  frag.appendChild(mkCTA('동의하고 전달하기', () => go('P12')));
+  return toDiv(frag);
+}
+
+// ── P12: 전송 로딩 ─────────────────────────────────────────────────
+function renderP12() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('인출설계', false));
+  const center = div('loading-center');
+  const spinner = div('spinner');
+  const ring = div('spinner-ring'); spinner.appendChild(ring);
+  const arc = div('spinner-arc'); spinner.appendChild(arc);
+  center.appendChild(spinner);
+  const title = div('loading-title'); title.innerHTML = '회원님의 은퇴 후 30년을<br>준비하고 있어요'; center.appendChild(title);
+  const sub = div('loading-sub'); sub.textContent = '담당 FA에게 전달 중이에요.'; center.appendChild(sub);
+  frag.appendChild(center);
+  const wrap = toDiv(frag);
+  setTimeout(() => go('P13'), 2500);
+  return wrap;
+}
+
+// ── P13: 전달 완료 ─────────────────────────────────────────────────
+function renderP13() {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(mkTopNav('인출설계', false));
+
+  const center = div('complete-center');
+  const outer = div('check-outer');
+  const inner = div('check-inner'); inner.textContent = '✓'; outer.appendChild(inner);
+  center.appendChild(outer);
+
+  const title = div('complete-title'); title.innerHTML = '인출설계 첫 걸음을<br>내딛으셨어요'; center.appendChild(title);
+
+  const box = div('impact-box');
+  box.innerHTML = '은퇴 후 30년,<br>준비된 인출 전략이<br>노후를 지켜줍니다.';
+  center.appendChild(box);
+
+  const sub1 = div('sub-header');
+  sub1.style.textAlign = 'center';
+  sub1.innerHTML = '입력하신 정보를 바탕으로 맞춤 은퇴 설계<br>리포트를 준비하겠습니다';
+  center.appendChild(sub1);
+
+  const sub2 = div('sub-header');
+  sub2.style.textAlign = 'center';
+  sub2.innerHTML = '담당 FA가 맞춤 인출 전략으로<br>곧 연락드릴게요.';
+  center.appendChild(sub2);
+
+  const helper = div('helper-text');
+  helper.style.textAlign = 'center';
+  helper.textContent = '평균 1~2영업일 내 연락을 드려요.';
+  center.appendChild(helper);
+
+  frag.appendChild(center);
+  frag.appendChild(mkCTA('홈으로 돌아가기', () => go('P1', true)));
+  return toDiv(frag);
+}
+
+// ── Utility ────────────────────────────────────────────────────────
+function toDiv(frag) {
+  const d = document.createElement('div');
+  d.style.cssText = 'display:flex;flex-direction:column;height:100%;';
+  d.appendChild(frag);
+  return d;
+}
+
+// ── Boot ───────────────────────────────────────────────────────────
+go('P1', true);
+</script>
+</body>
+</html>

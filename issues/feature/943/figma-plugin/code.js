@@ -71,9 +71,6 @@ figma.ui.onmessage = async (msg) => {
       if (msg.pages.includes(11)) frames.push(buildPage11());
       if (msg.pages.includes(12)) frames.push(buildPage12());
       if (msg.pages.includes(13)) frames.push(buildPage13());
-      if (msg.pages.includes(14)) frames.push(buildPage14());
-      if (msg.pages.includes(15)) frames.push(buildPage15());
-      if (msg.pages.includes(16)) frames.push(buildPage16());
 
       let xOff = 0;
       for (const f of frames) {
@@ -728,7 +725,7 @@ function buildPage3() {
 // P4: 언제 은퇴하고 싶으신가요? (1/10) — 슬라이더 스타일
 function buildPage4() {
   const { root, scroll } = buildRoot('P4 - 은퇴 시기', {
-    ctaLabel: '다음', pageNo: 1, pageTotal: 8,
+    ctaLabel: '다음', pageNo: 1, pageTotal: 7,
   });
 
   // Question header
@@ -771,7 +768,7 @@ function buildPage4() {
 // P4b: 기대수명은 얼마로 생각하시나요? (2/10)
 function buildPage5() {
   const { root, scroll } = buildRoot('P5 - 기대수명', {
-    ctaLabel: '다음', pageNo: 2, pageTotal: 8,
+    ctaLabel: '다음', pageNo: 2, pageTotal: 7,
   });
 
   const qHeader = mkText('기대수명은 얼마로\n생각하시나요?', 22, 'bold', C.text900);
@@ -811,7 +808,7 @@ function buildPage5() {
 // P4c: 노후 월 생활비는 얼마나 생각하세요? (3/10)
 function buildPage6() {
   const { root, scroll } = buildRoot('P6 - 월 생활비', {
-    ctaLabel: '다음', pageNo: 3, pageTotal: 8,
+    ctaLabel: '다음', pageNo: 3, pageTotal: 7,
   });
 
   const qHeader = mkText('은퇴 후 연금을 얼마씩\n받고 싶으세요?', 22, 'bold', C.text900);
@@ -850,169 +847,94 @@ function buildPage6() {
 }
 
 // P5: 국민연금 Y/N (2/8)
+// P7: 국민연금 Y/N + 입력 [병합] (4/7)
+// "아니요" 선택 시 계산기 필드 펼침 + 인라인 결과 카드 — 스케치는 "아니요"+결과 카드 상태로 표시
 function buildPage7() {
-  const { root, scroll } = buildRoot('P7 - 국민연금 수령액 여부', {
-    cta: false, pageNo: 4, pageTotal: 8,
+  const { root, scroll } = buildRoot('P7 - 국민연금[병합]', {
+    ctaLabel: '다음', pageNo: 4, pageTotal: 7,
   });
 
   scroll.appendChild(buildSectionHeader('국민연금 예상 수령액을\n알고 있나요?'));
+  scroll.appendChild(buildSubHeader('국민연금 수령액을 알면 더 정확한\n인출 전략을 세울 수 있어요'));
 
+  // Y/N 선택 카드 — "아니요" 선택 상태로 표시 (계산기 경로)
   const cards = vf('Choice Cards', CONTENT_W, 1, { gap: 12 });
   cards.fills = [];
   cards.primaryAxisSizingMode = 'AUTO';
   cards.appendChild(buildChoiceCard('네, 알고 있어요', false));
-  cards.appendChild(buildChoiceCard('아니요, 계산해 볼게요', false));
+  cards.appendChild(buildChoiceCard('아니요, 계산해 볼게요', true)); // selected
   scroll.appendChild(cards);
 
-  return root;
-}
+  // 구분선 (선택 후 하단 입력 영역 시작)
+  const divider = mkRect(CONTENT_W, 1, C.gray200);
+  scroll.appendChild(divider);
 
-// P6: 국민연금 계산기 — 레퍼런스 스타일 (5/10)
-function buildPage8() {
-  const { root, scroll } = buildRoot('P8 - 국민연금 계산기', {
-    ctaLabel: '계산하기', pageNo: 5, pageTotal: 8,
-  });
+  // 계산기 필드 — "아니요" 선택 시 펼쳐지는 영역
+  const g1 = vf('Field - 연소득', CONTENT_W, 1, { gap: 6 });
+  g1.fills = [];
+  g1.primaryAxisSizingMode = 'AUTO';
+  g1.appendChild(buildLabel('연소득 (세전)'));
+  g1.appendChild(buildTextInput('세전 연소득을 입력해 주세요', '만원'));
+  scroll.appendChild(g1);
 
-  // Reference style: large bold question header
-  const qHeader = mkText('연 소득 금액을 입력해 주세요.', 22, 'bold', C.text900);
-  qHeader.lineHeight = { value: 135, unit: 'PERCENT' };
-  qHeader.letterSpacing = { value: -0.3, unit: 'PIXELS' };
-  scroll.appendChild(qHeader);
-  qHeader.layoutSizingHorizontal = 'FILL';
-
-  scroll.appendChild(buildSubHeader('은퇴 시 퇴직연금 예상 수령액 계산과\n소득 추이를 예상하기 위해 필요한 정보예요.'));
-
-  const sp = mkRect(CONTENT_W, 8, C.white, 0, 0);
-  sp.fills = [];
-  scroll.appendChild(sp);
-
-  // Large input — reference style (value + unit)
-  const inputBox = hf('Large Input', CONTENT_W, 64, {
-    bg: C.white, radius: 8, px: 0,
-    stroke: C.gray200, strokeW: 1,
-    align: 'CENTER', justify: 'SPACE_BETWEEN',
-  });
-  inputBox.paddingBottom = 16;
-  inputBox.fills = [];
-  // Bottom border only — simulate with a rectangle below
-  const inputWrap = vf('Input Wrap', CONTENT_W, 1, { gap: 8 });
-  inputWrap.fills = [];
-  inputWrap.primaryAxisSizingMode = 'AUTO';
-
-  const inputRow = hf('Input Row', CONTENT_W, 52, {
-    align: 'CENTER', justify: 'SPACE_BETWEEN',
-  });
-  inputRow.fills = [];
-  const valText = mkText('6,000', 28, 'bold', C.text800);
-  valText.letterSpacing = { value: -0.5, unit: 'PIXELS' };
-  inputRow.appendChild(valText);
-  valText.layoutSizingHorizontal = 'FILL';
-  const unitText = mkText('만원', 14, 'medium', C.text500);
-  inputRow.appendChild(unitText);
-  inputWrap.appendChild(inputRow);
-
-  // Bottom border line
-  const divider = mkRect(CONTENT_W, 1, C.gray400);
-  inputWrap.appendChild(divider);
-  divider.layoutSizingHorizontal = 'FILL';
-
-  scroll.appendChild(inputWrap);
-  inputWrap.layoutSizingHorizontal = 'FILL';
-
-  scroll.appendChild(buildHelperText('· 고용노동부의 소득 데이터와 물가상승률을 이용해요.'));
-
-  const g2 = vf('Field - 가입시기', CONTENT_W, 1, { gap: 6 });
+  const g2 = vf('Field - 최초가입시기', CONTENT_W, 1, { gap: 6 });
   g2.fills = [];
   g2.primaryAxisSizingMode = 'AUTO';
   g2.appendChild(buildLabel('국민연금 최초 가입 시기'));
-  const selectRow = hf('Select Row', CONTENT_W, 48, { gap: 8 });
-  selectRow.fills = [];
-  const halfW = Math.floor((CONTENT_W - 8) / 2);
-  selectRow.appendChild(buildSelectBox('2000년', halfW));
-  selectRow.appendChild(buildSelectBox('1월', halfW));
-  g2.appendChild(selectRow);
+  const selRow = hf('Select Row', CONTENT_W, 1, { gap: 8 });
+  selRow.fills = [];
+  selRow.primaryAxisSizingMode = 'FIXED';
+  selRow.counterAxisSizingMode = 'AUTO';
+  const selYear = buildSelectBox('연도 선택');
+  const selMonth = buildSelectBox('월 선택');
+  selYear.layoutGrow = 1;
+  selMonth.layoutGrow = 1;
+  selRow.appendChild(selYear);
+  selRow.appendChild(selMonth);
+  g2.appendChild(selRow);
   scroll.appendChild(g2);
 
   const g3 = vf('Field - 납입종료', CONTENT_W, 1, { gap: 6 });
   g3.fills = [];
   g3.primaryAxisSizingMode = 'AUTO';
-  g3.appendChild(buildLabel('납입 종료 예정'));
-  g3.appendChild(buildReadonlyField('2051년 (은퇴시기 연동)'));
-  g3.appendChild(buildHelperText('은퇴시기와 동일하게 적용됩니다'));
+  g3.appendChild(buildLabel('납입 종료 예정일'));
+  g3.appendChild(buildReadonlyField('은퇴 시기 자동 적용'));
+  g3.appendChild(buildHelperText('앞서 입력한 은퇴 시기가 자동 적용돼요'));
   scroll.appendChild(g3);
 
-  scroll.appendChild(buildHelperText('실제 수령액은 국민연금공단 기준과 다를 수 있어요.'));
+  // 인라인 계산 결과 카드 ("계산하기" 후 표시되는 상태)
+  const resultCard = vf('Result Card', CONTENT_W, 1, { gap: 12 });
+  resultCard.fills = [{ type: 'SOLID', color: C.primary100 }];
+  resultCard.cornerRadius = 12;
+  resultCard.paddingTop = 16;
+  resultCard.paddingBottom = 16;
+  resultCard.paddingLeft = 16;
+  resultCard.paddingRight = 16;
+  resultCard.primaryAxisSizingMode = 'AUTO';
 
-  return root;
-}
+  const resultLabel = figma.createText();
+  resultLabel.characters = '예상 국민연금 월수령액';
+  resultLabel.fontName = { family: 'Pretendard', style: 'Regular' };
+  resultLabel.fontSize = 13;
+  resultLabel.fills = [{ type: 'SOLID', color: C.gray600 }];
+  resultCard.appendChild(resultLabel);
 
-// P7: 국민연금 직접입력 (3/8)
-function buildPage9() {
-  const { root, scroll } = buildRoot('P9 - 국민연금 직접입력', {
-    ctaLabel: '다음', pageNo: 5, pageTotal: 8,
-  });
+  const resultAmount = figma.createText();
+  resultAmount.characters = '약 120만원 (세전)';
+  resultAmount.fontName = { family: 'Pretendard', style: 'Bold' };
+  resultAmount.fontSize = 20;
+  resultAmount.fills = [{ type: 'SOLID', color: C.primary500 }];
+  resultCard.appendChild(resultAmount);
 
-  scroll.appendChild(buildSectionHeader('국민연금 예상 월수령액을\n입력해 주세요'));
-  scroll.appendChild(buildSubHeader('예상 국민연금 월 수령액을\n알려주세요'));
+  const recalcBtn = figma.createText();
+  recalcBtn.characters = '다시 계산하기';
+  recalcBtn.fontName = { family: 'Pretendard', style: 'Regular' };
+  recalcBtn.fontSize = 13;
+  recalcBtn.fills = [{ type: 'SOLID', color: C.gray500 }];
+  recalcBtn.textDecoration = 'UNDERLINE';
+  resultCard.appendChild(recalcBtn);
 
-  const group = vf('Field Group', CONTENT_W, 1, { gap: 6 });
-  group.fills = [];
-  group.primaryAxisSizingMode = 'AUTO';
-  group.appendChild(buildLabel('월 수령액 (세전)'));
-  group.appendChild(buildTextInput('예상 월수령액을 입력해 주세요', '만원/월'));
-  scroll.appendChild(group);
-
-  return root;
-}
-
-// P8: 마이데이터 IRP/DC 자산 확인 (4/8)
-function buildPage10() {
-  const { root, scroll } = buildRoot('P10 - IRP/DC 자산 확인', {
-    ctaLabel: '다음', pageNo: 6, pageTotal: 8,
-  });
-
-  scroll.appendChild(buildSectionHeader('연결된 퇴직연금을\n확인해 주세요'));
-  scroll.appendChild(buildSubHeader('마이데이터로 연결된 퇴직연금 계좌입니다.'));
-
-  const accounts = [
-    { bank: '삼성증권', type: 'IRP', amount: '2,450만원' },
-    { bank: '미래에셋증권', type: 'DC', amount: '3,120만원' },
-    { bank: '한국투자증권', type: 'ISA', amount: '890만원' },
-  ];
-
-  for (const acc of accounts) {
-    // DS: Cell/List Item Active — r=8, bg=#EBF5FF, pad h12/v14
-    const card = hf('Account Card', CONTENT_W, 72, {
-      bg: C.white, radius: 8, px: 16, align: 'CENTER', gap: 12,
-      stroke: C.gray400, strokeW: 1,
-    });
-    card.primaryAxisAlignItems = 'MIN';
-
-    // DS: Checkbox/Square/Md Checked — 18×18px, r=4, fill=#2E9BFF
-    const checkBox = hf('Checkbox', 20, 20, {
-      radius: 4, align: 'CENTER', justify: 'CENTER',
-      bg: C.primary500,
-    });
-    const checkMark = mkText('✓', 13, 'bold', C.white);
-    checkMark.textAlignHorizontal = 'CENTER';
-    checkBox.appendChild(checkMark);
-    checkBox.primaryAxisAlignItems = 'CENTER';
-    checkBox.counterAxisAlignItems = 'CENTER';
-    card.appendChild(checkBox);
-
-    const info = vf('Info', CONTENT_W - 48, 44, { gap: 4 });
-    info.fills = [];
-    // DS: Subtitle/Small — 14px/600
-    info.appendChild(mkText(acc.bank + '  ' + acc.type, 14, 'semibold', C.text900));
-    // DS: Body/Caption — 12px/400
-    info.appendChild(mkText('평가금액 ' + acc.amount, 12, 'regular', C.text500));
-    card.appendChild(info);
-    info.layoutSizingHorizontal = 'FILL';
-
-    scroll.appendChild(card);
-  }
-
-  scroll.appendChild(buildHelperText('계좌 정보는 마이데이터 기준이며, 실제 잔액과 차이가 있을 수 있어요.'));
+  scroll.appendChild(resultCard);
 
   return root;
 }
@@ -1020,9 +942,9 @@ function buildPage10() {
 // P9: 근로소득자 여부 (5/8)
 // P11: 근로소득자 질문 + 연봉/근속연수 입력 (병합, 6/8)
 // "네" 선택 시 입력 영역 펼침 — 스케치는 펼쳐진 상태로 표시
-function buildPage11() {
-  const { root, scroll } = buildRoot('P11 - 근로소득자+연봉(병합)', {
-    ctaLabel: '다음', pageNo: 6, pageTotal: 8,
+function buildPage8() {
+  const { root, scroll } = buildRoot('P8 - 근로소득자+연봉(병합)', {
+    ctaLabel: '다음', pageNo: 5, pageTotal: 7,
   });
 
   scroll.appendChild(buildSectionHeader('현재 근로소득이 있나요?'));
@@ -1060,9 +982,9 @@ function buildPage11() {
 
 // P12: 기타 정기소득 질문 + 입력 (병합, 7/8)
 // "네" 선택 시 입력 영역 펼침 — 스케치는 펼쳐진 상태로 표시
-function buildPage12() {
-  const { root, scroll } = buildRoot('P12 - 기타소득(병합)', {
-    ctaLabel: '다음', pageNo: 7, pageTotal: 8,
+function buildPage9() {
+  const { root, scroll } = buildRoot('P9 - 기타소득(병합)', {
+    ctaLabel: '다음', pageNo: 6, pageTotal: 7,
   });
 
   scroll.appendChild(buildSectionHeader('은퇴 후 기타 정기소득이\n있거나 예정인가요?'));
@@ -1108,9 +1030,9 @@ function buildPage12() {
 }
 
 // P13: 설문 결과 확인 (8/8)
-function buildPage13() {
-  const { root, scroll } = buildRoot('P13 - 결과 확인', {
-    ctaLabel: 'FA에게 전달하기', pageNo: 8, pageTotal: 8,
+function buildPage10() {
+  const { root, scroll } = buildRoot('P10 - 결과 확인', {
+    ctaLabel: 'FA에게 전달하기', pageNo: 7, pageTotal: 7,
   });
 
   scroll.appendChild(buildSectionHeader('입력하신 내용을\n확인해 주세요'));
@@ -1121,8 +1043,7 @@ function buildPage13() {
     { label: '기대수명', value: '100세' },
     { label: '월 생활비', value: '324만원' },
     { label: '국민연금 월 수령액', value: '120만원 (세전)' },
-    { label: '퇴직연금', value: '3개 계좌 / 6,460만원' },
-    { label: '근로소득', value: '연봉 5,000만원 / 근속 15년' },
+{ label: '근로소득', value: '연봉 5,000만원 / 근속 15년' },
     { label: '기타 정기소득', value: '없음' },
   ];
 
@@ -1174,8 +1095,8 @@ function buildPage13() {
 }
 
 // P14: T0054 약관동의
-function buildPage14() {
-  const { root, scroll } = buildRoot('P14 - 약관동의', {
+function buildPage11() {
+  const { root, scroll } = buildRoot('P11 - 약관동의', {
     navTitle: '약관 동의', ctaLabel: '동의하고 전달하기',
   });
 
@@ -1254,8 +1175,8 @@ function buildPage14() {
 }
 
 // P15: 전송 로딩
-function buildPage15() {
-  const { root, scroll } = buildRoot('P15 - 전송 로딩', {
+function buildPage12() {
+  const { root, scroll } = buildRoot('P12 - 전송 로딩', {
     navTitle: '인출설계', cta: false,
   });
 
@@ -1303,8 +1224,8 @@ function buildPage15() {
 }
 
 // P16: 전달 완료
-function buildPage16() {
-  const { root, scroll } = buildRoot('P16 - 전달 완료', {
+function buildPage13() {
+  const { root, scroll } = buildRoot('P13 - 전달 완료', {
     navTitle: '인출설계', ctaLabel: '홈으로 돌아가기',
   });
 
