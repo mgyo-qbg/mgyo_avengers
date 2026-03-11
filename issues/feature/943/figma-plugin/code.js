@@ -1276,7 +1276,7 @@ function buildPage13() {
 const FC = {
   NW: 220, NH: 64,
   VG: 56,
-  COL: { L: 100, C: 400, R: 700 },
+  COL: { LL: -200, L: 100, C: 400, R: 700 },
   COLOR: {
     start:    { bg: hex( 46, 201, 114), text: C.white },
     end:      { bg: hex( 46, 201, 114), text: C.white },
@@ -1287,65 +1287,88 @@ const FC = {
   },
 };
 
+// FC_NODES — 943spec.md Mermaid 1:1 매핑 (25개)
 const FC_NODES = [
-  ['ENTRY',        '인출설계 설문\n입력 진입점',              'start',    'C',  0 ],
-  ['FA_YN',        '매칭된 FA 유무?',                        'decision', 'C',  1 ],
-  ['FA_AUTO',      'qb.event 계정에\nFA 자동 매칭',          'action',   'L',  2 ],
-  ['SURVEY_START', '설문입력\n시작 페이지',                  'page',     'C',  3 ],
-  ['MYDATA_YN',    '마데 절세형/일반형\n자산 보유?',         'decision', 'C',  4 ],
-  ['ASSET_NONE',   '자산없음\n경고 페이지',                  'terminal', 'R',  4 ],
-  ['EXPENSE',      '은퇴시기·기대수명\n은퇴 후 생활비 입력', 'page',     'C',  5 ],
-  ['NPS_Q',        '국민연금 예상 수령액을\n아시나요?',       'page',     'C',  6 ],
-  ['NPS_YN',       '안다 / 모른다?',                         'decision', 'C',  7 ],
-  ['NPS_CALC',     '국민연금\n계산기 입력',                  'page',     'L',  8 ],
-  ['NPS_DIRECT',   '국민연금\n월수령액 직접입력',            'page',     'R',  8 ],
-  ['DC_YN',        'DC 자산\n보유여부?',                     'decision', 'C',  9 ],
-  ['IRP_DC',       '마이데이터\nIRP/DC 자산 확인',           'page',     'R', 10 ],
-  ['WORKER_Q',     '근로소득자\n이신가요?',                  'page',     'C', 10 ],
-  ['WORKER_YN',    '근로소득자?',                            'decision', 'C', 11 ],
-  ['SALARY',       '현재연봉·근속연수\n입력 페이지',         'page',     'L', 12 ],
-  ['EXTRA_Q',      '기타 정기소득이\n있나요?',               'page',     'C', 13 ],
-  ['EXTRA_YN',     '기타 정기소득\n유무?',                   'decision', 'C', 14 ],
-  ['EXTRA_INPUT',  '기타 정기소득\n입력 페이지',             'page',     'R', 15 ],
-  ['RESULT',       '설문 결과전달\n페이지',                  'page',     'C', 16 ],
-  ['TERMS_YN',     'T0054\n약관동의?',                       'decision', 'C', 17 ],
-  ['TERMS',        'T0054 약관동의\n페이지',                 'page',     'L', 18 ],
-  ['SENDING',      '설문결과\n전송 로딩',                    'page',     'C', 19 ],
-  ['DONE',         '설문 결과전달\n완료',                    'page',     'C', 20 ],
-  ['HOME',         '베러웰스 홈',                            'end',      'C', 21 ],
+  ['ENTRY',      '인출설계 설문\n입력 진입점',               'start',    'C',   0 ],
+  ['FA_YN',      '매칭된 FA 유무?',                         'decision', 'C',   1 ],
+  ['FA_AUTO',    'qb.event 계정에\nFA 자동 매칭',           'action',   'L',   2 ],
+  ['P1',         'P1 설문 시작\n페이지',                     'page',     'C',   3 ],
+  ['MYDATA_YN',  '마데 절세형/일반형\n자산 보유?',          'decision', 'C',   4 ],
+  ['P3',         'P3 자산없음\n경고 페이지',                 'terminal', 'R',   4 ],
+  ['P4',         'P4 은퇴시기',                              'page',     'C',   5 ],
+  ['P5',         'P5 기대수명',                              'page',     'C',   6 ],
+  ['P6',         'P6 월 생활비',                             'page',     'C',   7 ],
+  // --- P7 subgraph ---
+  ['NPS_YN',     '국민연금 예상 수령액을\n알고 있나요?',     'decision', 'C',   8 ],
+  ['NPS_YES',    '월수령액\n직접 입력 펼침',                 'action',   'L',   9 ],
+  ['NPS_NO',     '계산기 입력 +\n인라인 결과 펼침',          'action',   'R',   9 ],
+  // --- P7 end ---
+  ['DC_YN',      'DC 자산 보유?\n마이데이터 기준',          'decision', 'C',  10 ],
+  // --- P8 subgraph (left) ---
+  ['WORK_YN',    '현재 근로소득이\n있나요?',                 'decision', 'L',  11 ],
+  ['WORK_YES',   '연봉·근속연수\n입력 펼침',                 'action',   'LL', 12 ],
+  ['WORK_NO',    '입력 없음',                                'action',   'L',  12 ],
+  // --- P8 end ---
+  // --- P9 subgraph ---
+  ['EXTRA_YN',   '은퇴 후 기타\n정기소득이 있나요?',         'decision', 'C',  13 ],
+  ['EXTRA_YES',  '연소득·시작/종료\n입력 펼침',              'action',   'L',  14 ],
+  ['EXTRA_NO',   '입력 없음',                                'action',   'R',  14 ],
+  // --- P9 end ---
+  ['P10',        'P10 설문\n결과 확인',                      'page',     'C',  15 ],
+  ['TERMS_YN',   'T0054\n약관동의?',                        'decision', 'C',  16 ],
+  ['P11',        'P11 T0054\n약관동의',                      'page',     'L',  17 ],
+  ['P12',        'P12 전송 로딩',                            'page',     'C',  18 ],
+  ['P13',        'P13 전달 완료',                            'page',     'C',  19 ],
+  ['HOME',       '베러웰스 홈',                              'end',      'C',  20 ],
 ];
 
+// FC_EDGES — 943spec.md Mermaid 1:1 매핑 (30개)
 const FC_EDGES = [
-  ['ENTRY',       'FA_YN',       '',       'BOTTOM', 'TOP'   ],
-  ['FA_YN',       'FA_AUTO',     'N',      'LEFT',   'TOP'   ],
-  ['FA_YN',       'SURVEY_START','Y',      'BOTTOM', 'TOP'   ],
-  ['FA_AUTO',     'SURVEY_START','',       'BOTTOM', 'LEFT'  ],
-  ['SURVEY_START','MYDATA_YN',   '',       'BOTTOM', 'TOP'   ],
-  ['MYDATA_YN',   'ASSET_NONE',  'N',      'RIGHT',  'LEFT'  ],
-  ['MYDATA_YN',   'EXPENSE',     'Y',      'BOTTOM', 'TOP'   ],
-  ['EXPENSE',     'NPS_Q',       '',       'BOTTOM', 'TOP'   ],
-  ['NPS_Q',       'NPS_YN',      '',       'BOTTOM', 'TOP'   ],
-  ['NPS_YN',      'NPS_CALC',    'N',      'LEFT',   'TOP'   ],
-  ['NPS_YN',      'NPS_DIRECT',  'Y',      'RIGHT',  'TOP'   ],
-  ['NPS_CALC',    'DC_YN',       '',       'BOTTOM', 'LEFT'  ],
-  ['NPS_DIRECT',  'DC_YN',       '',       'BOTTOM', 'RIGHT' ],
-  ['DC_YN',       'IRP_DC',      'Y',      'RIGHT',  'TOP'   ],
-  ['DC_YN',       'WORKER_Q',    'N',      'BOTTOM', 'TOP'   ],
-  ['IRP_DC',      'EXTRA_Q',     '',       'BOTTOM', 'RIGHT' ],
-  ['WORKER_Q',    'WORKER_YN',   '',       'BOTTOM', 'TOP'   ],
-  ['WORKER_YN',   'SALARY',      'Y',      'LEFT',   'TOP'   ],
-  ['WORKER_YN',   'EXTRA_Q',     'N',      'BOTTOM', 'TOP'   ],
-  ['SALARY',      'EXTRA_Q',     '',       'BOTTOM', 'LEFT'  ],
-  ['EXTRA_Q',     'EXTRA_YN',    '',       'BOTTOM', 'TOP'   ],
-  ['EXTRA_YN',    'EXTRA_INPUT', 'Y',      'RIGHT',  'TOP'   ],
-  ['EXTRA_YN',    'RESULT',      'N',      'BOTTOM', 'TOP'   ],
-  ['EXTRA_INPUT', 'RESULT',      '',       'BOTTOM', 'RIGHT' ],
-  ['RESULT',      'TERMS_YN',    '',       'BOTTOM', 'TOP'   ],
-  ['TERMS_YN',    'TERMS',       'N',      'LEFT',   'TOP'   ],
-  ['TERMS_YN',    'SENDING',     'Y',      'BOTTOM', 'TOP'   ],
-  ['TERMS',       'SENDING',     '',       'BOTTOM', 'LEFT'  ],
-  ['SENDING',     'DONE',        '',       'BOTTOM', 'TOP'   ],
-  ['DONE',        'HOME',        '',       'BOTTOM', 'TOP'   ],
+  ['ENTRY',     'FA_YN',    '',           'BOTTOM', 'TOP'   ],
+  ['FA_YN',     'FA_AUTO',  'N',          'LEFT',   'TOP'   ],
+  ['FA_YN',     'P1',       'Y',          'BOTTOM', 'TOP'   ],
+  ['FA_AUTO',   'P1',       '',           'BOTTOM', 'LEFT'  ],
+  ['P1',        'MYDATA_YN','',           'BOTTOM', 'TOP'   ],
+  ['MYDATA_YN', 'P3',       'N',          'RIGHT',  'LEFT'  ],
+  ['MYDATA_YN', 'P4',       'Y',          'BOTTOM', 'TOP'   ],
+  ['P4',        'P5',       '',           'BOTTOM', 'TOP'   ],
+  ['P5',        'P6',       '',           'BOTTOM', 'TOP'   ],
+  ['P6',        'NPS_YN',   '',           'BOTTOM', 'TOP'   ],
+  // P7 subgraph 내부
+  ['NPS_YN',    'NPS_YES',  '네',         'LEFT',   'TOP'   ],
+  ['NPS_YN',    'NPS_NO',   '아니요',     'RIGHT',  'TOP'   ],
+  // P7 → DC_YN (양쪽 경로 수렴)
+  ['NPS_YES',   'DC_YN',    '',           'BOTTOM', 'TOP'   ],
+  ['NPS_NO',    'DC_YN',    '',           'BOTTOM', 'TOP'   ],
+  // DC=Y 바이패스 (RIGHT→RIGHT 직선, x=510)
+  ['DC_YN',     'EXTRA_YN', 'Y P8스킵',  'RIGHT',  'RIGHT' ],
+  // DC=N → P8 subgraph
+  ['DC_YN',     'WORK_YN',  'N',          'LEFT',   'TOP'   ],
+  // P8 subgraph 내부
+  ['WORK_YN',   'WORK_YES', '네',         'LEFT',   'TOP'   ],
+  ['WORK_YN',   'WORK_NO',  '아니요',     'BOTTOM', 'TOP'   ],
+  // P8 → P9 수렴
+  ['WORK_YES',  'EXTRA_YN', '',           'BOTTOM', 'TOP'   ],
+  ['WORK_NO',   'EXTRA_YN', '',           'BOTTOM', 'TOP'   ],
+  // P9 subgraph 내부
+  ['EXTRA_YN',  'EXTRA_YES','네',         'LEFT',   'TOP'   ],
+  ['EXTRA_YN',  'EXTRA_NO', '아니요',     'RIGHT',  'TOP'   ],
+  // P9 → P10 수렴
+  ['EXTRA_YES', 'P10',      '',           'BOTTOM', 'TOP'   ],
+  ['EXTRA_NO',  'P10',      '',           'BOTTOM', 'TOP'   ],
+  ['P10',       'TERMS_YN', '',           'BOTTOM', 'TOP'   ],
+  ['TERMS_YN',  'P11',      'N',          'LEFT',   'TOP'   ],
+  ['TERMS_YN',  'P12',      'Y',          'BOTTOM', 'TOP'   ],
+  ['P11',       'P12',      '',           'BOTTOM', 'LEFT'  ],
+  ['P12',       'P13',      '1초',        'BOTTOM', 'TOP'   ],
+  ['P13',       'HOME',     '',           'BOTTOM', 'TOP'   ],
+];
+
+// FC_SUBGRAPHS — P7/P8/P9 배경 프레임 (Mermaid subgraph 대응)
+const FC_SUBGRAPHS = [
+  { label: 'P7  국민연금 입력 [병합]', rows: [8, 9],   cols: ['L', 'R']  },
+  { label: 'P8  근로소득 입력 [병합]', rows: [11, 12], cols: ['LL', 'L'] },
+  { label: 'P9  기타소득 입력 [병합]', rows: [13, 14], cols: ['L', 'R']  },
 ];
 
 function fcEdgePt(node, magnet) {
@@ -1412,13 +1435,43 @@ async function buildFlowchart() {
 
   const title = figma.createText();
   try { title.fontName = gf('bold'); } catch (_) {}
-  title.characters = '#1114 인출설계 설문 플로우  (2026-03-09 확정)';
+  title.characters = '#1114 인출설계 설문 플로우  (2026-03-11 확정)';
   title.fontSize = 18;
   title.fills = [{ type: 'SOLID', color: C.text900 }];
   title.x = FC.COL.L - FC.NW / 2;
   title.y = -56;
   page.appendChild(title);
   created.push(title);
+
+  // subgraph 배경 프레임 (노드보다 먼저 렌더링)
+  for (const sg of FC_SUBGRAPHS) {
+    const PAD = 20;
+    const x0 = FC.COL[sg.cols[0]] - FC.NW / 2 - PAD;
+    const x1 = FC.COL[sg.cols[1]] + FC.NW / 2 + PAD;
+    const y0 = sg.rows[0] * STEP - 30;
+    const y1 = (sg.rows[1] + 1) * STEP - FC.VG + 10;
+    const bg = figma.createFrame();
+    bg.resize(x1 - x0, y1 - y0);
+    bg.x = x0;
+    bg.y = y0;
+    bg.fills = [{ type: 'SOLID', color: hex(249, 249, 249), opacity: 0.8 }];
+    bg.strokes = [{ type: 'SOLID', color: hex(204, 204, 204) }];
+    bg.strokeWeight = 1;
+    bg.dashPattern = [6, 4];
+    bg.cornerRadius = 12;
+    bg.clipsContent = false;
+    const lbl = figma.createText();
+    try { lbl.fontName = gf('semibold'); } catch (_) {}
+    lbl.characters = sg.label;
+    lbl.fontSize = 11;
+    lbl.fills = [{ type: 'SOLID', color: C.text500 }];
+    lbl.x = x0 + 8;
+    lbl.y = y0 + 6;
+    page.appendChild(bg);
+    page.appendChild(lbl);
+    created.push(bg);
+    created.push(lbl);
+  }
 
   const nodeMap = {};
   for (const [id, label, type, col, row] of FC_NODES) {

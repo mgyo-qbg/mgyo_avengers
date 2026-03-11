@@ -1232,6 +1232,7 @@ function renderP7() {
   const incG = div('field-group');
   const incLbl = div('field-label'); incLbl.textContent = '연소득 (세전)'; incG.appendChild(incLbl);
   incG.appendChild(incRow);
+  const incHelper = div('helper-text'); incHelper.textContent = '세금 공제 전 연간 소득 금액이에요. 다음 단계 연봉 입력에 자동 적용돼요.'; incG.appendChild(incHelper);
 
   const joinLabel = div('field-label'); joinLabel.textContent = '국민연금 최초 가입 시기';
   const selRow = div('select-row');
@@ -1334,13 +1335,18 @@ function renderP8() {
   salaryInp.className = 'field-input';
   salaryInp.type = 'text';
   salaryInp.placeholder = '세전 연봉을 입력해 주세요';
-  salaryInp.value = S.salary;
+  salaryInp.value = S.salary || (S.knowsNPS === 'no' ? S.npsIncome : '');
   salaryInp.oninput = () => { S.salary = salaryInp.value; };
   const salarySuf = div('field-suffix'); salarySuf.textContent = '만원';
   const salaryRow = div('field-row'); salaryRow.appendChild(salaryInp); salaryRow.appendChild(salarySuf);
   const salaryG = div('field-group');
   const sl = div('field-label'); sl.textContent = '연봉 (세전)'; salaryG.appendChild(sl);
   salaryG.appendChild(salaryRow);
+  const salaryHelper = div('helper-text');
+  salaryHelper.textContent = S.knowsNPS === 'no' && S.npsIncome
+    ? '앞서 입력한 연소득이 자동 적용됐어요. 다를 경우 수정해 주세요.'
+    : '세금 공제 전 연간 급여 총액을 입력해 주세요.';
+  salaryG.appendChild(salaryHelper);
 
   const tenureInp = document.createElement('input');
   tenureInp.className = 'field-input';

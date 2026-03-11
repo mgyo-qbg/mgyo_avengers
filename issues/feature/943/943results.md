@@ -72,6 +72,7 @@
 | 2026-03-11 | demo.html: DC 자산 보유 토글 추가 — DC=Y 시 P8 스킵·step 총수 6단계 / DC=N 시 7단계 |
 | 2026-03-11 | demo.html: 프로그레스 바 step 숫자 텍스트 제거 (바만 표시) |
 | 2026-03-11 | demo.html: 전송 로딩 2.5초 → 1초 |
+| 2026-03-11 | buildFlowchart: Mermaid 1:1 매핑 재작성 — 25노드/30엣지/subgraph 배경 3개 (P7·P8·P9), LL 컬럼 추가 |
 
 ---
 
