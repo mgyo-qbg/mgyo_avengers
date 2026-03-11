@@ -27,30 +27,101 @@
 
     body {
       font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-      background: #E8E8E8;
+      background: radial-gradient(ellipse at 50% 30%, #3a3a3a 0%, #111 100%);
       display: flex;
+      align-items: center;
       justify-content: center;
       min-height: 100vh;
+      padding: 48px 24px;
+    }
+
+    /* ── iPhone Frame ── */
+    .iphone-wrap { flex-shrink: 0; }
+
+    .iphone-frame {
+      position: relative;
+      width: 397px;
+      background: #1C1C1E;
+      border-radius: 52px;
+      padding: 14px 11px 22px;
+      box-shadow:
+        0 60px 120px rgba(0,0,0,.7),
+        0 20px 40px rgba(0,0,0,.5),
+        inset 0 0 0 1px #3a3a3a,
+        inset 0 1px 0 rgba(255,255,255,.1);
+    }
+    /* Side buttons */
+    .iphone-frame::before {
+      content: '';
+      position: absolute;
+      right: -3px; top: 110px;
+      width: 3px; height: 80px;
+      background: #2a2a2a;
+      border-radius: 0 2px 2px 0;
+      box-shadow: 0 60px 0 #2a2a2a;
+    }
+    .iphone-frame::after {
+      content: '';
+      position: absolute;
+      left: -3px; top: 90px;
+      width: 3px; height: 38px;
+      background: #2a2a2a;
+      border-radius: 2px 0 0 2px;
+      box-shadow: 0 50px 0 #2a2a2a, 0 100px 0 #2a2a2a;
+    }
+
+    .iphone-screen {
+      width: 375px;
+      height: 812px;
+      background: #fff;
+      border-radius: 42px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .dynamic-island {
+      position: absolute;
+      top: 12px; left: 50%; transform: translateX(-50%);
+      width: 126px; height: 37px;
+      background: #1C1C1E;
+      border-radius: 20px;
+      z-index: 200;
+      pointer-events: none;
+    }
+
+    .home-ind {
+      position: absolute;
+      bottom: 8px; left: 50%; transform: translateX(-50%);
+      width: 134px; height: 5px;
+      background: rgba(0,0,0,.2);
+      border-radius: 3px;
+      z-index: 200;
+      pointer-events: none;
     }
 
     #app {
       width: 375px;
-      min-height: 100vh;
+      height: 812px;
       background: var(--white);
       display: flex;
       flex-direction: column;
       position: relative;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
+    #app::-webkit-scrollbar { display: none; }
 
     /* ── Layout ── */
-    .screen { display: flex; flex-direction: column; height: 100vh; }
+    .screen { display: flex; flex-direction: column; height: 812px; }
 
     .status-bar {
-      height: 44px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
+      height: 54px; flex-shrink: 0;
+      display: flex; align-items: flex-end; justify-content: space-between;
       background: var(--white);
+      padding: 0 24px 8px;
     }
-    .status-bar span { font-size: 15px; font-weight: 600; color: var(--text-900); }
+    .status-bar .sb-time { font-size: 15px; font-weight: 600; color: var(--text-900); }
+    .status-bar .sb-icons { display: flex; align-items: center; gap: 6px; color: var(--text-900); font-size: 12px; }
 
     .nav-bar {
       height: 44px; flex-shrink: 0;
@@ -268,7 +339,15 @@
   </style>
 </head>
 <body>
-<div id="app"></div>
+<div class="iphone-wrap">
+  <div class="iphone-frame">
+    <div class="iphone-screen">
+      <div class="dynamic-island"></div>
+      <div id="app"></div>
+      <div class="home-ind"></div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ── State ────────────────────────────────────────────────────────────────
@@ -299,7 +378,14 @@ function back() {
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────
-const statusBar = () => `<div class="status-bar"><span>9:41</span></div>`;
+const statusBar = () => `<div class="status-bar">
+  <span class="sb-time">9:41</span>
+  <div class="sb-icons">
+    <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0.5" width="3" height="11.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+    <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5C10.3 2.5 12.4 3.4 14 4.9L15.5 3.4C13.5 1.6 10.9.5 8 .5S2.5 1.6.5 3.4L2 4.9C3.6 3.4 5.7 2.5 8 2.5Z"/><path d="M8 5.5C9.7 5.5 11.2 6.2 12.3 7.3L13.8 5.8C12.3 4.4 10.3 3.5 8 3.5S3.7 4.4 2.2 5.8L3.7 7.3C4.8 6.2 6.3 5.5 8 5.5Z"/><circle cx="8" cy="10" r="2"/></svg>
+    <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity=".35"/><rect x="1.5" y="1.5" width="19" height="9" rx="2.5" fill="currentColor" fill-opacity=".9"/><path d="M23 4.5v3a1.5 1.5 0 000-3z" fill="currentColor" fill-opacity=".4"/></svg>
+  </div>
+</div>`;
 
 function navBar(title, showBack = true) {
   const backBtn = showBack ? `<button class="nav-back" onclick="back()">‹</button>` : '';
