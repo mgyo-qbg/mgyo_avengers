@@ -912,25 +912,9 @@ function buildPage7() {
   resultCard.paddingRight = 16;
   resultCard.primaryAxisSizingMode = 'AUTO';
 
-  const resultLabel = figma.createText();
-  resultLabel.characters = '예상 국민연금 월수령액';
-  resultLabel.fontName = { family: 'Pretendard', style: 'Regular' };
-  resultLabel.fontSize = 13;
-  resultLabel.fills = [{ type: 'SOLID', color: C.gray600 }];
-  resultCard.appendChild(resultLabel);
-
-  const resultAmount = figma.createText();
-  resultAmount.characters = '약 120만원 (세전)';
-  resultAmount.fontName = { family: 'Pretendard', style: 'Bold' };
-  resultAmount.fontSize = 20;
-  resultAmount.fills = [{ type: 'SOLID', color: C.primary500 }];
-  resultCard.appendChild(resultAmount);
-
-  const recalcBtn = figma.createText();
-  recalcBtn.characters = '다시 계산하기';
-  recalcBtn.fontName = { family: 'Pretendard', style: 'Regular' };
-  recalcBtn.fontSize = 13;
-  recalcBtn.fills = [{ type: 'SOLID', color: C.gray500 }];
+  resultCard.appendChild(mkText('예상 국민연금 월수령액', 13, 'regular', C.gray600));
+  resultCard.appendChild(mkText('약 120만원 (세전)', 20, 'bold', C.primary500));
+  const recalcBtn = mkText('다시 계산하기', 13, 'regular', C.gray500);
   recalcBtn.textDecoration = 'UNDERLINE';
   resultCard.appendChild(recalcBtn);
 
