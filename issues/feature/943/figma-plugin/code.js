@@ -1350,9 +1350,9 @@ const FC_NODES = [
   ['P5',         'P5 기대수명',                              'page',     'C',   6 ],
   ['P6',         'P6 월 생활비',                             'page',     'C',   7 ],
   // --- P7 subgraph ---
-  ['NPS_YN',     '국민연금 예상 수령액을\n알고 있나요?',     'decision', 'C',   8 ],
-  ['NPS_YES',    '월수령액\n직접 입력 펼침',                 'action',   'L',   9 ],
-  ['NPS_NO',     '계산기 입력 +\n인라인 결과 펼침',          'action',   'R',   9 ],
+  ['NPS_YN',     '국민연금을 수령\n중이신가요?',              'decision', 'C',   8 ],
+  ['NPS_YES',    '수령 중 —\n월수령액 입력',                 'action',   'L',   9 ],
+  ['NPS_NO',     '수령 전 —\n월수령액 입력\n+ 계산하기 바텀시트', 'action', 'R',  9 ],
   // --- P7 end ---
   ['DC_YN',      'DC 자산 보유?\n마이데이터 기준',          'decision', 'C',  10 ],
   // --- P8 subgraph (left) ---
