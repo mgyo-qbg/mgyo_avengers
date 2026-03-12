@@ -906,11 +906,10 @@ function updateState() {
   S.birthMonth   = document.getElementById('inp-birth-month').value;
 }
 
-// 국민연금 납입 종료 예정일: 만 60세가 되는 달의 전달
+// 국민연금 납입 종료 예정일: 만 60세가 되는 해당달
 function npsPayEndDate() {
-  let year  = parseInt(S.birthYear)  + 60;
-  let month = parseInt(S.birthMonth) - 1; // 전달
-  if (month === 0) { month = 12; year -= 1; }
+  const year  = parseInt(S.birthYear) + 59;
+  const month = parseInt(S.birthMonth);
   return year + '년 ' + month + '월';
 }
 
@@ -1360,7 +1359,7 @@ function renderP7() {
     const joinG = div('field-group');
     joinG.appendChild(joinLabel); joinG.appendChild(selRow);
 
-    // 납입 종료 — 만 60세가 되는 달의 전달
+    // 납입 종료 — 만 60세가 되는 해당달
     const payEndField = mkReadonlyField('납입 종료 예정일', npsPayEndDate(), '만 60세가 되는 시점으로 자동 입력됩니다.');
 
     // 계산하기 버튼

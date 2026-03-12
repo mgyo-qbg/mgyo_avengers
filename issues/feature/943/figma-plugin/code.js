@@ -961,8 +961,8 @@ function buildPage7Sheet() {
   g3.fills = [];
   g3.primaryAxisSizingMode = 'AUTO';
   g3.appendChild(buildLabel('납입 종료 예정일'));
-  g3.appendChild(buildReadonlyField('은퇴 시기 자동 적용'));
-  g3.appendChild(buildHelperText('앞서 입력한 은퇴 시기가 자동 적용돼요'));
+  g3.appendChild(buildReadonlyField('2044년 1월'));
+  g3.appendChild(buildHelperText('만 60세가 되는 시점으로 자동 입력됩니다.'));
   sheet.appendChild(g3);
 
   // 계산하기 CTA — append 후 layoutSizingHorizontal 설정
