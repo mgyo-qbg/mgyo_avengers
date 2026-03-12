@@ -64,7 +64,7 @@ figma.ui.onmessage = async (msg) => {
       if (msg.pages.includes(4))  frames.push(buildPage4());
       if (msg.pages.includes(5))  frames.push(buildPage5());
       if (msg.pages.includes(6))  frames.push(buildPage6());
-      if (msg.pages.includes(7))  frames.push(buildPage7());
+      if (msg.pages.includes(7))  { frames.push(buildPage7()); frames.push(buildPage7Sheet()); }
       if (msg.pages.includes(8))  frames.push(buildPage8());
       if (msg.pages.includes(9))  frames.push(buildPage9());
       if (msg.pages.includes(10)) frames.push(buildPage10());
@@ -849,34 +849,64 @@ function buildPage6() {
 // P5: 국민연금 Y/N (2/8)
 // P7: 국민연금 Y/N + 입력 [병합] (4/7)
 // "아니요" 선택 시 계산기 필드 펼침 + 인라인 결과 카드 — 스케치는 "아니요"+결과 카드 상태로 표시
+// P7: 국민연금 수령 여부 + 월수령액 입력 [병합]
+// 선택 무관하게 월수령액 입력폼 항상 표시 / 계산기는 바텀시트 (→ buildPage7Sheet)
 function buildPage7() {
   const { root, scroll } = buildRoot('P7 - 국민연금[병합]', {
     ctaLabel: '다음', pageNo: 4, pageTotal: 7,
   });
 
-  scroll.appendChild(buildSectionHeader('국민연금 예상 수령액을\n알고 있나요?'));
-  scroll.appendChild(buildSubHeader('국민연금 수령액을 알면 더 정확한\n인출 전략을 세울 수 있어요'));
+  scroll.appendChild(buildSectionHeader('국민연금을 수령\n중이신가요?'));
+  scroll.appendChild(buildSubHeader('수령 여부와 관계없이 월 수령액을\n입력하거나 계산해 주세요'));
 
-  // Y/N 선택 카드 — "아니요" 선택 상태로 표시 (계산기 경로)
+  // Y/N 선택 카드 — "아니요, 수령 전이에요" 선택 상태로 표시
   const cards = vf('Choice Cards', CONTENT_W, 1, { gap: 12 });
   cards.fills = [];
   cards.primaryAxisSizingMode = 'AUTO';
-  cards.appendChild(buildChoiceCard('네, 알고 있어요', false));
-  cards.appendChild(buildChoiceCard('아니요, 계산해 볼게요', true)); // selected
+  cards.appendChild(buildChoiceCard('네, 수령 중이에요', false));
+  cards.appendChild(buildChoiceCard('아니요, 수령 전이에요', true)); // selected
   scroll.appendChild(cards);
 
-  // 구분선 (선택 후 하단 입력 영역 시작)
-  const divider = mkRect(CONTENT_W, 1, C.gray200);
-  scroll.appendChild(divider);
+  // 구분선 + 월수령액 입력폼 (선택 후 항상 표시)
+  scroll.appendChild(mkRect(CONTENT_W, 1, C.gray200));
 
-  // 계산기 필드 — "아니요" 선택 시 펼쳐지는 영역
+  const g1 = vf('Field - 월수령액', CONTENT_W, 1, { gap: 6 });
+  g1.fills = [];
+  g1.primaryAxisSizingMode = 'AUTO';
+  g1.appendChild(buildLabel('월 수령액 (세전)'));
+  g1.appendChild(buildTextInput('월 수령액을 입력해 주세요', '만원/월'));
+  scroll.appendChild(g1);
+
+  // 계산하기 링크 텍스트 (클릭 시 바텀시트 오픈)
+  const calcLink = mkText('국민연금 월 수령금액 계산하기 →', 13, 'semibold', C.primary500);
+  scroll.appendChild(calcLink);
+
+  return root;
+}
+
+// P7 계산기 바텀시트 상태 — "계산하기 →" 클릭 시 슬라이드업
+function buildPage7Sheet() {
+  const { root, scroll } = buildRoot('P7 - 계산기[바텀시트]', {
+    ctaLabel: '계산하기', navTitle: '인출설계',
+  });
+
+  // 바텀시트 핸들 표시
+  const handle = mkRect(36, 4, C.gray300);
+  handle.cornerRadius = 2;
+  scroll.appendChild(handle);
+
+  scroll.appendChild(mkText('국민연금 수령액 계산하기', 17, 'bold', C.text900));
+
+  // 연소득
   const g1 = vf('Field - 연소득', CONTENT_W, 1, { gap: 6 });
   g1.fills = [];
   g1.primaryAxisSizingMode = 'AUTO';
   g1.appendChild(buildLabel('연소득 (세전)'));
   g1.appendChild(buildTextInput('세전 연소득을 입력해 주세요', '만원'));
+  g1.appendChild(buildHelperText('세금 공제 전 연간 소득 금액이에요. 다음 단계 연봉 입력에 자동 적용돼요.'));
   scroll.appendChild(g1);
 
+  // 최초 가입 시기
   const g2 = vf('Field - 최초가입시기', CONTENT_W, 1, { gap: 6 });
   g2.fills = [];
   g2.primaryAxisSizingMode = 'AUTO';
@@ -894,6 +924,7 @@ function buildPage7() {
   g2.appendChild(selRow);
   scroll.appendChild(g2);
 
+  // 납입 종료 예정일
   const g3 = vf('Field - 납입종료', CONTENT_W, 1, { gap: 6 });
   g3.fills = [];
   g3.primaryAxisSizingMode = 'AUTO';
@@ -901,24 +932,6 @@ function buildPage7() {
   g3.appendChild(buildReadonlyField('은퇴 시기 자동 적용'));
   g3.appendChild(buildHelperText('앞서 입력한 은퇴 시기가 자동 적용돼요'));
   scroll.appendChild(g3);
-
-  // 인라인 계산 결과 카드 ("계산하기" 후 표시되는 상태)
-  const resultCard = vf('Result Card', CONTENT_W, 1, { gap: 12 });
-  resultCard.fills = [{ type: 'SOLID', color: C.primary100 }];
-  resultCard.cornerRadius = 12;
-  resultCard.paddingTop = 16;
-  resultCard.paddingBottom = 16;
-  resultCard.paddingLeft = 16;
-  resultCard.paddingRight = 16;
-  resultCard.primaryAxisSizingMode = 'AUTO';
-
-  resultCard.appendChild(mkText('예상 국민연금 월수령액', 13, 'regular', C.text500));
-  resultCard.appendChild(mkText('약 120만원 (세전)', 20, 'bold', C.primary500));
-  const recalcBtn = mkText('다시 계산하기', 13, 'regular', C.gray500);
-  recalcBtn.textDecoration = 'UNDERLINE';
-  resultCard.appendChild(recalcBtn);
-
-  scroll.appendChild(resultCard);
 
   return root;
 }
