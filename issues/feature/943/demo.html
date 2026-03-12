@@ -848,6 +848,11 @@ body {
     <input type="checkbox" id="tog-dc" onchange="updateState()">
     DC 자산 보유
   </label>
+  <label class="toggle-group" style="flex-direction:row;align-items:center;gap:6px;">
+    생년월일
+    <input type="number" id="inp-birth-year" value="1985" min="1940" max="2010" style="width:64px;padding:2px 4px;font-size:12px;" oninput="updateState()">년
+    <input type="number" id="inp-birth-month" value="1" min="1" max="12" style="width:40px;padding:2px 4px;font-size:12px;" oninput="updateState()">월
+  </label>
 </div>
 
 <!-- iPhone frame -->
@@ -879,6 +884,8 @@ const S = {
   npsCalcDone: false,    // 계산하기 완료 여부
   npsAmount: '',         // 월수령액 (직접 입력 or 계산 결과)
   npsIncome: '6,000',   // 계산기: 연소득
+  birthYear: '1985',
+  birthMonth: '1',
   npsJoinYear: '2000',
   npsJoinMonth: '1',
   hasWorkIncome: null,
@@ -892,9 +899,19 @@ const S = {
 };
 
 function updateState() {
-  S.hasMydata   = document.getElementById('tog-mydata').checked;
-  S.termsAgreed = document.getElementById('tog-terms').checked;
-  S.hasDC       = document.getElementById('tog-dc').checked;
+  S.hasMydata    = document.getElementById('tog-mydata').checked;
+  S.termsAgreed  = document.getElementById('tog-terms').checked;
+  S.hasDC        = document.getElementById('tog-dc').checked;
+  S.birthYear    = document.getElementById('inp-birth-year').value;
+  S.birthMonth   = document.getElementById('inp-birth-month').value;
+}
+
+// 국민연금 납입 종료 예정일: 만 60세가 되는 달의 전달
+function npsPayEndDate() {
+  let year  = parseInt(S.birthYear)  + 60;
+  let month = parseInt(S.birthMonth) - 1; // 전달
+  if (month === 0) { month = 12; year -= 1; }
+  return year + '년 ' + month + '월';
 }
 
 function totalSteps() { return S.hasDC ? 6 : 7; }
@@ -1343,8 +1360,8 @@ function renderP7() {
     const joinG = div('field-group');
     joinG.appendChild(joinLabel); joinG.appendChild(selRow);
 
-    // 납입 종료
-    const payEndField = mkReadonlyField('납입 종료 예정일', S.retireAge + '세 (은퇴시기 연동)', '앞서 입력한 은퇴 시기가 자동 적용돼요');
+    // 납입 종료 — 만 60세가 되는 달의 전달
+    const payEndField = mkReadonlyField('납입 종료 예정일', npsPayEndDate(), '국민연금 납부는 만 60세 전달까지 적용돼요');
 
     // 계산하기 버튼
     const calcBtn = document.createElement('button');
