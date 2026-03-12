@@ -884,55 +884,97 @@ function buildPage7() {
   return root;
 }
 
-// P7 계산기 바텀시트 상태 — "계산하기 →" 클릭 시 슬라이드업
+// P7 계산기 바텀시트 상태 — 딤드 오버레이 + 하단 화이트 시트
 function buildPage7Sheet() {
-  const { root, scroll } = buildRoot('P7 - 계산기[바텀시트]', {
-    ctaLabel: '계산하기', navTitle: '인출설계',
-  });
+  // 1. 루트: 375×812 일반 프레임 (레이아웃 없음) — 다크 오버레이
+  const root = figma.createFrame();
+  root.name = 'P7 - 계산기[바텀시트]';
+  root.resize(W, H);
+  root.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 }, opacity: 0.45 }];
+  root.clipsContent = true;
 
-  // 바텀시트 핸들 표시
-  const handle = mkRect(36, 4, C.gray300);
+  // 2. 바텀시트 패널 — 하단 고정, 상단 모서리 둥글게
+  const SHEET_H = 530;
+  const sheet = figma.createFrame();
+  sheet.name = 'Bottom Sheet';
+  sheet.resize(W, SHEET_H);
+  sheet.x = 0;
+  sheet.y = H - SHEET_H;
+  sheet.fills = [{ type: 'SOLID', color: C.white }];
+  sheet.topLeftRadius  = 20;
+  sheet.topRightRadius = 20;
+  sheet.bottomLeftRadius  = 0;
+  sheet.bottomRightRadius = 0;
+  sheet.layoutMode = 'VERTICAL';
+  sheet.paddingLeft   = PAD;
+  sheet.paddingRight  = PAD;
+  sheet.paddingTop    = 16;
+  sheet.paddingBottom = 40;
+  sheet.itemSpacing   = 14;
+  sheet.primaryAxisSizingMode   = 'FIXED';
+  sheet.counterAxisSizingMode   = 'FIXED';
+  sheet.clipsContent = true;
+
+  // 핸들
+  const handle = figma.createFrame();
+  handle.name = 'Handle';
+  handle.resize(36, 4);
+  handle.fills = [{ type: 'SOLID', color: C.gray300 }];
   handle.cornerRadius = 2;
-  scroll.appendChild(handle);
+  handle.layoutAlign  = 'CENTER';
+  sheet.appendChild(handle);
 
-  scroll.appendChild(mkText('국민연금 수령액 계산하기', 17, 'bold', C.text900));
+  // 시트 제목
+  const titleT = mkText('국민연금 수령액 계산하기', 17, 'bold', C.text900);
+  titleT.layoutSizingHorizontal = 'FILL';
+  sheet.appendChild(titleT);
 
   // 연소득
   const g1 = vf('Field - 연소득', CONTENT_W, 1, { gap: 6 });
   g1.fills = [];
   g1.primaryAxisSizingMode = 'AUTO';
+  g1.layoutSizingHorizontal = 'FILL';
   g1.appendChild(buildLabel('연소득 (세전)'));
   g1.appendChild(buildTextInput('세전 연소득을 입력해 주세요', '만원'));
   g1.appendChild(buildHelperText('세금 공제 전 연간 소득 금액이에요. 다음 단계 연봉 입력에 자동 적용돼요.'));
-  scroll.appendChild(g1);
+  sheet.appendChild(g1);
 
   // 최초 가입 시기
   const g2 = vf('Field - 최초가입시기', CONTENT_W, 1, { gap: 6 });
   g2.fills = [];
   g2.primaryAxisSizingMode = 'AUTO';
+  g2.layoutSizingHorizontal = 'FILL';
   g2.appendChild(buildLabel('국민연금 최초 가입 시기'));
   const selRow = hf('Select Row', CONTENT_W, 1, { gap: 8 });
   selRow.fills = [];
-  selRow.primaryAxisSizingMode = 'FIXED';
-  selRow.counterAxisSizingMode = 'AUTO';
-  const selYear = buildSelectBox('연도 선택');
+  selRow.primaryAxisSizingMode  = 'FIXED';
+  selRow.counterAxisSizingMode  = 'AUTO';
+  selRow.layoutSizingHorizontal = 'FILL';
+  const selYear  = buildSelectBox('연도 선택');
   const selMonth = buildSelectBox('월 선택');
-  selYear.layoutGrow = 1;
+  selYear.layoutGrow  = 1;
   selMonth.layoutGrow = 1;
   selRow.appendChild(selYear);
   selRow.appendChild(selMonth);
   g2.appendChild(selRow);
-  scroll.appendChild(g2);
+  sheet.appendChild(g2);
 
   // 납입 종료 예정일
   const g3 = vf('Field - 납입종료', CONTENT_W, 1, { gap: 6 });
   g3.fills = [];
   g3.primaryAxisSizingMode = 'AUTO';
+  g3.layoutSizingHorizontal = 'FILL';
   g3.appendChild(buildLabel('납입 종료 예정일'));
   g3.appendChild(buildReadonlyField('은퇴 시기 자동 적용'));
   g3.appendChild(buildHelperText('앞서 입력한 은퇴 시기가 자동 적용돼요'));
-  scroll.appendChild(g3);
+  sheet.appendChild(g3);
 
+  // 계산하기 CTA
+  const cta = buildCTA('계산하기');
+  cta.layoutSizingHorizontal = 'FILL';
+  sheet.appendChild(cta);
+
+  root.appendChild(sheet);
   return root;
 }
 
