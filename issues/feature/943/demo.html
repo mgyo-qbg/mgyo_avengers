@@ -1361,7 +1361,7 @@ function renderP7() {
     joinG.appendChild(joinLabel); joinG.appendChild(selRow);
 
     // 납입 종료 — 만 60세가 되는 달의 전달
-    const payEndField = mkReadonlyField('납입 종료 예정일', npsPayEndDate(), '국민연금 납부는 만 60세 전달까지 적용돼요');
+    const payEndField = mkReadonlyField('납입 종료 예정일', npsPayEndDate(), '만 60세가 되는 시점으로 자동 입력됩니다.');
 
     // 계산하기 버튼
     const calcBtn = document.createElement('button');
