@@ -915,25 +915,24 @@ function buildPage7Sheet() {
   sheet.counterAxisSizingMode   = 'FIXED';
   sheet.clipsContent = true;
 
-  // 핸들
+  // 핸들 — append 후 layoutAlign 설정
   const handle = figma.createFrame();
   handle.name = 'Handle';
   handle.resize(36, 4);
   handle.fills = [{ type: 'SOLID', color: C.gray300 }];
   handle.cornerRadius = 2;
-  handle.layoutAlign  = 'CENTER';
   sheet.appendChild(handle);
+  handle.layoutAlign = 'CENTER';
 
-  // 시트 제목
+  // 시트 제목 — append 후 layoutSizingHorizontal 설정
   const titleT = mkText('국민연금 수령액 계산하기', 17, 'bold', C.text900);
-  titleT.layoutSizingHorizontal = 'FILL';
   sheet.appendChild(titleT);
+  titleT.layoutSizingHorizontal = 'FILL';
 
   // 연소득
   const g1 = vf('Field - 연소득', CONTENT_W, 1, { gap: 6 });
   g1.fills = [];
   g1.primaryAxisSizingMode = 'AUTO';
-  g1.layoutSizingHorizontal = 'FILL';
   g1.appendChild(buildLabel('연소득 (세전)'));
   g1.appendChild(buildTextInput('세전 연소득을 입력해 주세요', '만원'));
   g1.appendChild(buildHelperText('세금 공제 전 연간 소득 금액이에요. 다음 단계 연봉 입력에 자동 적용돼요.'));
@@ -943,13 +942,11 @@ function buildPage7Sheet() {
   const g2 = vf('Field - 최초가입시기', CONTENT_W, 1, { gap: 6 });
   g2.fills = [];
   g2.primaryAxisSizingMode = 'AUTO';
-  g2.layoutSizingHorizontal = 'FILL';
   g2.appendChild(buildLabel('국민연금 최초 가입 시기'));
   const selRow = hf('Select Row', CONTENT_W, 1, { gap: 8 });
   selRow.fills = [];
-  selRow.primaryAxisSizingMode  = 'FIXED';
-  selRow.counterAxisSizingMode  = 'AUTO';
-  selRow.layoutSizingHorizontal = 'FILL';
+  selRow.primaryAxisSizingMode = 'FIXED';
+  selRow.counterAxisSizingMode = 'AUTO';
   const selYear  = buildSelectBox('연도 선택');
   const selMonth = buildSelectBox('월 선택');
   selYear.layoutGrow  = 1;
@@ -963,16 +960,15 @@ function buildPage7Sheet() {
   const g3 = vf('Field - 납입종료', CONTENT_W, 1, { gap: 6 });
   g3.fills = [];
   g3.primaryAxisSizingMode = 'AUTO';
-  g3.layoutSizingHorizontal = 'FILL';
   g3.appendChild(buildLabel('납입 종료 예정일'));
   g3.appendChild(buildReadonlyField('은퇴 시기 자동 적용'));
   g3.appendChild(buildHelperText('앞서 입력한 은퇴 시기가 자동 적용돼요'));
   sheet.appendChild(g3);
 
-  // 계산하기 CTA
+  // 계산하기 CTA — append 후 layoutSizingHorizontal 설정
   const cta = buildCTA('계산하기');
-  cta.layoutSizingHorizontal = 'FILL';
   sheet.appendChild(cta);
+  cta.layoutSizingHorizontal = 'FILL';
 
   root.appendChild(sheet);
   return root;
