@@ -43,7 +43,7 @@ issues/
         └── figma-plugin/              # manifest.json, code.js, ui.html
 ```
 
-## 전체 팀 구조 (총 16명)
+## 전체 팀 구조 (총 17명)
 
 ```
 총괄 (Claude — team-lead)
@@ -159,83 +159,23 @@ issues/
   → manifest 경로: `mgyo_avengers/issues/feature/{번호}/figma-plugin/manifest.json`
   → #943: `mgyo_avengers/issues/feature/943/figma-plugin/manifest.json`
 
-## #943 인출설계 설문지 (앱 #1114) — 플러그인 현황 (2026-03-12)
+## #943 인출설계 설문지 (앱 #1114) — 현황 요약
 
-### 구현된 화면 (P1, P3~P13 — 총 12개 + P7 바텀시트 오버레이, P2 제거됨)
-- P1: 설문 시작
-- P3: 자산없음 경고
-- P4~P10: 설문 입력 (연속형 프로그레스 바, 숫자 텍스트 없음, DC=N 7단계 / DC=Y 6단계 P8 스킵)
-- P11~P13: 후처리 (약관동의, 전송 로딩, 전달 완료)
-- P7 바텀시트: 다크 오버레이(375×812) + 하단 화이트 패널(topRadius 20) — 계산기 전용
+- **상태**: 완료 (사용자 테스트 5차, 이슈 0건)
+- **화면**: P1, P3~P13 (12개) + P7 바텀시트 오버레이
+- **플로우**: DC=N 7단계 / DC=Y 6단계(P8 스킵), 프로그레스 바 숫자 없음
+- **P7 핵심**: 국민연금 수령여부+월수령액 병합, 납입종료=만60세 해당달(birthYear+59)
+- **상세**: `issues/feature/943/943spec.md` / `app_planner_context.md` 참조
+- **플러그인**: `issues/feature/943/figma-plugin/` — FC_NODES 25개/FC_EDGES 30개/FC_SUBGRAPHS 3개
 
-### 주요 제약사항 (Figma 코멘트 기준 — 파일: 0DVyXyoWEbXXNOZF0H92Ic)
-- P4 은퇴시기: 55/60/65/70세 **셀렉트박스**, 디폴트 65세 (1/7)
-- P5 기대수명: 현재나이+1~100세 **셀렉트박스**, 디폴트 100세 (2/7)
-- P6 생활비: 324만원 디폴트 (통계청 2인 가구 기준) (3/7)
-- P7 [병합] 국민연금 수령 여부 + 월수령액 입력 (4/7)
-  - 질문: "국민연금을 수령 중이신가요?" (수령 중 / 수령 전)
-  - 선택 무관 월수령액 입력폼 항상 표시
-  - "수령 전" 선택 시 "계산하기" 링크 표시 → 바텀시트 계산기 열림
-  - 바텀시트: 연소득+최초가입시기+납입종료(readonly)
-  - **납입종료: 만 60세 해당달** (birthYear+59, birthMonth 유지) — "만 60세가 되는 시점으로 자동 입력됩니다."
-- P8 [병합] 근로소득자 Y/N + 연봉/근속연수 (step 5, DC=N만 표시): DC=Y 시 이 화면 스킵. Y선택→입력 펼침. 연봉: 계산기 사용(npsCalcDone=true)이면 연소득 자동 / 직접입력 경로면 빈값
-- P9 [병합] 기타소득 Y/N + 입력 (6/7): Y선택→소득/시작/종료 펼침. 연소득(세전) 단일, 시작=은퇴시기readonly, 종료=기대수명readonly
-- P12 로딩: "회원님의 은퇴 후 30년을 준비하고 있어요" (1초 후 P13 전환)
-- P13 완료: "인출설계 첫 걸음을 내딛으셨어요" + 임팩트 박스 "은퇴 후 30년, 준비된 인출 전략이 노후를 지켜줍니다."
+## 베러웰스앱 디자인 시스템
 
-### 사업팀 예시 문구 반영 (2026-03-10 완료)
-P1·P4·P6·P7·P12·P16 서브헤더/헬퍼텍스트 추가·수정 — 상세: `943spec.md` 추가 작업 섹션 참조
-
-### DB형 퇴직금 계산식 (확정)
-- 퇴직금 = 일평균임금 × 30일 × 근속연수
-- 일평균임금 = (퇴직전연봉/12 × 3) ÷ 90일
-- 퇴직전연봉 = 현재연봉 × (1.03)^(퇴직연도-현재연도) (물가상승률 3%)
-
-### 사용자 테스트 (5차 완료 — 이슈 0건)
-- 5차 연속 테스트, Major/Minor 이슈 모두 해소
-
-### 플로우차트
-- `buildFlowchart()` 함수로 Figma 현재 페이지에 직접 생성
-- `figma.createVector()` + `fcDrawEdge()` (createConnector는 FigJam 전용)
-- FC_NODES: 25개 / FC_EDGES: 30개 / FC_SUBGRAPHS: 3개 (P7·P8·P9)
-
-## 베러웰스앱 디자인 시스템 핵심
-
-- Figma File Key: wygEtCwUqQJ9p06qsDnBJF
-- 765개 컴포넌트, 124개 스타일
-- 폰트: Pretendard, Primary: #2E9BFF, Secondary: #2E58FF
-- WIP 69% (컴포넌트 페이지 16개 중 11개)
-- Figma Personal Access Token: 보안상 저장하지 않음 (필요 시 재발급)
+- Figma Key: `wygEtCwUqQJ9p06qsDnBJF` (수정 금지) — 상세: `better-wealth-app/figma_design_system.md`
 
 ## 회의록 관리
 
-> **🔒 총괄(사용자) 전용 — 팀원 접근 금지**
-> 회의록은 미확정 내용을 포함하므로 팀원에게 절대 공유하지 않는다.
-> 확정된 요건은 이슈 spec.md로 별도 전달한다.
-> **팀원 스폰/컨텍스트 로딩 시 `meetings/` 폴더 내용을 포함하지 않는다.**
+> **🔒 총괄(사용자) 전용 — 팀원 접근/스폰 시 포함 금지**
 
-- **저장 위치**: `{MGYO_REPO}/meetings/`
-- **인덱스**: `meetings/README.md`
-- **파일명**: `YYYY-MM-DD_HHMM_주제명.md` (날짜 + 회의 시작 시각 + 주제)
-- **트리거**: 사용자가 "나 회의했어. 내용정리할래" → Claude가 날짜/시각/참석자/내용 질문 → 정리 초안 → 확인 → 파일 생성 + 인덱스 업데이트
-- **검색**: 총괄 요청 시에만 태그 기반으로 관련 회의록 찾아 요약 제공
-
-## 주요 기술 스택
-
-### NestJS (be-nest)
-- NestJS 10, Prisma 5 (MySQL 69모델), Mongoose 9 (MongoDB), Redis, Bull Queue
-- 컨트롤러 49개, 엔드포인트 275개, 공유 라이브러리 22개
-- 포트: famain 13700, fabatch 23400
-- JWT ignoreExpiration: true (보안 이슈)
-
-### React (fe-react-app)
-- React 18, TypeScript 5, Vite 4 (SWC), TailwindCSS 3 + SCSS
-- Redux Toolkit (10 슬라이스) + React Query v4 + JwtContext
-- 828개 TS/TSX 파일, Storybook 104개 stories
-- 테스트 파일 2개 (0.24% 커버리지)
-
-### FastAPI (be-fastapi)
-- Python 3.11, FastAPI 0.104, Pydantic v2, Prisma Python
-- 포트 13550, HAProxy 로드밸런서 -> 워커 13551-13554
-- 5개 도메인: wm, fin, ai, kfr, misc
-- MySQL 18개 모델 (RD_, BD_ 접두사)
+- 저장: `{MGYO_REPO}/meetings/` / 인덱스: `meetings/README.md`
+- 파일명: `YYYY-MM-DD_HHMM_주제명.md`
+- 트리거: "나 회의했어. 내용정리할래" → Claude가 날짜/시각/참석자/내용 질문 후 정리
