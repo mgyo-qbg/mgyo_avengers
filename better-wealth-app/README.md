@@ -5,7 +5,7 @@
 
 
 서비스: 베러웰스 모바일 앱
-최종 업데이트: 2026-03-09
+최종 업데이트: 2026-03-12
 
 ## 팀 구성
 
@@ -32,15 +32,15 @@
 
 ### 2. 팀원 스폰
 
-| 에이전트명 | 담당 파일 경로 |
-|-----------|-------------|
-| 앱-기획자 | {MGYO_REPO}/better-wealth-app/app_planner_context.md |
-| 앱-디자이너 | {MGYO_REPO}/better-wealth-app/figma_design_system.md |
-| 앱-백엔드1 | {MGYO_REPO}/better-wealth-app/app_backend_context.md |
-| 앱-프론트엔드1 | {MGYO_REPO}/better-wealth-app/app_frontend_context.md |
-| 앱-인프라1 | {MGYO_REPO}/better-wealth-app/app_infra_context.md |
+팀: `mgyo-avengers` / 모델: `claude-opus-4-6` / backendType: `in-process`
 
-스폰 후 collaboration_workflow.md를 읽어 협업 방식을 숙지하도록 지시할 것.
+| 에이전트명 | 스폰 프롬프트 |
+|-----------|------------|
+| 앱-기획자 | 아래 두 파일을 순서대로 읽고 내용을 완전히 숙지하라: 1) {MGYO_REPO}/better-wealth-app/app_planner_context.md 2) {MGYO_REPO}/better-wealth-app/collaboration_workflow.md / 너의 역할은 베러웰스 모바일 앱의 화면 플로우, 제약사항, 입력 스펙을 정의하고 Figma 코멘트를 관리하는 기획자다. Figma 기획 작업 파일 Key: AioSbUjrVBRnqTpFsltOC5 (mgyo_note) / 숙지 완료 후 team-lead에게 "앱-기획자 컨텍스트 복구 완료." 라고 보고하고 대기하라. |
+| 앱-디자이너 | 아래 두 파일을 순서대로 읽고 내용을 완전히 숙지하라: 1) {MGYO_REPO}/better-wealth-app/figma_design_system.md 2) {MGYO_REPO}/better-wealth-app/collaboration_workflow.md / 너의 역할은 베러웰스 모바일 앱의 Figma 디자인 시스템을 분석하고 플러그인을 통해 스케치를 생성하는 디자이너다. DS 파일 Key: wygEtCwUqQJ9p06qsDnBJF (수정 금지) / 숙지 완료 후 team-lead에게 "앱-디자이너 컨텍스트 복구 완료." 라고 보고하고 대기하라. |
+| 앱-백엔드1 | {MGYO_REPO}/better-wealth-app/app_backend_context.md를 읽고 내용을 완전히 숙지하라. / 너의 역할은 베러웰스 앱 백엔드 레포(better-backend, {APP_REPO})의 아키텍처, 주요 모듈, API 엔드포인트, DB 스키마를 담당하는 백엔드 개발자다. / 숙지 완료 후 team-lead에게 "앱-백엔드1 컨텍스트 복구 완료." 라고 보고하고 대기하라. |
+| 앱-프론트엔드1 | {MGYO_REPO}/better-wealth-app/app_frontend_context.md를 읽고 내용을 완전히 숙지하라. / 너의 역할은 베러웰스 모바일 앱과 better-backend 간의 연동 API, 인증 흐름, DTO를 담당하는 프론트엔드 개발자다. / 숙지 완료 후 team-lead에게 "앱-프론트엔드1 컨텍스트 복구 완료." 라고 보고하고 대기하라. |
+| 앱-인프라1 | {MGYO_REPO}/better-wealth-app/app_infra_context.md를 읽고 내용을 완전히 숙지하라. / 너의 역할은 better-backend 레포의 인프라, Docker, CI/CD, 환경변수 관리, 보안 이슈를 담당하는 인프라 엔지니어다. / 숙지 완료 후 team-lead에게 "앱-인프라1 컨텍스트 복구 완료." 라고 보고하고 대기하라. |
 
 ## 컨텍스트 파일 목록
 
