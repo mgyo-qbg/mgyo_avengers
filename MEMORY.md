@@ -30,7 +30,10 @@
 └── better-wealth-app/                 # 베러웰스앱 팀
     ├── README.md                      # 앱팀 복구 가이드
     ├── figma_design_system.md         # 앱-디자이너 (Figma 분석 결과)
-    └── app_planner_context.md         # 앱-기획자 (플로우, 스펙, 플러그인 수정 이력)
+    ├── app_planner_context.md         # 앱-기획자 (플로우, 스펙, 플러그인 수정 이력)
+    ├── app_backend_context.md         # 앱-백엔드1 (better-backend 아키텍처, API, DB)
+    ├── app_frontend_context.md        # 앱-프론트엔드1 (앱↔백엔드 연동 API, DTO)
+    └── app_infra_context.md           # 앱-인프라1 (인프라, Docker, CI/CD, 보안)
 issues/
 └── feature/                           # 이슈별 작업 문서 (앱/웹 통합)
     └── 943/                           # #943 인출설계 설문지 (완료)
@@ -40,7 +43,7 @@ issues/
         └── figma-plugin/              # manifest.json, code.js, ui.html
 ```
 
-## 전체 팀 구조 (총 13명)
+## 전체 팀 구조 (총 16명)
 
 ```
 총괄 (Claude — team-lead)
@@ -57,7 +60,10 @@ issues/
 │   └── 웹-법률전문가1  (개인정보, 금융규제)
 └── 앱팀-리드
     ├── 앱-기획자       (화면 플로우, 입력 스펙, 제약사항 — app_planner_context.md)
-    └── 앱-디자이너     (Figma 디자인 시스템)
+    ├── 앱-디자이너     (Figma 디자인 시스템)
+    ├── 앱-백엔드1      (better-backend 아키텍처, API, DB — app_backend_context.md)
+    ├── 앱-프론트엔드1  (앱↔백엔드 연동 API, DTO — app_frontend_context.md)
+    └── 앱-인프라1      (better-backend 인프라, Docker, CI/CD, 보안 — app_infra_context.md)
 ```
 
 ### 팀 생성 주의사항
@@ -153,23 +159,26 @@ issues/
   → manifest 경로: `mgyo_avengers/issues/feature/{번호}/figma-plugin/manifest.json`
   → #943: `mgyo_avengers/issues/feature/943/figma-plugin/manifest.json`
 
-## #943 인출설계 설문지 (앱 #1114) — 플러그인 현황 (2026-03-11)
+## #943 인출설계 설문지 (앱 #1114) — 플러그인 현황 (2026-03-12)
 
-### 구현된 화면 (P1, P3~P13 — 총 12개, P2 제거됨)
+### 구현된 화면 (P1, P3~P13 — 총 12개 + P7 바텀시트 오버레이, P2 제거됨)
 - P1: 설문 시작
 - P3: 자산없음 경고
 - P4~P10: 설문 입력 (연속형 프로그레스 바, 숫자 텍스트 없음, DC=N 7단계 / DC=Y 6단계 P8 스킵)
 - P11~P13: 후처리 (약관동의, 전송 로딩, 전달 완료)
+- P7 바텀시트: 다크 오버레이(375×812) + 하단 화이트 패널(topRadius 20) — 계산기 전용
 
 ### 주요 제약사항 (Figma 코멘트 기준 — 파일: 0DVyXyoWEbXXNOZF0H92Ic)
 - P4 은퇴시기: 55/60/65/70세 **셀렉트박스**, 디폴트 65세 (1/7)
 - P5 기대수명: 현재나이+1~100세 **셀렉트박스**, 디폴트 100세 (2/7)
 - P6 생활비: 324만원 디폴트 (통계청 2인 가구 기준) (3/7)
-- P7 [병합] 국민연금 Y/N + 입력 (4/7)
-  - "네"→월수령액 직접입력 펼침(세전/만원) / CTA "다음" 즉시 활성
-  - "아니요"→계산기(연소득+최초가입시기+납입종료readonly) + 계산하기 → 인라인 결과 카드 + CTA 활성
-  - 납입종료: 은퇴시기 연동 readonly
-- P8 [병합] 근로소득자 Y/N + 연봉/근속연수 (step 5, DC=N만 표시): DC=Y 시 이 화면 스킵. Y선택→입력 펼침. 연봉: P7 계산기 경로면 연소득 자동 / 직접입력 경로면 빈값
+- P7 [병합] 국민연금 수령 여부 + 월수령액 입력 (4/7)
+  - 질문: "국민연금을 수령 중이신가요?" (수령 중 / 수령 전)
+  - 선택 무관 월수령액 입력폼 항상 표시
+  - "수령 전" 선택 시 "계산하기" 링크 표시 → 바텀시트 계산기 열림
+  - 바텀시트: 연소득+최초가입시기+납입종료(readonly)
+  - **납입종료: 만 60세 해당달** (birthYear+59, birthMonth 유지) — "만 60세가 되는 시점으로 자동 입력됩니다."
+- P8 [병합] 근로소득자 Y/N + 연봉/근속연수 (step 5, DC=N만 표시): DC=Y 시 이 화면 스킵. Y선택→입력 펼침. 연봉: 계산기 사용(npsCalcDone=true)이면 연소득 자동 / 직접입력 경로면 빈값
 - P9 [병합] 기타소득 Y/N + 입력 (6/7): Y선택→소득/시작/종료 펼침. 연소득(세전) 단일, 시작=은퇴시기readonly, 종료=기대수명readonly
 - P12 로딩: "회원님의 은퇴 후 30년을 준비하고 있어요" (1초 후 P13 전환)
 - P13 완료: "인출설계 첫 걸음을 내딛으셨어요" + 임팩트 박스 "은퇴 후 30년, 준비된 인출 전략이 노후를 지켜줍니다."
@@ -188,6 +197,7 @@ P1·P4·P6·P7·P12·P16 서브헤더/헬퍼텍스트 추가·수정 — 상세:
 ### 플로우차트
 - `buildFlowchart()` 함수로 Figma 현재 페이지에 직접 생성
 - `figma.createVector()` + `fcDrawEdge()` (createConnector는 FigJam 전용)
+- FC_NODES: 25개 / FC_EDGES: 30개 / FC_SUBGRAPHS: 3개 (P7·P8·P9)
 
 ## 베러웰스앱 디자인 시스템 핵심
 

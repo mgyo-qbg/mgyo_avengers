@@ -36,7 +36,10 @@ mgyo_avengers/
 │   └── 웹-법률전문가1  (개인정보/금융규제)
 └── 앱팀-리드
     ├── 앱-기획자       (화면 플로우, 제약사항, Figma 코멘트 관리)
-    └── 앱-디자이너     (Figma 디자인 시스템, 플러그인 스케치 생성)
+    ├── 앱-디자이너     (Figma 디자인 시스템, 플러그인 스케치 생성)
+    ├── 앱-백엔드1      (better-backend 아키텍처, API, DB)
+    ├── 앱-프론트엔드1  (앱↔백엔드 연동 API, DTO)
+    └── 앱-인프라1      (인프라, Docker, CI/CD, 보안)
 ```
 
 ## 복구 방법
@@ -52,7 +55,7 @@ mgyo_avengers/
 예시:
 - MGYO_REPO: `/Users/imsi/Desktop/qbg/repo/mgyo_avengers`
 - FA_REPO: `/Users/imsi/Desktop/qbg/repo/better-wealth-fa`
-- APP_REPO: 아직 분리되지 않음 (향후 앱 레포 분리 시 경로 입력)
+- APP_REPO: `/Users/imsi/Desktop/qbg/repo/better-backend` (베러웰스 앱 백엔드 — NestJS 모노레포)
 
 경로 확인 후 해당 경로를 기준으로 문서를 읽고 팀을 복구한다.
 

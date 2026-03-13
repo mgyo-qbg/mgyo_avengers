@@ -14,6 +14,9 @@
 | 앱팀-리드 | 팀 코디네이터 | (이 README) |
 | 앱-기획자 | 화면 플로우, 제약사항, 입력 스펙 정의 / Figma 코멘트 관리 / 스펙 게이트키퍼 | app_planner_context.md |
 | 앱-디자이너 | Figma 디자인 시스템 분석, 플러그인 스케치 생성 | figma_design_system.md |
+| 앱-백엔드1 | better-backend 아키텍처, 주요 모듈, API, DB 스키마 파악 | app_backend_context.md |
+| 앱-프론트엔드1 | 앱↔백엔드 연동 API 엔드포인트, 인증 흐름, DTO 파악 | app_frontend_context.md |
+| 앱-인프라1 | better-backend 인프라, Docker, CI/CD, 보안 이슈 파악 | app_infra_context.md |
 
 ## 복구 방법
 
@@ -33,6 +36,9 @@
 |-----------|-------------|
 | 앱-기획자 | {MGYO_REPO}/better-wealth-app/app_planner_context.md |
 | 앱-디자이너 | {MGYO_REPO}/better-wealth-app/figma_design_system.md |
+| 앱-백엔드1 | {MGYO_REPO}/better-wealth-app/app_backend_context.md |
+| 앱-프론트엔드1 | {MGYO_REPO}/better-wealth-app/app_frontend_context.md |
+| 앱-인프라1 | {MGYO_REPO}/better-wealth-app/app_infra_context.md |
 
 스폰 후 collaboration_workflow.md를 읽어 협업 방식을 숙지하도록 지시할 것.
 
@@ -48,6 +54,9 @@
 | figma_plugin_design_kit.md | 플러그인 공유 라이브러리 (색상토큰·컴포넌트 함수·레이아웃 상수) — 새 플러그인 작성 시 필독 |
 | persona_spec.md | 사용자 테스트 페르소나 스펙 (P-A~P-E, 커버리지 매트릭스) |
 | user_test_results.xlsx | 사용자 테스트 결과 (차수별 이슈, 페르소나별 기록) |
+| app_backend_context.md | 앱-백엔드1 컨텍스트 (better-backend 아키텍처, API, DB, 도메인) |
+| app_frontend_context.md | 앱-프론트엔드1 컨텍스트 (앱↔백엔드 연동, 인증 흐름, DTO) |
+| app_infra_context.md | 앱-인프라1 컨텍스트 (Docker, CI/CD, 보안, 환경변수) |
 
 ## Figma 플러그인
 
