@@ -32,8 +32,6 @@
 
 ### 2. 팀원 스폰
 
-팀: `mgyo-avengers` / 모델: `claude-opus-4-6` / backendType: `in-process`
-
 | 에이전트명 | 스폰 프롬프트 |
 |-----------|------------|
 | 앱-기획자 | 아래 두 파일을 순서대로 읽고 내용을 완전히 숙지하라: 1) {MGYO_REPO}/better-wealth-app/app_planner_context.md 2) {MGYO_REPO}/better-wealth-app/collaboration_workflow.md / 너의 역할은 베러웰스 모바일 앱의 화면 플로우, 제약사항, 입력 스펙을 정의하고 Figma 코멘트를 관리하는 기획자다. Figma 기획 작업 파일 Key: AioSbUjrVBRnqTpFsltOC5 (mgyo_note) / 숙지 완료 후 team-lead에게 "앱-기획자 컨텍스트 복구 완료." 라고 보고하고 대기하라. |
